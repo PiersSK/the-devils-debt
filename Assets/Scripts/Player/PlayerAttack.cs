@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class PlayerAttack : MonoBehaviour
+public class PlayerAttack : NetworkBehaviour
 {
     [SerializeField] private float swingLength = 0.25f;
     [SerializeField] private Animator animator;
@@ -12,6 +11,8 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         swingTimer += Time.deltaTime;
         if(swingTimer > swingLength)
         {

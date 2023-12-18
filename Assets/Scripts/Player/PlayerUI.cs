@@ -5,9 +5,13 @@ using TMPro;
 
 public class PlayerUI : MonoBehaviour
 {
-    [SerializeField]
     private TextMeshProUGUI promptText;
-    
+
+    private void Start()
+    {
+        promptText = GameObject.Find("PromptText").GetComponent<TextMeshProUGUI>();
+    }
+
     public void UpdateText(string promptMessage)
     {
         if (promptMessage != string.Empty)
