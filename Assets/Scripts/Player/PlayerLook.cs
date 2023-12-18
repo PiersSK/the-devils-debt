@@ -13,6 +13,7 @@ public class PlayerLook : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        
         camHolder.SetActive(IsOwner);
         base.OnNetworkSpawn();
     }

@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 using static Door;
 
-public class Dungeon : MonoBehaviour
+public class Dungeon : NetworkBehaviour
 {
     public float objectiveSpawnChance = 0f;
     public float objectiveMaxRooms = 10f;
@@ -15,6 +16,9 @@ public class Dungeon : MonoBehaviour
     [SerializeField] private float roomHeight = 6f;
     [SerializeField] private float stairSpawnChance = 10f;
     private Room[,,] dungeonGrid;
+
+    private Room spawningRoom;
+    private Room lastSpawned;
 
 
     private void Start()
@@ -73,37 +77,42 @@ public class Dungeon : MonoBehaviour
 
     public void AddRandomRoom(Room currentRoom, DoorDirection dir, Room.RoomType roomType)
     {
+        spawningRoom = currentRoom;
+
         if (Random.Range(0, 100) < stairSpawnChance && roomType != Room.RoomType.Objective)
         {
             int upDown = Random.Range(0, 2); //0=up, 1=down
             if (CanSpawnDownStairs(currentRoom.roomCoords, dir) && upDown == 0)
             {
-                Debug.Log("Spawning stairs down");
-                Room stairTop = InitiateNewRoom(currentRoom, dir, roomType, Resources.Load<GameObject>("Stairwell Top"));
-                InitiateNewRoom(stairTop, DoorDirection.Down, roomType, Resources.Load<GameObject>("Stairwell Bottom"));
+                InitiateNewRoomServerRpc(dir, roomType, "Stairwell Top");
+                spawningRoom = lastSpawned;
+                InitiateNewRoomServerRpc(DoorDirection.Down, roomType, "Stairwell Bottom");
             }
             else if (CanSpawnUpStairs(currentRoom.roomCoords, dir) && upDown == 1)
             {
-                Debug.Log("Spawning stairs up");
-                Room stairBottom = InitiateNewRoom(currentRoom, dir, roomType, Resources.Load<GameObject>("Stairwell Bottom"));
-                InitiateNewRoom(stairBottom, DoorDirection.Up, roomType, Resources.Load<GameObject>("Stairwell Top"));
+                InitiateNewRoomServerRpc(dir, roomType, "Stairwell Bottom");
+                spawningRoom = lastSpawned;
+                InitiateNewRoomServerRpc(DoorDirection.Up, roomType, "Stairwell Top");
             }
             else
             {
-                InitiateNewRoom(currentRoom, dir, roomType, Resources.Load<GameObject>("Room"));
+                InitiateNewRoomServerRpc(dir, roomType, "Room");
             }
         }
         else
         {
-            InitiateNewRoom(currentRoom, dir, roomType, Resources.Load<GameObject>("Room"));    
+            InitiateNewRoomServerRpc(dir, roomType, "Room");    
         }
     }
 
-    public Room InitiateNewRoom(Room currentRoom, DoorDirection dir, Room.RoomType roomType, GameObject roomObj)
+    [ServerRpc(RequireOwnership = false)]
+    public void InitiateNewRoomServerRpc(DoorDirection dir, Room.RoomType roomType, string prefabName)
     {
+        Transform roomObj = Resources.Load<Transform>(prefabName);
+
         //Establish new grid index and location of room
-        Vector3 newRoomPos = currentRoom.gameObject.transform.position;
-        Vector3 newGridIndex = currentRoom.roomCoords;
+        Vector3 newRoomPos = spawningRoom.gameObject.transform.position;
+        Vector3 newGridIndex = spawningRoom.roomCoords;
 
         float spaceShift = dir == DoorDirection.Up || dir == DoorDirection.Down ? roomHeight : roomWidth;
 
@@ -111,8 +120,8 @@ public class Dungeon : MonoBehaviour
         newGridIndex = newGridIndex + Door.DirectionToGrid(dir);
 
         //Setup new room object
-        GameObject newRoomObj = GameObject.Instantiate(roomObj, gameObject.transform);
-        Room newRoom = newRoomObj.GetComponent<Room>();
+        roomObj.GetComponent<NetworkObject>().Spawn(true);
+        Room newRoom = roomObj.GetComponent<Room>();
 
         dungeonGrid[(int)newGridIndex.x, (int)newGridIndex.y, (int)newGridIndex.z] = newRoom;
 
@@ -144,7 +153,7 @@ public class Dungeon : MonoBehaviour
             List<Room> neighbours = GetRoomNeighbours(newRoom);
             foreach (Room room in neighbours)
             {
-                if (room != currentRoom)
+                if (room != spawningRoom)
                     room.DisableDoorToNeighbour(newRoom);
             }
         }
@@ -166,7 +175,7 @@ public class Dungeon : MonoBehaviour
             }
         }
 
-        return newRoom;
+        lastSpawned = Instantiate(roomObj, transform).GetComponent<Room>();
 
     }
 
@@ -181,4 +190,14 @@ public class Dungeon : MonoBehaviour
 
         return neighbours;
     }
+
+    //[ServerRpc(RequireOwnership = false)]
+    //private GameObject SpawnRoomServerRpc(string prefabName)
+    //{
+    //    GameObject roomObj = Resources.Load<GameObject>(prefabName);
+
+    //    GameObject newRoomObj = Instantiate(roomObj, gameObject.transform);
+    //    newRoomObj.GetComponent<NetworkObject>().Spawn(true);
+    //    return newRoomObj;
+    //}
 }

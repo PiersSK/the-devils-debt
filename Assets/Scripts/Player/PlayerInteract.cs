@@ -32,7 +32,6 @@ public class PlayerInteract : NetworkBehaviour
         {
             if(hitInfo.collider.GetComponent<Interactable>() != null)
             {
-                Debug.Log("Hit Interactable");
                 Interactable interactable = hitInfo.collider.GetComponent<Interactable>();
                 playerUI.UpdateText(interactable.promptMessage);
                 if (inputManager.onFoot.Interact.triggered)
