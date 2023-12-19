@@ -1,28 +1,33 @@
- using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
+using TMPro;
 
-public class NetworkManagerUI : MonoBehaviour
+public class NetworkManagerUI : NetworkBehaviour
 {
     [SerializeField] private Button hostButton;
-    [SerializeField] private Button serverButton;
     [SerializeField] private Button clientButton;
+
+    [SerializeField] private TextMeshProUGUI playerList;
 
     private void Awake()
     {
         hostButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
-        });
-        serverButton.onClick.AddListener(() =>
-        {
-            NetworkManager.Singleton.StartServer();
+            UpdatePlayerListServerRpc();
         });
         clientButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartClient();
+            UpdatePlayerListServerRpc();
         });
+    }
+
+    [ServerRpc]
+    private void UpdatePlayerListServerRpc()
+    {
+        Debug.Log("Player joined with client id: " + OwnerClientId);
+        playerList.text += OwnerClientId + "\n";
     }
 }
