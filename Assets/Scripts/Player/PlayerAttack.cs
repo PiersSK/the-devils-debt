@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerAttack : MonoBehaviour
+public class PlayerAttack : NetworkBehaviour
 {
     [SerializeField] private float swingLength = 0.25f;
     [SerializeField] private Animator animator;
@@ -12,6 +13,8 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         swingTimer += Time.deltaTime;
         if(swingTimer > swingLength)
         {
@@ -19,6 +22,7 @@ public class PlayerAttack : MonoBehaviour
             animator.SetBool("Swinging", false);
         }
     }
+
     public void SwingSword()
     {
         if(isSwinging) return;
