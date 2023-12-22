@@ -1,6 +1,6 @@
-using Unity.Netcode;
+using UnityEngine;
 
-public class Interactable : NetworkBehaviour
+public class Interactable : MonoBehaviour
 {
     public string promptMessage;
 

@@ -53,8 +53,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5692442084366614259}
   - component: {fileID: 7463542913734025907}
-  - component: {fileID: 5681279231942269143}
-  - component: {fileID: 3627808225945571117}
+  - component: {fileID: 1379098790009094069}
+  - component: {fileID: 2770546982705273032}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -71,7 +71,7 @@ Transform:
   m_GameObject: {fileID: 1936926810206918120}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -97.81, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -99,10 +99,10 @@ MonoBehaviour:
   - {fileID: 377060546468503971}
   - {fileID: 5875691303868042256}
   - {fileID: 4185648399253906264}
-  roomCoords: {x: 0, y: 0, z: 0}
+  roomCoords: {x: 10, y: 11, z: 1}
   roomLight: {fileID: 146565173956292586}
-  roomType: 0
---- !u!114 &5681279231942269143
+  roomType: 3
+--- !u!114 &1379098790009094069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 173308874
+  GlobalObjectIdHash: 3871331153
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -122,7 +122,7 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &3627808225945571117
+--- !u!114 &2770546982705273032
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -289,6 +289,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3074846976723424150}
     m_Modifications:
+    - target: {fileID: -259656277374354293, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3871331153
+      objectReference: {fileID: 0}
     - target: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -334,12 +338,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7463542913734025907}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: portal
+      value: 
+      objectReference: {fileID: 8031646252621523003}
+    - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: direction
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7813461379881142826, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_Name
       value: Door S
+      objectReference: {fileID: 0}
+    - target: {fileID: 7909492524320574999, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -362,6 +374,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df012e38106daa14da157fd3d617b3dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &8031646252621523003 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7909492524320574999, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+  m_PrefabInstance: {fileID: 194228995077056044}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &479046865757733535
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1162,6 +1179,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3074846976723424150}
     m_Modifications:
+    - target: {fileID: -259656277374354293, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3871331153
+      objectReference: {fileID: 0}
     - target: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10
@@ -1206,6 +1227,10 @@ PrefabInstance:
       propertyPath: room
       value: 
       objectReference: {fileID: 7463542913734025907}
+    - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: portal
+      value: 
+      objectReference: {fileID: 4307432713044067720}
     - target: {fileID: 7813461379881142826, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_Name
       value: Door E
@@ -1226,6 +1251,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df012e38106daa14da157fd3d617b3dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &4307432713044067720 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7909492524320574999, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+  m_PrefabInstance: {fileID: 6197862041850465183}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5056648471897384452 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
@@ -1239,6 +1269,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3074846976723424150}
     m_Modifications:
+    - target: {fileID: -259656277374354293, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3871331153
+      objectReference: {fileID: 0}
     - target: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1284,6 +1318,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7463542913734025907}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: portal
+      value: 
+      objectReference: {fileID: 3570052692701015154}
+    - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: direction
       value: 0
       objectReference: {fileID: 0}
@@ -1307,6 +1345,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df012e38106daa14da157fd3d617b3dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &3570052692701015154 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7909492524320574999, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+  m_PrefabInstance: {fileID: 6651616028354847333}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5503576621561040894 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
@@ -1419,6 +1462,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3074846976723424150}
     m_Modifications:
+    - target: {fileID: -259656277374354293, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3871331153
+      objectReference: {fileID: 0}
     - target: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10
@@ -1464,6 +1511,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7463542913734025907}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: portal
+      value: 
+      objectReference: {fileID: 354355693744310131}
+    - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: direction
       value: 3
       objectReference: {fileID: 0}
@@ -1476,6 +1527,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+--- !u!1 &354355693744310131 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7909492524320574999, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+  m_PrefabInstance: {fileID: 7579212012064344420}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4185648399253906264 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}

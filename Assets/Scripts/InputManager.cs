@@ -13,6 +13,8 @@ public class InputManager : NetworkBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+
         playerInput = new PlayerInput();
         onFoot = playerInput.OnFoot;
 
@@ -22,6 +24,7 @@ public class InputManager : NetworkBehaviour
 
         onFoot.Jump.performed += ctx => motor.Jump();
         onFoot.Attack.performed += ctx => attack.SwingSword();
+        //onFoot.Test.performed += ctx => TestSpawn();
     }
 
     // Update is called once per frame
@@ -46,4 +49,6 @@ public class InputManager : NetworkBehaviour
     {
         onFoot.Disable();
     }
+
+    
 }

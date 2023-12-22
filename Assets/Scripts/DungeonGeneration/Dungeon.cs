@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using static Door;
+using Mono.CSharp;
 
 public class Dungeon : NetworkBehaviour
 {
@@ -17,16 +18,34 @@ public class Dungeon : NetworkBehaviour
     [SerializeField] private float stairSpawnChance = 10f;
     private Room[,,] dungeonGrid;
 
+    private PlayerInfo player;
+
+    private Transform roomToSpawn;
     private Room spawningRoom;
     private Room lastSpawned;
 
 
+
     private void Start()
     {
+        //Debug.Log("Dungeon start?");
+        //Debug.Log("Creating Player");
+        //Transform player = Instantiate(Resources.Load<Transform>("Player"));
+        //player.GetComponent<NetworkObject>().Spawn();
+        //if(!IsSpawned)
+        //    NetworkObject.Spawn();
+        //SpawnPlayerServerRpc(player);
+        player = PlayerInfo.GetPlayerInfo();
         InitiateGrid();
         dungeonGrid[maxRoomRadius, maxRoomRadius, (int)maxFloors/2] = startingRoom;
         startingRoom.roomCoords = new Vector3(maxRoomRadius, maxRoomRadius, (int)maxFloors / 2);
     }
+
+    //[ServerRpc(RequireOwnership = false)]
+    //private void SpawnPlayerServerRpc(Transform player)
+    //{
+    //    Debug.Log("Spawning player...");
+    //}
 
     private void InitiateGrid()
     {
@@ -77,6 +96,7 @@ public class Dungeon : NetworkBehaviour
 
     public void AddRandomRoom(Room currentRoom, DoorDirection dir, Room.RoomType roomType)
     {
+        Debug.Log("AddRandomRoom");
         spawningRoom = currentRoom;
 
         if (Random.Range(0, 100) < stairSpawnChance && roomType != Room.RoomType.Objective)
@@ -84,59 +104,85 @@ public class Dungeon : NetworkBehaviour
             int upDown = Random.Range(0, 2); //0=up, 1=down
             if (CanSpawnDownStairs(currentRoom.roomCoords, dir) && upDown == 0)
             {
-                InitiateNewRoomServerRpc(dir, roomType, "Stairwell Top");
+                InitiateNewRoom(dir, roomType, "Stairwell Top");
                 spawningRoom = lastSpawned;
-                InitiateNewRoomServerRpc(DoorDirection.Down, roomType, "Stairwell Bottom");
+                InitiateNewRoom(DoorDirection.Down, roomType, "Stairwell Bottom");
             }
             else if (CanSpawnUpStairs(currentRoom.roomCoords, dir) && upDown == 1)
             {
-                InitiateNewRoomServerRpc(dir, roomType, "Stairwell Bottom");
+                InitiateNewRoom(dir, roomType, "Stairwell Bottom");
                 spawningRoom = lastSpawned;
-                InitiateNewRoomServerRpc(DoorDirection.Up, roomType, "Stairwell Top");
+                InitiateNewRoom(DoorDirection.Up, roomType, "Stairwell Top");
             }
             else
             {
-                InitiateNewRoomServerRpc(dir, roomType, "Room");
+                InitiateNewRoom(dir, roomType, "Room");
             }
         }
         else
         {
-            InitiateNewRoomServerRpc(dir, roomType, "Room");    
+            InitiateNewRoom(dir, roomType, "Room");    
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void InitiateNewRoomServerRpc(DoorDirection dir, Room.RoomType roomType, string prefabName)
+    private void SpawnRoomServerRpc(DoorDirection dir, string prefabName)
     {
+        Debug.Log("SpawnRoomServerRpc");
+
+        SpawnRoom(dir, prefabName);
+
+    }
+
+    private void SpawnRoom(DoorDirection dir, string prefabName)
+    {
+        Debug.Log("SpawnRoom");
+
         Transform roomObj = Resources.Load<Transform>(prefabName);
+        roomObj = Instantiate(roomObj, transform);
+
+        Vector3 newRoomPos = spawningRoom.gameObject.transform.position;
+        float spaceShift = dir == DoorDirection.Up || dir == DoorDirection.Down ? roomHeight : roomWidth;
+        newRoomPos += (DirectionToWorldSpace(dir) * spaceShift);
+        roomObj.position = newRoomPos;
+
+        roomObj.GetComponent<NetworkObject>().Spawn();
+        roomToSpawn = roomObj;
+    }
+
+
+    public void InitiateNewRoom(DoorDirection dir, Room.RoomType roomType, string prefabName)
+    {
+        Debug.Log("InitiateNewRoom player.IsServer="+ player.IsServer);
+
+        if (player.IsServer)
+            SpawnRoom(dir, prefabName);
+        else
+            SpawnRoomServerRpc(dir, prefabName);
+
+        Transform roomObj = roomToSpawn;
 
         //Establish new grid index and location of room
-        Vector3 newRoomPos = spawningRoom.gameObject.transform.position;
         Vector3 newGridIndex = spawningRoom.roomCoords;
 
-        float spaceShift = dir == DoorDirection.Up || dir == DoorDirection.Down ? roomHeight : roomWidth;
-
-        newRoomPos = newRoomPos + (Door.DirectionToWorldSpace(dir) * spaceShift);
-        newGridIndex = newGridIndex + Door.DirectionToGrid(dir);
+        newGridIndex = newGridIndex + DirectionToGrid(dir);
 
         //Setup new room object
-        roomObj.GetComponent<NetworkObject>().Spawn(true);
         Room newRoom = roomObj.GetComponent<Room>();
 
         dungeonGrid[(int)newGridIndex.x, (int)newGridIndex.y, (int)newGridIndex.z] = newRoom;
 
         newRoom.SetType(roomType);
         newRoom.roomCoords = newGridIndex;
-        newRoom.transform.position = newRoomPos;
 
         // Block doors to OOB
         foreach (Door door in newRoom.doors)
         {
             door.dungeon = this;
-            if ((newRoom.roomCoords.x + Door.DirectionToGrid(door.direction).x) < 0
-                || (newRoom.roomCoords.x + Door.DirectionToGrid(door.direction).x) > maxRoomRadius*2
-                || (newRoom.roomCoords.y + Door.DirectionToGrid(door.direction).y) < 0
-                || (newRoom.roomCoords.y + Door.DirectionToGrid(door.direction).y) > maxRoomRadius*2)
+            if ((newRoom.roomCoords.x + DirectionToGrid(door.direction).x) < 0
+                || (newRoom.roomCoords.x + DirectionToGrid(door.direction).x) > maxRoomRadius*2
+                || (newRoom.roomCoords.y + DirectionToGrid(door.direction).y) < 0
+                || (newRoom.roomCoords.y + DirectionToGrid(door.direction).y) > maxRoomRadius*2)
             {
                 Debug.Log("Blocking door in room at: " + newRoom.roomCoords + " in direction " + Door.DirectionToGrid(door.direction));
                 door.BlockDoor();
@@ -145,7 +191,15 @@ public class Dungeon : NetworkBehaviour
 
         //Remove door joining to entrance
         if (dir != DoorDirection.Up && dir != DoorDirection.Down)
-            newRoom.doors[((int)dir + 2) % 4].RemoveDoor();
+        {
+            //newRoom.doors[((int)dir + 2) % 4].RemoveDoor();
+            Destroy(spawningRoom.doors[(int)dir].gameObject);
+            spawningRoom.doors[(int)dir].GetComponent<NetworkObject>().Despawn();
+
+
+            Destroy(newRoom.doors[((int)dir + 2) % 4].gameObject);
+            newRoom.doors[((int)dir + 2) % 4].GetComponent<NetworkObject>().Despawn();
+        }
 
         //Open doors to other adjacent rooms (leave Objective rooms as dead ends)
         if (roomType != Room.RoomType.Objective)
@@ -175,7 +229,7 @@ public class Dungeon : NetworkBehaviour
             }
         }
 
-        lastSpawned = Instantiate(roomObj, transform).GetComponent<Room>();
+        lastSpawned = roomObj.GetComponent<Room>();
 
     }
 

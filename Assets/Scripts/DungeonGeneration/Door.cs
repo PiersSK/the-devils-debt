@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Door : MonoBehaviour
@@ -30,25 +31,44 @@ public class Door : MonoBehaviour
     [SerializeField] private DoorButton[] chooseButtons = new DoorButton[3];
 
     public GameObject portal;
-    private GameObject block;
+    public GameObject block;
 
-    private void Awake()
-    {
-        portal = gameObject.transform.Find("Portal").gameObject;
-        block = gameObject.transform.Find("Block").gameObject;
-    }
+    //[ServerRpc(RequireOwnership = false)]
+    //private void DespawnPortalServerRpc()
+    //{
+    //    Debug.Log("DespawnPortalServerRpc IsServer=" + IsServer + "IsHost=" + IsHost + "IsClient=" + IsClient);
+
+    //    portal.GetComponent<NetworkObject>().Despawn();
+    //}
+
+    //[ServerRpc(RequireOwnership = false)]
+    //private void DespawnBlockServerRpc()
+    //{
+    //    block.GetComponent<NetworkObject>().Despawn();
+    //}
+
 
     public void RemoveDoor()
     {
-        portal.SetActive(false);
-        block.SetActive(false);
+        // Destroy locally
+        Destroy(portal);
+        Destroy(block);
+        //Debug.Log("DespawnPortalServerRpc IsServer=" + IsServer + "IsHost=" + IsHost + "IsClient=" + IsClient);
+
+        //// Despawn on server
+        //DespawnPortalServerRpc();
+        //DespawnBlockServerRpc();
 
     }
 
     public void BlockDoor()
     {
+        // Set locally
         block.SetActive(true);
-        portal.SetActive(false);
+        Destroy(portal);
+
+        // Despawn on server
+        //DespawnPortalServerRpc();
     }
 
     public void ConvertToObjective()
