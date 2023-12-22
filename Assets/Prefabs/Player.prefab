@@ -119,14 +119,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 797907064081540504}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.07867456, z: -0, w: 0.9969004}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.5, y: 0.033, z: 0.113}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6541341129367143654}
   m_Father: {fileID: 2412814474680419081}
-  m_LocalEulerAnglesHint: {x: 0, y: 9.025, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3696486461869480780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,7 +255,7 @@ CharacterController:
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 90
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -299,9 +299,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c2ef1c8b7e214d4f863526336de1dba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 8772116406571269577}
-  xSensitivity: 40
-  ySensitivity: 40
+  cam: {fileID: 8772116406571269577}
+  xSensitivity: 0.3
+  ySensitivity: 0.3
 --- !u!114 &5389996632190842432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,7 +411,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 69.6
+  field of view: 70
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
