@@ -77,42 +77,54 @@ public class Dungeon : NetworkBehaviour
         Vector3 currentPos = currentRoom.gameObject.transform.position;
         Vector3 currentCoords = currentRoom.roomCoords;
 
-        InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
-        //InitiateNewRoom(currentRoom, dir, roomType, Resources.Load<GameObject>("Room"));
+        //InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
 
-        // TEMP SIMPLIFED FOR NETWORK DEVELOPMENT
-        //if (Random.Range(0, 100) < stairSpawnChance && roomType != Room.RoomType.Objective)
-        //{
-        //    int upDown = Random.Range(0, 2); //0=up, 1=down
-        //    if (CanSpawnDownStairs(currentRoom.roomCoords, dir) && upDown == 0)
-        //    {
-        //        Debug.Log("Spawning stairs down");
-        //        Room stairTop = InitiateNewRoom(currentRoom, dir, roomType, Resources.Load<GameObject>("Stairwell Top"));
-        //        InitiateNewRoom(stairTop, DoorDirection.Down, roomType, Resources.Load<GameObject>("Stairwell Bottom"));
-        //    }
-        //    else if (CanSpawnUpStairs(currentRoom.roomCoords, dir) && upDown == 1)
-        //    {
-        //        Debug.Log("Spawning stairs up");
-        //        Room stairBottom = InitiateNewRoom(currentRoom, dir, roomType, Resources.Load<GameObject>("Stairwell Bottom"));
-        //        InitiateNewRoom(stairBottom, DoorDirection.Up, roomType, Resources.Load<GameObject>("Stairwell Top"));
-        //    }
-        //    else
-        //    {
-        //        InitiateNewRoom(currentRoom, dir, roomType, Resources.Load<GameObject>("Room"));
-        //    }
-        //}
-        //else
-        //{
-        //    InitiateNewRoom(currentRoom, dir, roomType, Resources.Load<GameObject>("Room"));    
-        //}
+        if (Random.Range(0, 100) < stairSpawnChance && roomType != Room.RoomType.Objective)
+        {
+            int upDown = Random.Range(0, 2); //0=up, 1=down
+            if (CanSpawnDownStairs(currentRoom.roomCoords, dir) && upDown == 0)
+            {
+                Debug.Log("Spawning stairs down");
+
+                InitiateNewRoomServerRpc("Stairwell Top", currentPos, currentCoords, dir, roomType);
+
+                Vector3 stairTopPos = currentPos + (DirectionToWorldSpace(dir) * roomWidth);
+                Vector3 stairTopGrid = currentCoords + DirectionToGrid(dir);
+
+                InitiateNewRoomServerRpc("Stairwell Bottom", stairTopPos, stairTopGrid, DoorDirection.Down, roomType);
+            }
+            else if (CanSpawnUpStairs(currentRoom.roomCoords, dir) && upDown == 1)
+            {
+                Debug.Log("Spawning stairs up");
+
+                InitiateNewRoomServerRpc("Stairwell Bottom", currentPos, currentCoords, dir, roomType);
+
+                Vector3 stairBottomPos = currentPos + (DirectionToWorldSpace(dir) * roomWidth);
+                Vector3 stairBottomGrid = currentCoords + DirectionToGrid(dir);
+
+                InitiateNewRoomServerRpc("Stairwell Top", stairBottomPos, stairBottomGrid, DoorDirection.Up, roomType);
+            }
+            else
+            {
+                InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
+
+            }
+        }
+        else
+        {
+            InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
+
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void InitiateNewRoomServerRpc(string prefabName, Vector3 currentPos, Vector3 currentCoords, DoorDirection dir, Room.RoomType roomType)
     {
+        // Server instantiates and spawns the room
         GameObject newRoomObj = Instantiate(Resources.Load<GameObject>(prefabName), gameObject.transform);
         newRoomObj.GetComponent<NetworkObject>().Spawn();
 
+        // Server sets room up and sends to clients
         InitiateNewRoomClientRpc(newRoomObj.GetComponent<NetworkObject>(), currentPos, currentCoords, dir, roomType);
     }
 
