@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     public TextMeshProUGUI playerUI_promptText;
+    public TextMeshProUGUI playerUI_joinCode;
 
     private void Awake()
     {
