@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerInteract : MonoBehaviour
+public class PlayerInteract : NetworkBehaviour
 {
     private Camera cam;
     [SerializeField]
@@ -20,7 +21,7 @@ public class PlayerInteract : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateText(string.Empty);
+        if (!IsOwner) return;
 
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         Debug.DrawRay(ray.origin, ray.direction * distance);
@@ -38,10 +39,14 @@ public class PlayerInteract : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            UpdateText(string.Empty);
+        }
     }
 
     private void UpdateText(string promptMessage)
-    { 
+    {
         if (promptMessage != string.Empty)
         {
             UIManager.Instance.playerUI_promptText.text = "[E] " + promptMessage;
