@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class ObjectiveController : NetworkBehaviour
 {
+    public static ObjectiveController Instance { get; private set; }
+
     public enum ObjectiveType
     {
         Keys
@@ -23,6 +25,11 @@ public class ObjectiveController : NetworkBehaviour
     public float objectiveGoal = 3f;
     private NetworkVariable<float> objectiveProgress = new NetworkVariable<float>(0f);
 
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     public override void OnNetworkSpawn()
     {
         objectiveProgress.OnValueChanged += ProgressChanged;
@@ -31,11 +38,9 @@ public class ObjectiveController : NetworkBehaviour
 
     private void ProgressChanged(float prevVal, float newVal)
     {
-        Debug.Log("objectiveProgress changed from " + prevVal + " to " + newVal);
         objectiveProgress.Value = newVal;
 
         objectiveBar.fillAmount = objectiveProgress.Value / objectiveGoal;
-        Debug.Log("progress now " + objectiveProgress.Value + "/" + objectiveGoal);
 
         if (objectiveProgress.Value == objectiveGoal)
             objectiveComplete = true;

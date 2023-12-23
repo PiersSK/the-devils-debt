@@ -1,27 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class TreasureChest : Interactable
+public class TreasureChest : NetworkInteractable
 {
     [SerializeField] private Animator anim;
-    protected ObjectiveController objective;
-    protected bool isOpen = false;
+    private NetworkVariable<bool> isOpen = new(false);
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        objective = ObjectiveController.GetObjectiveController();
+        base.OnNetworkSpawn();
+        isOpen.OnValueChanged += ToggleOpen;
+    }
+
+    private void ToggleOpen(bool prevVal, bool newVal)
+    {
+        Debug.Log("toggling chest state");
+        isOpen.Value = newVal;
+        if(isOpen.Value)
+        {
+            anim.SetTrigger("OpenChest");
+            SetPromptMessage(string.Empty);
+        }
     }
 
     protected override void Interact()
     {
-        if (!isOpen)
-        {
-            anim.SetTrigger("OpenChest");
-            if (objective.objectiveSelected == ObjectiveController.ObjectiveType.Keys)
-                objective.ProgressObjective();
-            isOpen = true;
-            promptMessage = string.Empty;
-        }
+        Debug.Log("Chest interact happening");
+        OpenChestServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void OpenChestServerRpc()
+    {
+        Debug.Log("Chest serverRPC happening");
+        if (!isOpen.Value)
+            isOpen.Value = true;
+            if (ObjectiveController.Instance.objectiveSelected == ObjectiveController.ObjectiveType.Keys)
+                ObjectiveController.Instance.ProgressObjective();
     }
 }

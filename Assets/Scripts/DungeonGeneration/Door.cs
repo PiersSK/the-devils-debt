@@ -44,9 +44,8 @@ public class Door : NetworkBehaviour
         block = gameObject.transform.Find("Block").gameObject;
     }
 
-    public void RemoveDoor(string message = "")
+    public void RemoveDoor()
     {
-        Debug.Log(message + " | IsServer: " + IsServer + " IsClient: " + IsClient + " IsHost: " + IsHost);
         if (IsClient)
         {
             RemoveDoorServerRpc();
@@ -86,7 +85,7 @@ public class Door : NetworkBehaviour
         }
 
         randomButton.roomType = Room.RoomType.Objective;
-        randomButton.promptMessage = "Objective! [0]";
+        randomButton.SetPromptMessage("Objective! [0]");
 
     }
     

@@ -76,6 +76,29 @@ public class Dungeon : NetworkBehaviour
     {
         Vector3 currentPos = currentRoom.gameObject.transform.position;
         Vector3 currentCoords = currentRoom.roomCoords;
+        string prefabName = "Rooms/";
+
+        if (roomType == Room.RoomType.Random)
+            roomType = (Room.RoomType)Random.Range(0, 3);
+
+        switch (roomType)
+        {
+            case Room.RoomType.Boon:
+                prefabName += "BoonRoom";
+                break;
+            case Room.RoomType.Treasure:
+                prefabName += "TreasureRoom";
+                break;
+            case Room.RoomType.Monster:
+                prefabName += "MonsterRoom";
+                break;
+            case Room.RoomType.Objective:
+                prefabName += "ObjectiveRoom";
+                break;
+            default:
+                prefabName += "Room";
+                break;
+        }
 
         //InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
 
@@ -106,13 +129,13 @@ public class Dungeon : NetworkBehaviour
             }
             else
             {
-                InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
+                InitiateNewRoomServerRpc(prefabName, currentPos, currentCoords, dir, roomType);
 
             }
         }
         else
         {
-            InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
+            InitiateNewRoomServerRpc(prefabName, currentPos, currentCoords, dir, roomType);
 
         }
     }
@@ -121,11 +144,12 @@ public class Dungeon : NetworkBehaviour
     private void InitiateNewRoomServerRpc(string prefabName, Vector3 currentPos, Vector3 currentCoords, DoorDirection dir, Room.RoomType roomType)
     {
         // Server instantiates and spawns the room
-        GameObject newRoomObj = Instantiate(Resources.Load<GameObject>(prefabName), gameObject.transform);
+        GameObject newRoomObj = Instantiate(Resources.Load<GameObject>(prefabName));
         newRoomObj.GetComponent<NetworkObject>().Spawn();
+        newRoomObj.transform.parent = transform;
 
-        if (roomType == Room.RoomType.Random)
-            roomType = (Room.RoomType)Random.Range(0, 3);
+        // Server instantiates and spawns objects inside
+        newRoomObj.GetComponent<Room>().GetSpawnRequirements(roomType);
 
         // Server sets room up and sends to clients
         InitiateNewRoomClientRpc(newRoomObj.GetComponent<NetworkObject>(), currentPos, currentCoords, dir, roomType);
@@ -134,31 +158,32 @@ public class Dungeon : NetworkBehaviour
     [ClientRpc]
     private void InitiateNewRoomClientRpc(NetworkObjectReference roomNetworkObjectReference, Vector3 currentPos, Vector3 currentCoords, DoorDirection dir, Room.RoomType roomType)
     {
+        if (roomType == Room.RoomType.Objective)
+            ObjectiveController.GetObjectiveController().ShowObjectiveUI();
+
+        roomNetworkObjectReference.TryGet(out NetworkObject roomNetworkObject);
+        Room newRoom = roomNetworkObject.GetComponent<Room>();
+
+        //Move room to correct position
         Vector3 newRoomPos = currentPos;
         float spaceShift = dir == DoorDirection.Up || dir == DoorDirection.Down ? roomHeight : roomWidth;
         newRoomPos += (DirectionToWorldSpace(dir) * spaceShift);
+        newRoom.transform.position = newRoomPos;
 
+        //Add room to dungeon grid
         Vector3 newGridIndex = currentCoords;
         newGridIndex += DirectionToGrid(dir);
-
-        roomNetworkObjectReference.TryGet(out NetworkObject roomNetworkObject);
-        GameObject newRoomObj = roomNetworkObject.gameObject;
-        Room newRoom = newRoomObj.GetComponent<Room>();
-
         dungeonGrid[(int)newGridIndex.x, (int)newGridIndex.y, (int)newGridIndex.z] = newRoom;
-
-        newRoom.SetType(roomType);
-        newRoom.roomCoords = newGridIndex;
-        newRoom.transform.position = newRoomPos;
+        newRoom.roomCoords = newGridIndex; // Let room object know what co-ords it's at
 
         // Block doors to OOB
         foreach (Door door in newRoom.doors)
         {
             door.dungeon = this;
-            if ((newRoom.roomCoords.x + Door.DirectionToGrid(door.direction).x) < 0
-                || (newRoom.roomCoords.x + Door.DirectionToGrid(door.direction).x) > maxRoomRadius * 2
-                || (newRoom.roomCoords.y + Door.DirectionToGrid(door.direction).y) < 0
-                || (newRoom.roomCoords.y + Door.DirectionToGrid(door.direction).y) > maxRoomRadius * 2)
+            if ((newRoom.roomCoords.x + DirectionToGrid(door.direction).x) < 0
+                || (newRoom.roomCoords.x + DirectionToGrid(door.direction).x) > maxRoomRadius * 2
+                || (newRoom.roomCoords.y + DirectionToGrid(door.direction).y) < 0
+                || (newRoom.roomCoords.y + DirectionToGrid(door.direction).y) > maxRoomRadius * 2)
             {
                 door.BlockDoor();
             }
@@ -166,7 +191,7 @@ public class Dungeon : NetworkBehaviour
 
         //Remove door joining to entrance
         if (dir != DoorDirection.Up && dir != DoorDirection.Down)
-            newRoom.doors[((int)dir + 2) % 4].RemoveDoor("InitiateNewRoomClientRpc");
+            newRoom.doors[((int)dir + 2) % 4].RemoveDoor();
 
         //Open doors to other adjacent rooms (leave Objective rooms as dead ends)
         if (roomType != Room.RoomType.Objective)

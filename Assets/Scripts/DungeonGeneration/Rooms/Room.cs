@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using static Door;
 
-public class Room : MonoBehaviour
+public class Room : NetworkBehaviour
 {
     public enum RoomType
     {
@@ -12,6 +13,17 @@ public class Room : MonoBehaviour
         Treasure,
         Random,
         Objective
+    }
+
+    public class RoomObjectToSpawn
+    {
+        public string prefabName;
+        public Vector3 localOffset;
+        public RoomObjectToSpawn(string name, Vector3 offset)
+        {
+            prefabName = name;
+            localOffset = offset;
+        }
     }
 
     public Door[] doors = new Door[4];
@@ -95,8 +107,7 @@ public class Room : MonoBehaviour
             case RoomType.Treasure:
                 roomLight.color = Color.blue;
 
-                GameObject chest = GameObject.Instantiate(Resources.Load<GameObject>("TreasureChest"), transform);
-                chest.transform.localPosition = new Vector3(0f, -1.7f, 0f);
+                SpawnObjectInRoomServerRpc("TreasureChest", new Vector3(0f, -1.7f, 0f));
                 break;
             case RoomType.Boon:
                 roomLight.color = Color.green;
@@ -108,12 +119,54 @@ public class Room : MonoBehaviour
                 roomLight.color = Color.yellow;
                 roomLight.intensity = 1;
                 foreach (Door door in doors) door.BlockDoor();
-                GameObject objectiveChest = GameObject.Instantiate(Resources.Load<GameObject>("ObjectiveChest"), transform);
-                objectiveChest.transform.localPosition = new Vector3(0f, -1.7f, 0f);
+
+                SpawnObjectInRoomServerRpc("ObjectiveChest", new Vector3(0f, -1.7f, 0f));
 
                 ObjectiveController.GetObjectiveController().ShowObjectiveUI();
                 break;
         }
+    }
+
+    public List<RoomObjectToSpawn> GetSpawnRequirements(RoomType type)
+    {
+        List<RoomObjectToSpawn> roomObjectsToSpawn = new();
+
+        switch (type)
+        {
+            case RoomType.Treasure:
+                roomObjectsToSpawn.Add(new RoomObjectToSpawn("TreasureChest", new Vector3(0f, -1.7f, 0f)));
+                break;
+            case RoomType.Boon:
+                roomLight.color = Color.green;
+                break;
+            case RoomType.Monster:
+                roomLight.color = Color.red;
+                break;
+            case RoomType.Objective:
+                roomObjectsToSpawn.Add(new RoomObjectToSpawn("ObjectiveChest", new Vector3(0f, -1.7f, 0f)));
+                break;
+        }
+
+        return roomObjectsToSpawn;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SpawnObjectInRoomServerRpc(string prefabName, Vector3 localOffset)
+    {
+        Debug.Log("Spawning chest in room");
+        Transform obj = Instantiate(Resources.Load<Transform>(prefabName));
+        NetworkObject objNO = obj.GetComponent<NetworkObject>();
+        objNO.Spawn();
+        objNO.transform.parent = transform;
+
+        ChangeObjectLocalPositionClientRpc(objNO, localOffset);
+    }
+
+    [ClientRpc]
+    private void ChangeObjectLocalPositionClientRpc(NetworkObjectReference objNOR, Vector3 localOffset)
+    {
+        objNOR.TryGet(out NetworkObject objNO);
+        objNO.transform.localPosition = localOffset;
     }
 
 }

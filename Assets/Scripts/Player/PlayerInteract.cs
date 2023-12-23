@@ -29,10 +29,10 @@ public class PlayerInteract : NetworkBehaviour
         RaycastHit hitInfo;
         if(Physics.Raycast(ray, out hitInfo, distance, mask))
         {
-            if(hitInfo.collider.GetComponent<Interactable>() != null)
+            if(hitInfo.collider.GetComponent<IInteractable>() != null)
             {
-                Interactable interactable = hitInfo.collider.GetComponent<Interactable>();
-                UpdateText(interactable.promptMessage);
+                IInteractable interactable = hitInfo.collider.GetComponent<IInteractable>();
+                UpdateText(interactable.GetPromptMessage());
                 if (inputManager.onFoot.Interact.triggered)
                 {
                     interactable.BaseInteract();
