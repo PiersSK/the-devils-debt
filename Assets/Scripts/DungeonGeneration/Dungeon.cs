@@ -124,6 +124,9 @@ public class Dungeon : NetworkBehaviour
         GameObject newRoomObj = Instantiate(Resources.Load<GameObject>(prefabName), gameObject.transform);
         newRoomObj.GetComponent<NetworkObject>().Spawn();
 
+        if (roomType == Room.RoomType.Random)
+            roomType = (Room.RoomType)Random.Range(0, 3);
+
         // Server sets room up and sends to clients
         InitiateNewRoomClientRpc(newRoomObj.GetComponent<NetworkObject>(), currentPos, currentCoords, dir, roomType);
     }

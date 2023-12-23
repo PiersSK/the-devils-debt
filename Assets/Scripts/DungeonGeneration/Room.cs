@@ -90,9 +90,6 @@ public class Room : MonoBehaviour
     {
         roomType = type;
 
-        if (roomType == RoomType.Random)
-            type = (RoomType)Random.Range(0, 3);
-
         switch (type)
         {
             case RoomType.Treasure:
