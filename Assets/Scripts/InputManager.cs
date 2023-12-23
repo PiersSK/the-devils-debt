@@ -11,7 +11,8 @@ public class InputManager : NetworkBehaviour
     private PlayerLook look;
     private PlayerAttack attack;
     // Start is called before the first frame update
-    void Awake()
+
+    private void Awake()
     {
         playerInput = new PlayerInput();
         onFoot = playerInput.OnFoot;
@@ -19,6 +20,12 @@ public class InputManager : NetworkBehaviour
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
         attack = GetComponent<PlayerAttack>();
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        if (!IsOwner) return;
 
         onFoot.Jump.performed += ctx => motor.Jump();
         onFoot.Attack.performed += ctx => attack.SwingSword();
