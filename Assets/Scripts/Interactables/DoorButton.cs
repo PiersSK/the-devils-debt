@@ -10,7 +10,7 @@ public class DoorButton : Interactable
 
     protected override void Interact()
     {
-        door.RemoveDoor();
-        //door.dungeon.AddRandomRoom(door.room, door.direction, roomType);
+        door.RemoveDoor("DoorButton");
+        door.dungeon.AddRandomRoom(door.room, door.direction, roomType);
     }
 }

@@ -44,17 +44,24 @@ public class Door : NetworkBehaviour
         block = gameObject.transform.Find("Block").gameObject;
     }
 
-    public void RemoveDoor()
+    public void RemoveDoor(string message = "")
     {
-        RemoveDoorServerRpc();
-        //portal.SetActive(false);
-        //block.SetActive(false);
+        Debug.Log(message + " | IsServer: " + IsServer + " IsClient: " + IsClient + " IsHost: " + IsHost);
+        if (IsClient)
+        {
+            RemoveDoorServerRpc();
+        }
+        else
+        {
+            portal.SetActive(false);
+            block.SetActive(false);
+        }
+
     }
 
     [ClientRpc]
     private void RemoveDoorClientRpc()
     {
-        Debug.Log("Removing door");
         portal.SetActive(false);
         block.SetActive(false);
     }
