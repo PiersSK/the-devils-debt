@@ -7,15 +7,15 @@ public class ObjectiveChest : TreasureChest
 
     private void Update()
     {
-        if (!objective.objectiveComplete)
-            promptMessage = string.Empty;
+        if (!ObjectiveController.Instance.objectiveComplete)
+            SetPromptMessage(string.Empty);
         else
-            promptMessage = "Loot objective!";
+            SetPromptMessage("Loot objective!");
     }
 
     protected override void Interact()
     {
-        if (objective.objectiveComplete)
+        if (ObjectiveController.Instance.objectiveComplete)
             base.Interact();
     }
 }

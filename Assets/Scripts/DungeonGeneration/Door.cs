@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Door : MonoBehaviour
+public class Door : NetworkBehaviour
 {
     public enum DoorDirection
     {
@@ -32,6 +33,11 @@ public class Door : MonoBehaviour
     public GameObject portal;
     private GameObject block;
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+    }
+
     private void Awake()
     {
         portal = gameObject.transform.Find("Portal").gameObject;
@@ -40,9 +46,29 @@ public class Door : MonoBehaviour
 
     public void RemoveDoor()
     {
+        if (IsClient)
+        {
+            RemoveDoorServerRpc();
+        }
+        else
+        {
+            portal.SetActive(false);
+            block.SetActive(false);
+        }
+
+    }
+
+    [ClientRpc]
+    private void RemoveDoorClientRpc()
+    {
         portal.SetActive(false);
         block.SetActive(false);
+    }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void RemoveDoorServerRpc()
+    {
+        RemoveDoorClientRpc();
     }
 
     public void BlockDoor()
@@ -59,7 +85,7 @@ public class Door : MonoBehaviour
         }
 
         randomButton.roomType = Room.RoomType.Objective;
-        randomButton.promptMessage = "Objective! [0]";
+        randomButton.SetPromptMessage("Objective! [0]");
 
     }
     

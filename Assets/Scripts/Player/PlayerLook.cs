@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerLook : MonoBehaviour
+public class PlayerLook : NetworkBehaviour
 {
     public Camera cam;
     private float xRotation = 0f;
 
-    public float xSensitivity = 30f;
-    public float ySensitivity = 30;
+    public float xSensitivity = 0.3f;
+    public float ySensitivity = 0.3f;
 
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
-        Cursor.lockState = CursorLockMode.Locked;    
+        if (!IsOwner) return;
+        cam.gameObject.transform.parent.gameObject.SetActive(true);
+        base.OnNetworkSpawn();
+
+        //Cursor.lockState = CursorLockMode.Locked;    
     }
 
     public void ProcessLook(Vector2 input)

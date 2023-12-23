@@ -786,9 +786,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7602899247325678606}
-  - component: {fileID: 3417171732293380207}
   - component: {fileID: 1938371987701136060}
   - component: {fileID: 6332015991366613959}
+  - component: {fileID: 5522223159837940857}
+  - component: {fileID: 3523482149740499291}
   m_Layer: 0
   m_Name: TreasureChest
   m_TagString: Untagged
@@ -814,20 +815,6 @@ Transform:
   - {fileID: 7560229679950394523}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3417171732293380207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2210722613686822875}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18c8d2fed2f43274c907503447a23edd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  promptMessage: Open Chest
-  anim: {fileID: 1938371987701136060}
 --- !u!95 &1938371987701136060
 Animator:
   serializedVersion: 5
@@ -870,6 +857,40 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0814958, y: 0.9658621, z: 1.4232364}
   m_Center: {x: 0.20925212, y: 0.16149917, z: 0.6623142}
+--- !u!114 &5522223159837940857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2210722613686822875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18c8d2fed2f43274c907503447a23edd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  promptMessage: Open Chest
+  anim: {fileID: 1938371987701136060}
+--- !u!114 &3523482149740499291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2210722613686822875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68bde97efeb2427691bac0c3322ce81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList:
+  - Layer: 0
+    OriginatingState: -1300071019
+    DestinationState: 1572279387
+    TransitionDuration: 0.24999994
+    TriggerNameHash: 1554329390
+    TransitionIndex: 0
+  m_Animator: {fileID: 1938371987701136060}
 --- !u!1 &2628140808755452063
 GameObject:
   m_ObjectHideFlags: 0
