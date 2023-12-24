@@ -1588,6 +1588,11 @@ MonoBehaviour:
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 5286449038831752649, guid: fbb7b7c135cc642629b740406cfbb587, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
     TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
@@ -2274,7 +2279,7 @@ MonoBehaviour:
   playerUI_joinCode: {fileID: 1114040582}
   playerUI_staminaBar: {fileID: 2041044834}
   playerUI_manaBar: {fileID: 1354367031}
-  playerUI_manaVal: {fileID: 0}
+  playerUI_manaVal: {fileID: 553934562}
 --- !u!114 &1326694229 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4185648399253906264, guid: e251e68868ae2ac439064d91368b59da, type: 3}
@@ -3211,7 +3216,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4845276930943762971, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000030517578
+      value: 0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 4845637959249703711, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3917,6 +3922,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 962900637}
     m_Modifications:
+    - target: {fileID: 146565173956292586, guid: e251e68868ae2ac439064d91368b59da, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 337423654509527326, guid: e251e68868ae2ac439064d91368b59da, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1906327210
+      objectReference: {fileID: 0}
     - target: {fileID: 377060546468503971, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: dungeon
       value: 
@@ -3961,6 +3974,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3589168399877433887, guid: e251e68868ae2ac439064d91368b59da, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2321291659
+      objectReference: {fileID: 0}
     - target: {fileID: 4185648399253906264, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: dungeon
       value: 
@@ -3968,6 +3985,10 @@ PrefabInstance:
     - target: {fileID: 4185648399253906264, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: direction
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4288335720382006245, guid: e251e68868ae2ac439064d91368b59da, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4222814259
       objectReference: {fileID: 0}
     - target: {fileID: 4610301368054755170, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: m_Layer
@@ -4045,6 +4066,10 @@ PrefabInstance:
       propertyPath: doors.Array.data[3]
       value: 
       objectReference: {fileID: 1326694229}
+    - target: {fileID: 8012477752777436758, guid: e251e68868ae2ac439064d91368b59da, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2269891832
+      objectReference: {fileID: 0}
     - target: {fileID: 8086498433068884939, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: m_Layer
       value: 0
