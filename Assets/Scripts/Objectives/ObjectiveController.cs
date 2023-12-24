@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
@@ -12,15 +13,21 @@ public class ObjectiveController : NetworkBehaviour
     public enum ObjectiveType
     {
         Keys
-        //,Monsters
+        ,Monsters
         //,Puzzle
     }
+
+    private List<string> objectiveMessages = new List<string>
+    {
+        "Find Keys" //Keys
+        ,"Slay Enemies" //Monsters
+    };
 
     [SerializeField] GameObject objectiveUI;
     [SerializeField] private TextMeshProUGUI objectiveText;
     [SerializeField] private Image objectiveBar;
 
-    public ObjectiveType objectiveSelected;
+    public NetworkVariable<ObjectiveType> objectiveSelected;
     public bool objectiveComplete = false;
     public float objectiveGoal = 3f;
     private NetworkVariable<float> objectiveProgress = new NetworkVariable<float>(0f);
@@ -32,8 +39,13 @@ public class ObjectiveController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        objectiveProgress.OnValueChanged += ProgressChanged;
         base.OnNetworkSpawn();
+
+        objectiveProgress.OnValueChanged += ProgressChanged;
+
+        if (IsServer) SetObjective();
+        else objectiveText.text = objectiveMessages[(int)objectiveSelected.Value]; //Assumes host joins first and has already set NVs
+
     }
 
     private void ProgressChanged(float prevVal, float newVal)
@@ -44,11 +56,6 @@ public class ObjectiveController : NetworkBehaviour
 
         if (objectiveProgress.Value == objectiveGoal)
             objectiveComplete = true;
-    }
-
-    private void Start()
-    {
-        SetObjective();
     }
 
     public void ShowObjectiveUI()
@@ -72,15 +79,12 @@ public class ObjectiveController : NetworkBehaviour
     private void SetObjective()
     {
         int objectiveOptions = Enum.GetValues(typeof(ObjectiveType)).Cast<int>().Max();
-        objectiveSelected = (ObjectiveType)UnityEngine.Random.Range(0, objectiveOptions+1);
+        objectiveSelected.Value = (ObjectiveType)UnityEngine.Random.Range(0, objectiveOptions+1);
 
-        switch(objectiveSelected)
-        {
-            case ObjectiveType.Keys:
-                objectiveText.text = "Objective: Find Keys";
-                break;
-        }
-    } 
+        Debug.Log("Set objective as " + objectiveSelected.Value);
+        objectiveText.text = objectiveMessages[(int)objectiveSelected.Value];
+
+    }
 
     public static ObjectiveController GetObjectiveController()
     {

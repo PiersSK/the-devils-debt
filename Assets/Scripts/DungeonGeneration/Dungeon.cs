@@ -148,11 +148,11 @@ public class Dungeon : NetworkBehaviour
         newRoomObj.GetComponent<NetworkObject>().Spawn();
         newRoomObj.transform.parent = transform;
 
-        // Server instantiates and spawns objects inside
-        newRoomObj.GetComponent<Room>().GetSpawnRequirements(roomType);
-
         // Server sets room up and sends to clients
         InitiateNewRoomClientRpc(newRoomObj.GetComponent<NetworkObject>(), currentPos, currentCoords, dir, roomType);
+
+        // Server spawns room contents
+        newRoomObj.GetComponent<Room>().SpawnRoomContents();
     }
 
     [ClientRpc]

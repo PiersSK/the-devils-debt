@@ -35,7 +35,7 @@ public class TreasureChest : NetworkInteractable
         Debug.Log("Chest serverRPC happening");
         if (!isOpen.Value)
             isOpen.Value = true;
-            if (ObjectiveController.Instance.objectiveSelected == ObjectiveController.ObjectiveType.Keys)
+            if (ObjectiveController.Instance.objectiveSelected.Value == ObjectiveController.ObjectiveType.Keys)
                 ObjectiveController.Instance.ProgressObjective();
     }
 }
