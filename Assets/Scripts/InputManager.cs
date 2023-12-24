@@ -28,7 +28,7 @@ public class InputManager : NetworkBehaviour
         if (!IsOwner) return;
 
         onFoot.Jump.performed += ctx => motor.Jump();
-        onFoot.Attack.performed += ctx => attack.SwingSword();
+        //onFoot.Attack.performed += ctx => attack.Attack();
     }
 
     // Update is called once per frame
