@@ -54,10 +54,9 @@ public class PlayerAttack : NetworkBehaviour
         Invoke(nameof(ResetAttack), attackSpeed);
         Invoke(nameof(AttackRaycast), attackDelay);
 
-        audioSource.pitch = Random.Range(0.9f, 1.1f);
-        audioSource.PlayOneShot(swordSwing);
+        PlaySwingSoundServerRpc();
 
-        if(attackCount == 0)
+        if (attackCount == 0)
         {
             ChangeAnimationState(ATTACK1);
             attackCount++;
@@ -100,8 +99,7 @@ public class PlayerAttack : NetworkBehaviour
 
     private void HitTarget(Vector3 pos)
     {
-        audioSource.pitch = 1;
-        audioSource.PlayOneShot(hitSound);
+        PlayHitSoundServerRpc();
     }
 
     private void ChangeAnimationState(string newState)
@@ -109,6 +107,32 @@ public class PlayerAttack : NetworkBehaviour
         if (currentAnimationState == newState) return;
         currentAnimationState = newState;
         animator.CrossFadeInFixedTime(currentAnimationState, 0.2f);
+    }
+
+    [ServerRpc]
+    private void PlaySwingSoundServerRpc()
+    {
+        PlaySwingSoundClientRpc();
+    }
+
+    [ClientRpc]
+    private void PlaySwingSoundClientRpc()
+    {
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.PlayOneShot(swordSwing);
+    }
+
+    [ServerRpc]
+    private void PlayHitSoundServerRpc()
+    {
+        PlayHitSoundClientRpc();
+    }
+
+    [ClientRpc]
+    private void PlayHitSoundClientRpc()
+    {
+        audioSource.pitch = 1;
+        audioSource.PlayOneShot(hitSound);
     }
 
     //[SerializeField] private float swingLength = 0.5f;
