@@ -11,7 +11,7 @@ public class Enemy : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        currentHealth.Value = maxHealth;
+        if(IsServer) currentHealth.Value = maxHealth;
         currentHealth.OnValueChanged += UpdateCurrentHealth;
     }
 
