@@ -27,4 +27,5 @@ public class Player : NetworkBehaviour
         playerAttack = GetComponent<PlayerAttack>();
         playerMana = GetComponent<PlayerMana>();
     }
+
 }

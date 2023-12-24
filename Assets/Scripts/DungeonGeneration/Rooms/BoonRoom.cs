@@ -6,11 +6,12 @@ using UnityEngine;
 public class BoonRoom : Room
 {
     private NetworkVariable<bool> isManaRegen = new(false);
+    private int spawnChance = 7; // 1=10%, 10=100%
 
     public override void OnNetworkSpawn()
     {
         isManaRegen.OnValueChanged += SyncManaRegen;
-        if (IsServer) isManaRegen.Value = Random.Range(0, 10) < 3;
+        if (IsServer) isManaRegen.Value = Random.Range(0, 10) < spawnChance;
     }
 
     private void SyncManaRegen(bool prevVal, bool newVal)
