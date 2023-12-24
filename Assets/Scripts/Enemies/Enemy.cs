@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class Enemy : NetworkBehaviour
 {
+
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private Image healthBar;
     private NetworkVariable<int> currentHealth = new(3);
@@ -36,6 +37,9 @@ public class Enemy : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void DeathServerRpc()
     {
+        if (ObjectiveController.Instance.objectiveSelected.Value == ObjectiveController.ObjectiveType.Monsters)
+            ObjectiveController.Instance.ProgressObjective();
+
         Destroy(gameObject);
         NetworkObject.Despawn();
     }
