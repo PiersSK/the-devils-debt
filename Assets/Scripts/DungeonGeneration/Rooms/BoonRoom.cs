@@ -11,7 +11,6 @@ public class BoonRoom : Room
     {
         isManaRegen.OnValueChanged += SyncManaRegen;
         if (IsServer) isManaRegen.Value = Random.Range(0, 10) < 3;
-        if (IsServer) isManaRegen.Value = true;
     }
 
     private void SyncManaRegen(bool prevVal, bool newVal)
