@@ -28,6 +28,7 @@ public class InputManager : NetworkBehaviour
         if (!IsOwner) return;
 
         onFoot.Jump.performed += ctx => motor.Jump();
+        onFoot.Sprint.performed += ctx => motor.ToggleSprint();
         //onFoot.Attack.performed += ctx => attack.Attack();
     }
 
