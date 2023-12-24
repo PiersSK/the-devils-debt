@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerMotor : MonoBehaviour
+public class PlayerMotor : NetworkBehaviour
 {
+    public static PlayerMotor LocalInstance { get; private set; }
     public float speed = 5.0f;
     public float gravity = -9.8f;
     public float jumpHeight = 1.0f;
@@ -13,6 +15,12 @@ public class PlayerMotor : MonoBehaviour
     public bool isMoving;
     private bool isGrounded;
     private Vector3 playerVelocity;
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        if (IsOwner) LocalInstance = this;
+    }
 
     // Start is called before the first frame update
     void Start()
