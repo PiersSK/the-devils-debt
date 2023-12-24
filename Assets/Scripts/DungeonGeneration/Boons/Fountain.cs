@@ -18,8 +18,11 @@ public class Fountain : MonoBehaviour
     {
         //If local player is nearby, give regen effect
         float distanceToPlayer = Vector3.Magnitude(Player.LocalInstance.transform.position - transform.position);
-        if(distanceToPlayer <= requiredDistance)
+        bool playerMaxMana = Player.LocalInstance.playerMana.CurrentMana == Player.LocalInstance.playerMana.maxMana;
+
+        if (distanceToPlayer <= requiredDistance && !playerMaxMana)
         {
+            UIManager.Instance.playerUI_manaOverlay.gameObject.SetActive(true);
             manaTimer += Time.deltaTime;
             if(manaTimer >= manaRegenSpeed)
             {
@@ -29,18 +32,21 @@ public class Fountain : MonoBehaviour
         }
         else
         {
+            UIManager.Instance.playerUI_manaOverlay.gameObject.SetActive(false);
             manaTimer = 0f;
         }
 
-        ChangeAnimation(AnyPlayerInRange() ? SPIN : IDLE);
+        ChangeAnimation(AnyPlayerRegenValid() ? SPIN : IDLE);
     }
 
-    private bool AnyPlayerInRange()
+    private bool AnyPlayerRegenValid()
     {
         foreach (Player player in FindObjectsOfType<Player>())
         {
             float distanceToPlayer = Vector3.Magnitude(player.transform.position - transform.position);
-            if (distanceToPlayer <= requiredDistance) return true;
+            bool playerMaxMana = player.playerMana.CurrentMana == player.playerMana.maxMana;
+
+            return distanceToPlayer <= requiredDistance && !playerMaxMana;
         }
 
         return false;

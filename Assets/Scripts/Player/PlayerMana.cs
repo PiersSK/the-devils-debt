@@ -3,7 +3,7 @@ using Unity.Netcode;
 
 public class PlayerMana : NetworkBehaviour
 {
-    private int maxMana = 10;
+    public int maxMana = 10;
     private int currentMana;
     public int CurrentMana
     {
