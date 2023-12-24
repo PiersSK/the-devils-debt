@@ -6,11 +6,20 @@ using UnityEngine;
 public class PlayerMotor : NetworkBehaviour
 {
     public static PlayerMotor LocalInstance { get; private set; }
-    public float speed = 5.0f;
-    public float gravity = -9.8f;
-    public float jumpHeight = 1.0f;
+
+    private float speed = 6f;
+    [SerializeField] private float baseSpeed = 6f;
+    [SerializeField] private float sprintSpeed = 10f;
+
+    [SerializeField] private float gravity = -9.8f;
+    [SerializeField] private float jumpHeight = 1.0f;
 
     private CharacterController controller;
+
+    [SerializeField] private float staminaMax = 6f;
+    private float currentStamina;
+    private bool isSprinting;
+    
 
     public bool isMoving;
     private bool isGrounded;
@@ -25,6 +34,7 @@ public class PlayerMotor : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentStamina = staminaMax;
         controller = GetComponent<CharacterController>();
     }
 
@@ -32,6 +42,21 @@ public class PlayerMotor : NetworkBehaviour
     void Update()
     {
         isGrounded = controller.isGrounded;
+
+        if(isSprinting)
+        {
+            currentStamina -= Time.deltaTime;
+            if (currentStamina <= 0 || !isMoving)
+            {
+                ToggleSprint();
+            }
+        } else
+        {
+            currentStamina += Time.deltaTime;
+            currentStamina = Mathf.Clamp(currentStamina, 0f, staminaMax);
+        }
+
+        UIManager.Instance.playerUI_staminaBar.fillAmount = currentStamina / staminaMax;
     }
 
     public void ProcessMove(Vector2 input)
@@ -54,5 +79,12 @@ public class PlayerMotor : NetworkBehaviour
         Debug.Log("Jump");
         if (isGrounded)
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+    }
+
+    public void ToggleSprint()
+    {
+        isSprinting = !isSprinting;
+
+        speed = isSprinting ? sprintSpeed : baseSpeed;
     }
 }

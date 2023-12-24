@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -9,6 +8,7 @@ public class UIManager : MonoBehaviour
 
     public TextMeshProUGUI playerUI_promptText;
     public TextMeshProUGUI playerUI_joinCode;
+    public Image playerUI_staminaBar;
 
     private void Awake()
     {
