@@ -10,7 +10,7 @@ public class PlayerMotor : MonoBehaviour
 
     private CharacterController controller;
 
-    private bool isMoving;
+    public bool isMoving;
     private bool isGrounded;
     private Vector3 playerVelocity;
 
