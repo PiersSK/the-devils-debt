@@ -1,25 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : NetworkBehaviour
 {
     [SerializeField] private int maxHealth = 3;
-    private int currentHealth;
+    private NetworkVariable<int> currentHealth = new(3);
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        currentHealth = maxHealth;
+        base.OnNetworkSpawn();
+        currentHealth.Value = maxHealth;
+        currentHealth.OnValueChanged += UpdateCurrentHealth;
     }
 
-    public void DamageToEnemy(int damage)
-    {
-        currentHealth -= damage;
-        if (currentHealth <= 0) Death();
+    private void UpdateCurrentHealth(int prevVal, int newVal) {
+        currentHealth.Value = newVal;
+        if (currentHealth.Value <= 0) DeathServerRpc();
     }
 
-    private void Death()
+    [ServerRpc(RequireOwnership = false)]
+    public void DamageToEnemyServerRpc(int damage)
+    {
+        currentHealth.Value -= damage;
+        
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DeathServerRpc()
     {
         Destroy(gameObject);
+        NetworkObject.Despawn();
     }
 }
