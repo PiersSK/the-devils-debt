@@ -4,9 +4,18 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.AI;
 
 public class Enemy : NetworkBehaviour
 {
+    private EnemyStateMachine stateMachine;
+    [SerializeField] private string currentState; //For debugging 
+
+    private NavMeshAgent agent;
+    public NavMeshAgent Agent { get => agent; }
+
+    public  Path path;
+
 
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private Image healthBar;
@@ -17,6 +26,13 @@ public class Enemy : NetworkBehaviour
         base.OnNetworkSpawn();
         if(IsServer) currentHealth.Value = maxHealth;
         currentHealth.OnValueChanged += UpdateCurrentHealth;
+    }
+
+    private void Start()
+    {
+        stateMachine = GetComponent<EnemyStateMachine>();
+        agent = GetComponent<NavMeshAgent>();
+        stateMachine.Initialise();
     }
 
     private void UpdateCurrentHealth(int prevVal, int newVal) {

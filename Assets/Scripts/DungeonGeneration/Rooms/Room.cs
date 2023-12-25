@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using Unity.Netcode;
 using UnityEngine;
 using static Door;
 
 public class Room : NetworkBehaviour
-{
-
+{    
     public enum RoomType
     {
         Monster,
@@ -21,7 +21,7 @@ public class Room : NetworkBehaviour
     public Door[] doors = new Door[4];
     public Vector3 roomCoords;
     public Light roomLight;
-    
+       
     private void Awake()
     {
         OrderDoorArray();
