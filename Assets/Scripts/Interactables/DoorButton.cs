@@ -5,17 +5,22 @@ using UnityEngine;
 public class DoorButton : Interactable
 {
     [SerializeField] private Door door;
-    [SerializeField] private int manaCost;
+    public int manaCost;
     
     public Room.RoomType roomType;
 
     protected override void Interact()
     {
-        if (manaCost <= Player.LocalInstance.playerMana.CurrentMana)
+        if (manaCost <= Player.LocalInstance.playerMana.currentMana.Value)
         {
-            Player.LocalInstance.playerMana.CurrentMana -= manaCost;
+            Player.LocalInstance.playerMana.IncrementPlayerManaServerRpc(-manaCost);
             door.RemoveDoor();
             door.dungeon.AddRandomRoom(door.room, door.direction, roomType);
         }
+    }
+
+    public override bool CanInteract()
+    {
+        return manaCost <= Player.LocalInstance.playerMana.currentMana.Value;
     }
 }

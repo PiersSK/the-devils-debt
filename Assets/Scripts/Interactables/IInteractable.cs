@@ -6,4 +6,6 @@ public interface IInteractable
 
     public string GetPromptMessage();
     public void SetPromptMessage(string promptMessage);
+
+    public virtual bool CanInteract() { return true; }
 }

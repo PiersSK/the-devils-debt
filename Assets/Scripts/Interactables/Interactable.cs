@@ -9,6 +9,11 @@ public class Interactable : MonoBehaviour, IInteractable
         Interact();
     }
 
+    public virtual bool CanInteract()
+    {
+        return true;
+    }
+
     public string GetPromptMessage()
     {
         return promptMessage;
@@ -22,4 +27,6 @@ public class Interactable : MonoBehaviour, IInteractable
     protected virtual void Interact()
     {
     }
+
+
 }

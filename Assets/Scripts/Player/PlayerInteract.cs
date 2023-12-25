@@ -32,7 +32,7 @@ public class PlayerInteract : NetworkBehaviour
             if(hitInfo.collider.GetComponent<IInteractable>() != null)
             {
                 IInteractable interactable = hitInfo.collider.GetComponent<IInteractable>();
-                UpdateText(interactable.GetPromptMessage());
+                UpdateText(interactable.GetPromptMessage(), interactable.CanInteract());
                 if (inputManager.onFoot.Interact.triggered)
                 {
                     interactable.BaseInteract();
@@ -41,15 +41,16 @@ public class PlayerInteract : NetworkBehaviour
         }
         else
         {
-            UpdateText(string.Empty);
+            UpdateText(string.Empty, true);
         }
     }
 
-    private void UpdateText(string promptMessage)
+    private void UpdateText(string promptMessage, bool canInteract)
     {
         if (promptMessage != string.Empty)
         {
             UIManager.Instance.playerUI_promptText.text = "[E] " + promptMessage;
+            UIManager.Instance.playerUI_promptText.color = canInteract ? Color.white : Color.red;
         }
         else
         {

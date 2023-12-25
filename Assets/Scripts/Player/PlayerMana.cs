@@ -4,30 +4,29 @@ using Unity.Netcode;
 public class PlayerMana : NetworkBehaviour
 {
     public int maxMana = 10;
-    private int currentMana;
-    public int CurrentMana
+    public NetworkVariable<int> currentMana = new(10);
+
+    public override void OnNetworkSpawn()
     {
-        get
-        {
-            return currentMana;
-        }
-        set
-        {
-            currentMana = value;
-            currentMana = Math.Clamp(currentMana, 0, maxMana);
-            UpdateManaUI();
-        }
+        base.OnNetworkSpawn();
+        currentMana.OnValueChanged += SyncPlayerMana;
     }
 
-    private void Start()
+    private void SyncPlayerMana(int prevVal, int newVal)
     {
-        CurrentMana = maxMana;
-
+        currentMana.Value = Math.Clamp(newVal, 0, maxMana);
+        if(IsOwner) UpdateManaUI();
     }
 
     private void UpdateManaUI()
     {
-        UIManager.Instance.playerUI_manaVal.text = currentMana.ToString();
-        UIManager.Instance.playerUI_manaBar.fillAmount = (float)currentMana / maxMana;
+        UIManager.Instance.playerUI_manaVal.text = currentMana.Value.ToString();
+        UIManager.Instance.playerUI_manaBar.fillAmount = (float)currentMana.Value / maxMana;
+    }
+
+    [ServerRpc]
+    public void IncrementPlayerManaServerRpc(int incr)
+    {
+        currentMana.Value += incr;
     }
 }
