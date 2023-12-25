@@ -10,6 +10,11 @@ public class NetworkInteractable : NetworkBehaviour, IInteractable
         Interact();
     }
 
+    public virtual bool CanInteract()
+    {
+        return true;
+    }
+
     public string GetPromptMessage()
     {
         return promptMessage;

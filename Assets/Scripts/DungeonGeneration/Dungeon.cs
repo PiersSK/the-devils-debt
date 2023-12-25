@@ -77,9 +77,13 @@ public class Dungeon : NetworkBehaviour
         Vector3 currentPos = currentRoom.gameObject.transform.position;
         Vector3 currentCoords = currentRoom.roomCoords;
         string prefabName = "Rooms/";
+        bool trySpawnStairs = false;
 
         if (roomType == Room.RoomType.Random)
+        {
             roomType = (Room.RoomType)Random.Range(0, 3);
+            trySpawnStairs = true;
+        }
 
         switch (roomType)
         {
@@ -102,7 +106,7 @@ public class Dungeon : NetworkBehaviour
 
         //InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
 
-        if (Random.Range(0, 100) < stairSpawnChance && roomType != Room.RoomType.Objective)
+        if (Random.Range(0, 100) < stairSpawnChance && roomType != Room.RoomType.Objective && trySpawnStairs)
         {
             int upDown = Random.Range(0, 2); //0=up, 1=down
             if (CanSpawnDownStairs(currentRoom.roomCoords, dir) && upDown == 0)
