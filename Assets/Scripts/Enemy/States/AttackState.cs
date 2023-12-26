@@ -17,7 +17,11 @@ public class AttackState : BaseState
     private int attackDamage = 2;
 
     private float attackTriggerRange = 2.5f;
+
+    private float chargeTimeMax = 1f;
+    private float chargeTimeMin = 0.4f;
     private float chargeTime = 0.5f;
+
     private float attackTime = 0.5f;
     private float chargeTimer = 0f;
     private bool isAttacking = false;
@@ -108,8 +112,9 @@ public class AttackState : BaseState
             attackComplete = false;
             chargeComplete = false;
             chargeTimer = 0f;
+            chargeTime = Random.Range(chargeTimeMin, chargeTimeMax);
             attackTarget = currentClosestPlayer;
-            enemy.ChangeAnimationState(Enemy.ATTACK);
+            enemy.ChangeAnimationState(Enemy.ATTACKPREP);
         }
     }
 
@@ -121,6 +126,8 @@ public class AttackState : BaseState
 
         if(chargeComplete && !attackComplete)
         {
+            enemy.ChangeAnimationState(Enemy.ATTACK);
+
             Ray ray = new(enemy.transform.position, enemy.transform.forward);
 
             if (Physics.Raycast(ray, out RaycastHit hit, attackRange))

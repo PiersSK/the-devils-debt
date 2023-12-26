@@ -106,7 +106,7 @@ public class PlayerAttack : NetworkBehaviour
     {
         if (currentAnimationState == newState) return;
         currentAnimationState = newState;
-        animator.CrossFadeInFixedTime(currentAnimationState, 0.2f);
+        animator.CrossFadeInFixedTime(currentAnimationState, 0.1f);
     }
 
     [ServerRpc]

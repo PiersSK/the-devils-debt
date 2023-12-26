@@ -35,6 +35,7 @@ public class Enemy : NetworkBehaviour
     private string currentAnimationState;
     public const string WALK = "EnemyWalk";
     public const string IDLE = "Idle";
+    public const string ATTACKPREP = "EnemySwordBack";
     public const string ATTACK = "EnemySwordSwing";
 
     [SerializeField] private int maxHealth = 3;
