@@ -10,6 +10,8 @@ public class Dungeon : NetworkBehaviour
     public float objectiveMaxRooms = 10f;
     private bool objectiveSpawned = false;
 
+    [SerializeField] private NavMeshSurface navMeshSurface;
+
     [SerializeField] private Room startingRoom;
     [SerializeField] private int maxRoomRadius = 10;
     [SerializeField] private int maxFloors = 3;
@@ -235,7 +237,8 @@ public class Dungeon : NetworkBehaviour
             }
         }
 
-        currentRoomNO.GetComponent<Room>().floor.GetComponent<NavMeshSurface>().BuildNavMesh();
+        navMeshSurface.BuildNavMesh();
+        //currentRoomNO.GetComponent<Room>().floor.GetComponent<NavMeshSurface>().BuildNavMesh();
 
         lastSpawnedRoom = roomNetworkObject;
     }

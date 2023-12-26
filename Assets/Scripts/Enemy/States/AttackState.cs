@@ -8,13 +8,14 @@ public class AttackState : BaseState
     private Transform closestPlayer;
 
     private float alertRadius = 5f;
-    private float lookSpeed = 3f;
+    //private float lookSpeed = 3f;
 
     private float trackPlayerTimer;
     private float losePlayerTimer;
 
     public override void Enter()
     {
+        enemy.Agent.stoppingDistance = 2f;
     }
 
     public override void Exit()
@@ -24,8 +25,6 @@ public class AttackState : BaseState
     public override void Perform()
     {
         closestPlayer = GetClosestPlayer();
-        Debug.Log("Closest player is " + Vector3.Distance(enemy.transform.position, closestPlayer.position) + " away");
-
         // If closest player is very close it will constantly rotate to look at them
         if (Vector3.Distance(enemy.transform.position, closestPlayer.position) <= alertRadius)
             trackPlayerTimer = 3f;
@@ -34,13 +33,7 @@ public class AttackState : BaseState
 
         if (trackPlayerTimer >= 0f)
         {
-            Debug.Log("turning to look at player");
-            //Vector3 direction = closestPlayer.position - enemy.transform.position;
-
-            enemy.transform.LookAt(closestPlayer);
-
-            //Quaternion toRotation = Quaternion.LookRotation(enemy.transform.forward, direction);
-            //enemy.transform.rotation = Quaternion.Lerp(enemy.transform.rotation, toRotation, lookSpeed * Time.deltaTime);
+            enemy.transform.LookAt(closestPlayer); // Should change to be gradual
         }
 
         // If can see a player, move towards the closest

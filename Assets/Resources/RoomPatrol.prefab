@@ -103,6 +103,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1138014578522817627}
   - component: {fileID: 3127659418680856005}
+  - component: {fileID: -6072331331251399038}
   m_Layer: 0
   m_Name: RoomPatrol
   m_TagString: Untagged
@@ -146,6 +147,22 @@ MonoBehaviour:
   - {fileID: 6572323396400348992}
   - {fileID: 5408989142612210858}
   - {fileID: 1330343542481981351}
+--- !u!114 &-6072331331251399038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4056523981431567759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &4876799957205301451
 GameObject:
   m_ObjectHideFlags: 0

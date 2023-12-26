@@ -10,6 +10,7 @@ public class PatrolState : BaseState
 
     public override void Enter()
     {
+        enemy.Agent.stoppingDistance = 0f;
     }
 
     public override void Exit()
