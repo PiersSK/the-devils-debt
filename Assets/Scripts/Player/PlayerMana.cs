@@ -15,13 +15,7 @@ public class PlayerMana : NetworkBehaviour
     private void SyncPlayerMana(int prevVal, int newVal)
     {
         currentMana.Value = Math.Clamp(newVal, 0, maxMana);
-        if(IsOwner) UpdateManaUI();
-    }
-
-    private void UpdateManaUI()
-    {
-        UIManager.Instance.playerUI_manaVal.text = currentMana.Value.ToString();
-        UIManager.Instance.playerUI_manaBar.fillAmount = (float)currentMana.Value / maxMana;
+        if (IsOwner) UIManager.Instance.mana.UpdateBar(currentMana.Value, maxMana);
     }
 
     [ServerRpc]

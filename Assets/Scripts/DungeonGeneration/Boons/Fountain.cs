@@ -34,7 +34,7 @@ public class Fountain : NetworkBehaviour
 
             if (localPlayerInRange && !playerMaxMana)
             {
-                UIManager.Instance.playerUI_manaOverlay.gameObject.SetActive(true);
+                UIManager.Instance.mana.ShowOverlay();
                 manaTimer += Time.deltaTime;
                 if (manaTimer >= manaRegenSpeed)
                 {
@@ -45,7 +45,6 @@ public class Fountain : NetworkBehaviour
             }
             else
             {
-                UIManager.Instance.playerUI_manaOverlay.gameObject.SetActive(false);
                 manaTimer = 0f;
             }
 
@@ -53,8 +52,6 @@ public class Fountain : NetworkBehaviour
         }
         else
         {
-            UIManager.Instance.playerUI_manaOverlay.gameObject.SetActive(false);
-
             ChangeAnimation(DEACTIVATE);
         }
     }

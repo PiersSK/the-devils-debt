@@ -9,11 +9,10 @@ public class UIManager : MonoBehaviour
     [Header("PlayerUI")]
     public TextMeshProUGUI playerUI_promptText;
     public TextMeshProUGUI playerUI_joinCode;
-    public Image playerUI_staminaBar;
-    public Image playerUI_manaBar;
-    public Image playerUI_manaOverlay;
-    public TextMeshProUGUI playerUI_manaVal;
 
+    public ResourceBarUI stamina;
+    public ResourceBarUI mana;
+    public ResourceBarUI health;
 
     private void Awake()
     {

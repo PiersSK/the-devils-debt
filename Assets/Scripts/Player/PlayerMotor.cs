@@ -56,7 +56,7 @@ public class PlayerMotor : NetworkBehaviour
             currentStamina = Mathf.Clamp(currentStamina, 0f, staminaMax);
         }
 
-        UIManager.Instance.playerUI_staminaBar.fillAmount = currentStamina / staminaMax;
+        UIManager.Instance.stamina.UpdateBar(currentStamina, staminaMax);
     }
 
     public void ProcessMove(Vector2 input)
