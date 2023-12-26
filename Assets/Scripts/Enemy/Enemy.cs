@@ -14,7 +14,10 @@ public class Enemy : NetworkBehaviour
     private NavMeshAgent agent;
     public NavMeshAgent Agent { get => agent; }
 
-    public  Path path;
+    public Path path;
+
+    public float sightDistance = 15f;
+    public float sightFOV = 65f;
 
 
     [SerializeField] private int maxHealth = 3;
@@ -33,6 +36,12 @@ public class Enemy : NetworkBehaviour
         stateMachine = GetComponent<EnemyStateMachine>();
         agent = GetComponent<NavMeshAgent>();
         stateMachine.Initialise();
+    }
+
+    private void Update()
+    {
+        CanSeePlayer();
+        currentState = stateMachine.activeState.ToString();
     }
 
     private void UpdateCurrentHealth(int prevVal, int newVal) {
@@ -58,5 +67,37 @@ public class Enemy : NetworkBehaviour
 
         Destroy(gameObject);
         NetworkObject.Despawn();
+    }
+
+    public bool CanSeePlayer()
+    {
+        //Find all players
+        Player[] players = FindObjectsOfType<Player>();
+        foreach(Player player in players)
+        {
+            //If close enough to be seen
+            if(Vector3.Distance(transform.position, player.transform.position) < sightDistance)
+            {
+                //If in FOV
+                Vector3 targetDirection = player.transform.position - transform.position;
+                float angleToPlayer = Vector3.Angle(targetDirection, transform.forward);
+                if (angleToPlayer >= -sightFOV && angleToPlayer <= sightFOV)
+                {
+                    //If view is unobstructed
+                    Ray ray = new(transform.position, targetDirection);
+                    Debug.DrawRay(ray.origin, ray.direction * sightDistance);
+                    RaycastHit hitInfo = new();
+                    if(Physics.Raycast(ray, out hitInfo, sightDistance))
+                    {
+                        if(hitInfo.transform == player.transform)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }

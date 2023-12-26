@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 3448115824820601437}
   - component: {fileID: 8998564537567038187}
   - component: {fileID: 209587708309433417}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Option 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -345,7 +345,7 @@ GameObject:
   - component: {fileID: 8851952400567073190}
   - component: {fileID: 1711366850642514726}
   - component: {fileID: 2853799024873330561}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Option X
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -467,7 +467,7 @@ GameObject:
   - component: {fileID: 6171803357305844651}
   - component: {fileID: 5240520273450032580}
   - component: {fileID: 8918723723632611019}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Option 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -925,7 +925,7 @@ GameObject:
   - component: {fileID: 6909573673687094794}
   - component: {fileID: 2077128518404636618}
   - component: {fileID: 7249422221311868108}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Option 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1097,6 +1097,10 @@ PrefabInstance:
     - target: {fileID: 6229247520373792897, guid: 3ad7a1cffb2556547a8b7e60fd320431, type: 3}
       propertyPath: m_Name
       value: Block
+      objectReference: {fileID: 0}
+    - target: {fileID: 6229247520373792897, guid: 3ad7a1cffb2556547a8b7e60fd320431, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6229247520373792897, guid: 3ad7a1cffb2556547a8b7e60fd320431, type: 3}
       propertyPath: m_IsActive
