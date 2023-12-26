@@ -1447,45 +1447,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 432622074}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &583121968 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6444308001262241288, guid: 53617d3bd69b747bf8266b4db6718f24, type: 3}
-  m_PrefabInstance: {fileID: 597069363}
-  m_PrefabAsset: {fileID: 0}
---- !u!195 &583121969
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583121968}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5000001
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &583121977
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 583121968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d25b85f7f262424ea37703654f2bbbe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &585747802
 GameObject:
   m_ObjectHideFlags: 0
@@ -1670,13 +1631,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6444308001262241288, guid: 53617d3bd69b747bf8266b4db6718f24, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 583121969}
-    - targetCorrespondingSourceObject: {fileID: 6444308001262241288, guid: 53617d3bd69b747bf8266b4db6718f24, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 583121977}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53617d3bd69b747bf8266b4db6718f24, type: 3}
 --- !u!1 &656416498
 GameObject:
@@ -3576,7 +3531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4845276930943762971, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000015258789
+      value: 0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 4845637959249703711, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_AnchorMax.y

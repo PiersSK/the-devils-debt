@@ -8,6 +8,17 @@ using UnityEngine.AI;
 
 public class Enemy : NetworkBehaviour
 {
+    public event EventHandler<OnAttackedArgs> OnAttacked;
+    public class OnAttackedArgs : EventArgs
+    {
+        public Player attacker;
+
+        public OnAttackedArgs(Player p)
+        {
+            attacker = p;
+        }
+    }
+
     private EnemyStateMachine stateMachine;
     [SerializeField] private string currentState; //For debugging 
 
@@ -29,6 +40,12 @@ public class Enemy : NetworkBehaviour
         base.OnNetworkSpawn();
         if(IsServer) currentHealth.Value = maxHealth;
         currentHealth.OnValueChanged += UpdateCurrentHealth;
+        OnAttacked += ChangeToAttackState;
+    }
+
+    private void ChangeToAttackState(object caller, OnAttackedArgs e)
+    {
+        stateMachine.ChangeState(new AttackState());
     }
 
     private void Start()
@@ -53,9 +70,14 @@ public class Enemy : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void DamageToEnemyServerRpc(int damage)
+    public void DamageToEnemyServerRpc(int damage, NetworkObjectReference damageSourceNOR)
     {
         currentHealth.Value = Math.Clamp(currentHealth.Value - damage, 0, maxHealth);
+
+        damageSourceNOR.TryGet(out NetworkObject damageSourceNO);
+
+        if (damageSourceNO.GetComponent<Player>() != null)
+            OnAttacked?.Invoke(this, new OnAttackedArgs(damageSourceNO.GetComponent<Player>()));
         
     }
 

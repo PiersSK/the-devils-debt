@@ -81,7 +81,7 @@ public class PlayerAttack : NetworkBehaviour
             HitTarget(hit.point);
             if(hit.transform.TryGetComponent(out Enemy enemy))
             {
-                enemy.DamageToEnemyServerRpc(attackDamage);
+                enemy.DamageToEnemyServerRpc(attackDamage, NetworkObject);
             }
         }
     }

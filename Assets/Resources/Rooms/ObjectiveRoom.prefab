@@ -94,6 +94,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cd609157997ac74c9e1e82c8dd0ddf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  floor: {fileID: 3967063598080329923}
+  roomType: 4
   doors:
   - {fileID: 1114611946678421593}
   - {fileID: 377060546468503971}
@@ -101,7 +103,6 @@ MonoBehaviour:
   - {fileID: 4185648399253906264}
   roomCoords: {x: 0, y: 0, z: 0}
   roomLight: {fileID: 146565173956292586}
-  roomType: 4
 --- !u!114 &819281973847560120
 MonoBehaviour:
   m_ObjectHideFlags: 0

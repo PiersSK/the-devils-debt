@@ -17,7 +17,7 @@ public class PlayerLook : NetworkBehaviour
         cam.gameObject.transform.parent.gameObject.SetActive(true);
         base.OnNetworkSpawn();
 
-        //Cursor.lockState = CursorLockMode.Locked;    
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void ProcessLook(Vector2 input)

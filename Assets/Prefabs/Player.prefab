@@ -514,6 +514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82b731982e905417ca00acc286898dd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxMana: 10
   currentMana:
     m_InternalValue: 10
 --- !u!1 &6189434249826500495

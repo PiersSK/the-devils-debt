@@ -12,6 +12,8 @@ public class InputManager : NetworkBehaviour
     private PlayerAttack attack;
     // Start is called before the first frame update
 
+    private bool cursorIsLocked = true;
+
     private void Awake()
     {
         playerInput = new PlayerInput();
@@ -29,7 +31,13 @@ public class InputManager : NetworkBehaviour
 
         onFoot.Jump.performed += ctx => motor.Jump();
         onFoot.Sprint.performed += ctx => motor.ToggleSprint();
-        //onFoot.Attack.performed += ctx => attack.Attack();
+        onFoot.LockCursor.performed += ctx => ToggleCursorLock();
+    }
+
+    private void ToggleCursorLock()
+    {
+        Cursor.lockState = cursorIsLocked ? CursorLockMode.None : CursorLockMode.Locked;
+        cursorIsLocked = !cursorIsLocked;
     }
 
     // Update is called once per frame
