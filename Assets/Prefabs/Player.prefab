@@ -340,8 +340,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 3979305801545496967}
   attackDistance: 3
-  attackDelay: 0.2
-  attackSpeed: 0.4
+  attackDelay: 0.3
+  attackSpeed: 0.5
   attackDamage: 1
   attackLayer:
     serializedVersion: 2
