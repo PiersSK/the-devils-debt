@@ -682,7 +682,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &329641921
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1302,9 +1302,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d79108a0b5ea54798a9428e4faedad3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bar: {fileID: 1354367031}
-  overlay: {fileID: 1726144740}
-  value: {fileID: 553934562}
+  bar: {fileID: 2041044834}
+  overlay: {fileID: 0}
+  value: {fileID: 0}
 --- !u!1 &538035579
 GameObject:
   m_ObjectHideFlags: 0
@@ -1710,7 +1710,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &654490998
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1743,7 +1743,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2723,13 +2723,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerUI_promptText: {fileID: 1602205262}
   playerUI_joinCode: {fileID: 1114040582}
-  stamina: {fileID: 0}
-  mana: {fileID: 0}
-  health: {fileID: 0}
-  playerUI_staminaBar: {fileID: 2041044834}
-  playerUI_manaBar: {fileID: 1354367031}
-  playerUI_manaOverlay: {fileID: 1726144740}
-  playerUI_manaVal: {fileID: 553934562}
+  stamina: {fileID: 482073848}
+  mana: {fileID: 1892009652}
+  health: {fileID: 1940521442}
 --- !u!114 &1326694229 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4185648399253906264, guid: e251e68868ae2ac439064d91368b59da, type: 3}
@@ -3219,7 +3215,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1726144739
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3252,7 +3248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3708,9 +3704,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d79108a0b5ea54798a9428e4faedad3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bar: {fileID: 0}
+  bar: {fileID: 1354367031}
   overlay: {fileID: 1726144740}
-  value: {fileID: 0}
+  value: {fileID: 553934562}
 --- !u!1001 &1921489823
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4021,7 +4017,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4845276930943762971, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000015258789
+      value: 0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 4845637959249703711, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_AnchorMax.y

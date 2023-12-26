@@ -20,6 +20,7 @@ public class PatrolState : BaseState
     public override void Perform()
     {
         PatrolCycle();
+        SetAnimations();
         if (enemy.CanSeePlayer()) stateMachine.ChangeState(new AttackState());
     }
 
@@ -41,4 +42,13 @@ public class PatrolState : BaseState
 
         }
     }
+
+    private void SetAnimations()
+    {
+        if (enemy.Agent.velocity != Vector3.zero)
+            enemy.ChangeAnimationState(Enemy.WALK);
+        else
+            enemy.ChangeAnimationState(Enemy.IDLE);
+    }
+    
 }

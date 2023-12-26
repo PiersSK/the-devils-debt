@@ -30,6 +30,12 @@ public class Enemy : NetworkBehaviour
     public float sightDistance = 15f;
     public float sightFOV = 65f;
 
+    public bool isMoving = false;
+
+    private string currentAnimationState;
+    public const string WALK = "EnemyWalk";
+    public const string IDLE = "Idle";
+    public const string ATTACK = "EnemySwordSwing";
 
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private Image healthBar;
@@ -65,6 +71,7 @@ public class Enemy : NetworkBehaviour
     {
         CanSeePlayer();
         currentState = stateMachine.activeState.ToString();
+        isMoving = Agent.velocity != Vector3.zero;
     }
 
     private void UpdateCurrentHealth(int prevVal, int newVal) {
@@ -127,5 +134,12 @@ public class Enemy : NetworkBehaviour
         }
 
         return false;
+    }
+
+    public void ChangeAnimationState(string newState)
+    {
+        if (currentAnimationState == newState) return;
+        currentAnimationState = newState;
+        GetComponent<Animator>().CrossFadeInFixedTime(currentAnimationState, 0.2f);
     }
 }
