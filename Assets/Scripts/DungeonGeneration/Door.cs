@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Door : NetworkBehaviour
 {
@@ -56,6 +57,11 @@ public class Door : NetworkBehaviour
             block.SetActive(false);
         }
 
+    }
+
+    public void SetNavMeshLink(Transform linkedFloor)
+    {
+        GetComponent<OffMeshLink>().endTransform = linkedFloor;
     }
 
     [ClientRpc]

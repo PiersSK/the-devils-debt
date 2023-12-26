@@ -16,6 +16,8 @@ public class Room : NetworkBehaviour
         Objective
     }
 
+    public Transform floor;
+
     public RoomType roomType;
 
     public Door[] doors = new Door[4];

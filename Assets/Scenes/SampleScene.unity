@@ -1462,7 +1462,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5000001
-  m_Speed: 0
+  m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -2414,6 +2414,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1161810663}
   m_CullTransparentMesh: 1
+--- !u!1 &1234445320 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3468251319296206927, guid: e251e68868ae2ac439064d91368b59da, type: 3}
+  m_PrefabInstance: {fileID: 6512005031246160717}
+  m_PrefabAsset: {fileID: 0}
+--- !u!191 &1234445323
+OffMeshLink:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1234445320}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_AreaIndex: 0
+  m_AgentTypeID: 0
+  m_Start: {fileID: 1802736990}
+  m_End: {fileID: 0}
+  m_CostOverride: -1
+  m_BiDirectional: 1
+  m_Activated: 1
+  m_AutoUpdatePositions: 0
 --- !u!1 &1251244889
 GameObject:
   m_ObjectHideFlags: 0
@@ -3034,6 +3056,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!4 &1802736990 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3967063598080329923, guid: e251e68868ae2ac439064d91368b59da, type: 3}
+  m_PrefabInstance: {fileID: 6512005031246160717}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1828601335
 GameObject:
   m_ObjectHideFlags: 0
@@ -3549,7 +3576,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4845276930943762971, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000030517578
+      value: 0.000015258789
       objectReference: {fileID: 0}
     - target: {fileID: 4845637959249703711, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_AnchorMax.y
@@ -4338,6 +4365,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3570052692701015154, guid: e251e68868ae2ac439064d91368b59da, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3589168399877433887, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2321291659
@@ -4364,15 +4395,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5258175344005373834, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: m_VoxelSize
-      value: 0.016666668
+      value: 0.06666667
       objectReference: {fileID: 0}
     - target: {fileID: 5258175344005373834, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: m_NavMeshData
       value: 
-      objectReference: {fileID: 23800000, guid: 2dd224a0327094e6e99406efec20c179, type: 2}
+      objectReference: {fileID: 23800000, guid: 456d96eeb87224b0995d274e6aa2e7cf, type: 2}
     - target: {fileID: 5258175344005373834, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: m_LayerMask.m_Bits
-      value: 383
+      value: 375
       objectReference: {fileID: 0}
     - target: {fileID: 5258175344005373834, guid: e251e68868ae2ac439064d91368b59da, type: 3}
       propertyPath: m_OverrideTileSize
@@ -4470,7 +4501,10 @@ PrefabInstance:
     - {fileID: 3595373435611540105, guid: e251e68868ae2ac439064d91368b59da, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3468251319296206927, guid: e251e68868ae2ac439064d91368b59da, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1234445323}
   m_SourcePrefab: {fileID: 100100000, guid: e251e68868ae2ac439064d91368b59da, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

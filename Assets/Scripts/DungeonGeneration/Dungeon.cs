@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using static Door;
+using Unity.AI.Navigation;
 
 public class Dungeon : NetworkBehaviour
 {
@@ -17,6 +18,7 @@ public class Dungeon : NetworkBehaviour
     [SerializeField] private float stairSpawnChance = 10f;
     private Room[,,] dungeonGrid;
 
+    private NetworkObject lastSpawnedRoom;
 
     private void Start()
     {
@@ -76,6 +78,7 @@ public class Dungeon : NetworkBehaviour
     {
         Vector3 currentPos = currentRoom.gameObject.transform.position;
         Vector3 currentCoords = currentRoom.roomCoords;
+        NetworkObject currentRoomNO = currentRoom.GetComponent<NetworkObject>();
         string prefabName = "Rooms/";
         bool trySpawnStairs = false;
 
@@ -113,59 +116,65 @@ public class Dungeon : NetworkBehaviour
             {
                 Debug.Log("Spawning stairs down");
 
-                InitiateNewRoomServerRpc("Stairwell Top", currentPos, currentCoords, dir, roomType);
+                InitiateNewRoomServerRpc(currentRoomNO, "Stairwell Top", dir, roomType);
 
                 Vector3 stairTopPos = currentPos + (DirectionToWorldSpace(dir) * roomWidth);
                 Vector3 stairTopGrid = currentCoords + DirectionToGrid(dir);
 
-                InitiateNewRoomServerRpc("Stairwell Bottom", stairTopPos, stairTopGrid, DoorDirection.Down, roomType);
+                InitiateNewRoomServerRpc(lastSpawnedRoom, "Stairwell Bottom", DoorDirection.Down, roomType);
             }
             else if (CanSpawnUpStairs(currentRoom.roomCoords, dir) && upDown == 1)
             {
                 Debug.Log("Spawning stairs up");
 
-                InitiateNewRoomServerRpc("Stairwell Bottom", currentPos, currentCoords, dir, roomType);
+                InitiateNewRoomServerRpc(currentRoomNO, "Stairwell Bottom", dir, roomType);
 
                 Vector3 stairBottomPos = currentPos + (DirectionToWorldSpace(dir) * roomWidth);
                 Vector3 stairBottomGrid = currentCoords + DirectionToGrid(dir);
 
-                InitiateNewRoomServerRpc("Stairwell Top", stairBottomPos, stairBottomGrid, DoorDirection.Up, roomType);
+                InitiateNewRoomServerRpc(lastSpawnedRoom, "Stairwell Top", DoorDirection.Up, roomType);
             }
             else
             {
-                InitiateNewRoomServerRpc(prefabName, currentPos, currentCoords, dir, roomType);
+                InitiateNewRoomServerRpc(currentRoomNO, prefabName, dir, roomType);
 
             }
         }
         else
         {
-            InitiateNewRoomServerRpc(prefabName, currentPos, currentCoords, dir, roomType);
+            InitiateNewRoomServerRpc(currentRoomNO, prefabName, dir, roomType);
 
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void InitiateNewRoomServerRpc(string prefabName, Vector3 currentPos, Vector3 currentCoords, DoorDirection dir, Room.RoomType roomType)
+    private void InitiateNewRoomServerRpc(NetworkObjectReference currentRoomNOR, string prefabName, DoorDirection dir, Room.RoomType roomType)
     {
+        
+
         // Server instantiates and spawns the room
         GameObject newRoomObj = Instantiate(Resources.Load<GameObject>(prefabName));
         newRoomObj.GetComponent<NetworkObject>().Spawn();
         newRoomObj.transform.parent = transform;
 
         // Server sets room up and sends to clients
-        InitiateNewRoomClientRpc(newRoomObj.GetComponent<NetworkObject>(), currentPos, currentCoords, dir, roomType);
+        InitiateNewRoomClientRpc(newRoomObj.GetComponent<NetworkObject>(), currentRoomNOR, dir, roomType);
 
         // Server spawns room contents
         newRoomObj.GetComponent<Room>().SpawnRoomContents();
     }
 
     [ClientRpc]
-    private void InitiateNewRoomClientRpc(NetworkObjectReference roomNetworkObjectReference, Vector3 currentPos, Vector3 currentCoords, DoorDirection dir, Room.RoomType roomType)
+    private void InitiateNewRoomClientRpc(NetworkObjectReference roomNOR, NetworkObjectReference currentRoomNOR, DoorDirection dir, Room.RoomType roomType)
     {
+        currentRoomNOR.TryGet(out NetworkObject currentRoomNO);
+        Vector3 currentPos = currentRoomNO.transform.position;
+        Vector3 currentCoords = currentRoomNO.GetComponent<Room>().roomCoords;
+
         if (roomType == Room.RoomType.Objective)
             ObjectiveController.GetObjectiveController().ShowObjectiveUI();
 
-        roomNetworkObjectReference.TryGet(out NetworkObject roomNetworkObject);
+        roomNOR.TryGet(out NetworkObject roomNetworkObject);
         Room newRoom = roomNetworkObject.GetComponent<Room>();
 
         //Move room to correct position
@@ -192,10 +201,11 @@ public class Dungeon : NetworkBehaviour
                 door.BlockDoor();
             }
         }
-
-        //Remove door joining to entrance
+        
         if (dir != DoorDirection.Up && dir != DoorDirection.Down)
-            newRoom.doors[((int)dir + 2) % 4].RemoveDoor();
+        {
+            newRoom.doors[((int)dir + 2) % 4].RemoveDoor(); //Remove door joining to entrance
+        }
 
         //Open doors to other adjacent rooms (leave Objective rooms as dead ends)
         if (roomType != Room.RoomType.Objective)
@@ -225,6 +235,9 @@ public class Dungeon : NetworkBehaviour
             }
         }
 
+        currentRoomNO.GetComponent<Room>().floor.GetComponent<NavMeshSurface>().BuildNavMesh();
+
+        lastSpawnedRoom = roomNetworkObject;
     }
 
     private List<Room> GetRoomNeighbours(Room room)

@@ -112,9 +112,9 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.016666668
+  m_VoxelSize: 0.06666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: fefc5c5a4fdc84914a451d1ec63f8253, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 22f6064a061f04402954919dbdaab37c, type: 2}
   m_BuildHeightMesh: 0
 --- !u!65 &6875924898177510672
 BoxCollider:
@@ -230,7 +230,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cd609157997ac74c9e1e82c8dd0ddf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomType: 0
+  floor: {fileID: 3967063598080329923}
+  roomType: 3
   doors:
   - {fileID: 1114611946678421593}
   - {fileID: 377060546468503971}
@@ -496,6 +497,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3074846976723424150}
     m_Modifications:
+    - target: {fileID: -879357188410040694, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: m_Start
+      value: 
+      objectReference: {fileID: 3967063598080329923}
     - target: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1270,6 +1275,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3074846976723424150}
     m_Modifications:
+    - target: {fileID: -879357188410040694, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: m_Start
+      value: 
+      objectReference: {fileID: 3967063598080329923}
     - target: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10
@@ -1347,6 +1356,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3074846976723424150}
     m_Modifications:
+    - target: {fileID: -879357188410040694, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: m_Start
+      value: 
+      objectReference: {fileID: 3967063598080329923}
     - target: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1527,6 +1540,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3074846976723424150}
     m_Modifications:
+    - target: {fileID: -879357188410040694, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: m_Start
+      value: 
+      objectReference: {fileID: 3967063598080329923}
     - target: {fileID: 1166406250387795355, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10
