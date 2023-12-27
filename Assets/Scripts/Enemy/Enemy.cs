@@ -30,6 +30,8 @@ public class Enemy : NetworkBehaviour
     public float sightDistance = 15f;
     public float sightFOV = 65f;
 
+    public LayerMask sightLayer;
+
     public bool isMoving = false;
 
     private string currentAnimationState;
@@ -126,7 +128,7 @@ public class Enemy : NetworkBehaviour
                     Ray ray = new(transform.position, targetDirection);
                     Debug.DrawRay(ray.origin, ray.direction * sightDistance);
                     RaycastHit hitInfo = new();
-                    if(Physics.Raycast(ray, out hitInfo, sightDistance))
+                    if(Physics.Raycast(ray.origin, ray.direction, out hitInfo, sightDistance, sightLayer))
                     {
                         if(hitInfo.transform == player.transform)
                         {

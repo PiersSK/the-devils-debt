@@ -21,6 +21,7 @@ public class AttackState : BaseState
     private float chargeTimeMax = 1f;
     private float chargeTimeMin = 0.4f;
     private float chargeTime = 0.5f;
+    private float lockedTime = 0.1f;
 
     private float attackTime = 0.5f;
     private float chargeTimer = 0f;
@@ -31,6 +32,7 @@ public class AttackState : BaseState
 
     public override void Enter()
     {
+        enemy.Agent.speed = 6f;
         enemy.Agent.stoppingDistance = 2f;
     }
 
@@ -121,8 +123,11 @@ public class AttackState : BaseState
     private void Attack()
     {
         chargeTimer += Time.deltaTime;
-        enemy.transform.LookAt(attackTarget);
-        if (chargeTimer >= chargeTime) chargeComplete = true;
+
+        if (chargeTimer <= chargeTime)
+            enemy.transform.LookAt(attackTarget, Vector3.up); //Need to find a way to slow this down
+
+        if (chargeTimer >= chargeTime + lockedTime) chargeComplete = true;
 
         if(chargeComplete && !attackComplete)
         {

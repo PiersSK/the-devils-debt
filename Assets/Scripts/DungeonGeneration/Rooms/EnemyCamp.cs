@@ -17,15 +17,21 @@ public class EnemyCamp : Room
     [ServerRpc(RequireOwnership = false)]
     private void SpawnEnemyServerRpc(string prefabName)
     {
-        Transform enemyObj = Instantiate(Resources.Load<Transform>(prefabName));
-        enemyObj.position = transform.position + new Vector3(Random.Range(-5f, 5f), -1f, Random.Range(-5f, 5f));
-        enemyObj.GetComponent<NetworkObject>().Spawn();
-
         Transform defaultPath = Instantiate(Resources.Load<Transform>("RoomPatrol"));
         defaultPath.position = transform.position + new Vector3(0, -1.6f, 0);
         defaultPath.GetComponent<NetworkObject>().Spawn();
 
-        SetEnemyPatrolClientRpc(enemyObj.GetComponent<NetworkObject>(), defaultPath.GetComponent<NetworkObject>());
+        Transform enemyPrefab = Resources.Load<Transform>(prefabName);
+
+        for (int i = 0; i < Random.Range(1, 3); i++)
+        {
+            enemyPrefab.position = transform.position + new Vector3(Random.Range(-5f, 5f), -1f, Random.Range(-5f, 5f));
+
+            Transform enemyObj = Instantiate(enemyPrefab);
+            enemyObj.GetComponent<NetworkObject>().Spawn();
+
+            SetEnemyPatrolClientRpc(enemyObj.GetComponent<NetworkObject>(), defaultPath.GetComponent<NetworkObject>());
+        }
     }
 
     [ClientRpc]
