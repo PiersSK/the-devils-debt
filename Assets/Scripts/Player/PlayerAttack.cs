@@ -89,14 +89,17 @@ public class PlayerAttack : NetworkBehaviour
     {
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, attackLayer))
         {
-            if(hit.transform.TryGetComponent(out Enemy enemy))
+            if (hit.transform.TryGetComponent(out Enemy enemy))
             {
                 HitTarget(true);
                 UIManager.Instance.ShowHitmarker();
                 enemy.DamageToEnemyServerRpc(attackDamage, NetworkObject);
             }
             else
+            {
+                Debug.Log("Not enemy, was : " + hit.transform.name);
                 HitTarget(false);
+            }
         }
     }
 

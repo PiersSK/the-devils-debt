@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 using Unity.Netcode;
 
 public class PlayerHealth : NetworkBehaviour
@@ -18,15 +19,19 @@ public class PlayerHealth : NetworkBehaviour
         if (IsOwner)
         {
             UIManager.Instance.health.UpdateBar(currentHealth.Value, maxHealth);
-            if(prevVal>newVal)
+            if(prevVal > newVal)
             {
-                UIManager.Instance.health.ShowOverlay();
+                UIManager.Instance.health.ShowOverlay(3f, false);
+            }
+            else if(prevVal < newVal)
+            {
+                UIManager.Instance.health.ShowOverlay(3f, true);
             }
         }
 
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void IncrementPlayerHealthServerRpc(int incr)
     {
         currentHealth.Value += incr;

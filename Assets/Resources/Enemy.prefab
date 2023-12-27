@@ -94,7 +94,6 @@ GameObject:
   - component: {fileID: 1473897686106802919}
   - component: {fileID: 540895815829922367}
   - component: {fileID: 5006383458381756608}
-  - component: {fileID: 8365555341965795492}
   m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
@@ -167,27 +166,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8365555341965795492
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1373432424387759044}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2043173356070183126
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,7 +329,6 @@ GameObject:
   - component: {fileID: 5929339624779659088}
   - component: {fileID: 178644091118921845}
   - component: {fileID: 2592093654444920169}
-  - component: {fileID: 3371100451662693971}
   m_Layer: 7
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -424,27 +401,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3371100451662693971
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4098197004653068014}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4137034296048944642
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,7 +519,7 @@ Transform:
   m_GameObject: {fileID: 6444308001262241288}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19.230446, y: -1, z: 2.5114355}
+  m_LocalPosition: {x: 20.536617, y: -1, z: 0.76903296}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
