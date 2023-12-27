@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class HandItem : MonoBehaviour
 {
-    [SerializeField] private Transform player;
-    [SerializeField] private Transform cam;
+    public Transform player;
+    public Transform cam;
     private Vector3 initPos;
     private Quaternion initRot;
 
