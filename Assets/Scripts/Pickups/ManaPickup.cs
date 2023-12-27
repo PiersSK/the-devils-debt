@@ -9,12 +9,18 @@ public class ManaPickup : Pickup
 
     protected override void OnTriggerEnter(Collider other)
     {
-        PlayerMana playerMana = other.GetComponent<PlayerMana>();
-        if (playerMana != null && playerMana.currentMana.Value != playerMana.maxMana)
+        if (CanPickUp(other.transform))
         {
-            playerMana.IncrementPlayerManaServerRpc(manaValue);
+            other.GetComponent<PlayerMana>().IncrementPlayerManaServerRpc(manaValue);
             DespawnServerRpc();
         }
+    }
+
+    protected override bool CanPickUp(Transform player)
+    {
+        PlayerMana playerMana = player.GetComponent<PlayerMana>();
+        return playerMana != null && playerMana.currentMana.Value != playerMana.maxMana;
+
     }
 
     [ServerRpc(RequireOwnership = false)]

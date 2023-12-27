@@ -7,11 +7,17 @@ public class HealthPickup : Pickup
 
     protected override void OnTriggerEnter(Collider other)
     {
-        PlayerHealth playerHealth= other.GetComponent<PlayerHealth>();
-        if (playerHealth != null && playerHealth.currentHealth.Value != playerHealth.maxHealth) {
-            playerHealth.IncrementPlayerHealthServerRpc(healthValue);
+        if (CanPickUp(other.transform)) {
+            other.GetComponent<PlayerHealth>().IncrementPlayerHealthServerRpc(healthValue);
             DespawnServerRpc();
         }
+    }
+
+    protected override bool CanPickUp(Transform player)
+    {
+        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+        return playerHealth != null && playerHealth.currentHealth.Value != playerHealth.maxHealth;
+
     }
 
     [ServerRpc(RequireOwnership = false)]

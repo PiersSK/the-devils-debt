@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1354254824992788447}
   - component: {fileID: 5121536637885933543}
   - component: {fileID: 8948643950468446556}
+  - component: {fileID: -6436623800890651666}
   m_Layer: 0
   m_Name: HealthOrb
   m_TagString: Untagged
@@ -32,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 1950060490699823590}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -8.275148, y: -0.8186059, z: 7.628}
+  m_LocalPosition: {x: -3.4364634, y: -1.6, z: 15.95009}
   m_LocalScale: {x: 0.25754, y: 0.25754, z: 0.25754}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4934,3 +4935,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 116c24fa2c33b45b591fc3db5ce57197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &-6436623800890651666
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950060490699823590}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
