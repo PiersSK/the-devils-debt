@@ -106,6 +106,12 @@ public class Enemy : NetworkBehaviour
         if (ObjectiveController.Instance.objectiveSelected.Value == ObjectiveController.ObjectiveType.Monsters)
             ObjectiveController.Instance.ProgressObjective();
 
+        //Add random chance
+        Transform healthOrb = Resources.Load<Transform>("Pickups/HealthOrb");
+        healthOrb.position = new Vector3(transform.position.x, -1.6f, transform.position.z);
+        Transform healthOrbObj = Instantiate(healthOrb);
+        healthOrbObj.GetComponent<NetworkObject>().Spawn();
+
         Destroy(gameObject);
         NetworkObject.Despawn();
     }
