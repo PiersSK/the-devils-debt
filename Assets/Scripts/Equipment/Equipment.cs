@@ -13,7 +13,6 @@ public abstract class Equipment : NetworkBehaviour
     }
 
     [Header("General")]
-    public Transform prefab;
     public InventorySlot inventorySlot;
 
     public abstract void PerformAbility();

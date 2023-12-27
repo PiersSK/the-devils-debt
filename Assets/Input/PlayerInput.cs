@@ -89,6 +89,42 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipMain"",
+                    ""type"": ""Button"",
+                    ""id"": ""120dd662-7699-48da-8a30-af3c4ef5549e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipOff"",
+                    ""type"": ""Button"",
+                    ""id"": ""a9776f9b-af09-40f6-8016-42a651be8a4d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EquipAccessory"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7a87819-ae69-472c-b51a-f2afcb0019b0"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleEquipDown"",
+                    ""type"": ""Value"",
+                    ""id"": ""e88b6405-d6e9-4c93-9414-b08c6bcc3b8b"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -309,6 +345,50 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""LockCursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1d7cec16-67f8-4899-922c-8f5e196a02c9"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipMain"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""acb9a00b-3a8e-44c8-82ba-d432cb28ec67"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipOff"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5ffcbfa9-9e94-4683-9902-249d436b6ab2"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EquipAccessory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7865091f-025d-43af-9b41-59c4dbf76eba"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleEquipDown"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -842,6 +922,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_OnFoot_Attack = m_OnFoot.FindAction("Attack", throwIfNotFound: true);
         m_OnFoot_Sprint = m_OnFoot.FindAction("Sprint", throwIfNotFound: true);
         m_OnFoot_LockCursor = m_OnFoot.FindAction("LockCursor", throwIfNotFound: true);
+        m_OnFoot_EquipMain = m_OnFoot.FindAction("EquipMain", throwIfNotFound: true);
+        m_OnFoot_EquipOff = m_OnFoot.FindAction("EquipOff", throwIfNotFound: true);
+        m_OnFoot_EquipAccessory = m_OnFoot.FindAction("EquipAccessory", throwIfNotFound: true);
+        m_OnFoot_ToggleEquipDown = m_OnFoot.FindAction("ToggleEquipDown", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -922,6 +1006,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_OnFoot_Attack;
     private readonly InputAction m_OnFoot_Sprint;
     private readonly InputAction m_OnFoot_LockCursor;
+    private readonly InputAction m_OnFoot_EquipMain;
+    private readonly InputAction m_OnFoot_EquipOff;
+    private readonly InputAction m_OnFoot_EquipAccessory;
+    private readonly InputAction m_OnFoot_ToggleEquipDown;
     public struct OnFootActions
     {
         private @PlayerInput m_Wrapper;
@@ -933,6 +1021,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_OnFoot_Attack;
         public InputAction @Sprint => m_Wrapper.m_OnFoot_Sprint;
         public InputAction @LockCursor => m_Wrapper.m_OnFoot_LockCursor;
+        public InputAction @EquipMain => m_Wrapper.m_OnFoot_EquipMain;
+        public InputAction @EquipOff => m_Wrapper.m_OnFoot_EquipOff;
+        public InputAction @EquipAccessory => m_Wrapper.m_OnFoot_EquipAccessory;
+        public InputAction @ToggleEquipDown => m_Wrapper.m_OnFoot_ToggleEquipDown;
         public InputActionMap Get() { return m_Wrapper.m_OnFoot; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -963,6 +1055,18 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @LockCursor.started += instance.OnLockCursor;
             @LockCursor.performed += instance.OnLockCursor;
             @LockCursor.canceled += instance.OnLockCursor;
+            @EquipMain.started += instance.OnEquipMain;
+            @EquipMain.performed += instance.OnEquipMain;
+            @EquipMain.canceled += instance.OnEquipMain;
+            @EquipOff.started += instance.OnEquipOff;
+            @EquipOff.performed += instance.OnEquipOff;
+            @EquipOff.canceled += instance.OnEquipOff;
+            @EquipAccessory.started += instance.OnEquipAccessory;
+            @EquipAccessory.performed += instance.OnEquipAccessory;
+            @EquipAccessory.canceled += instance.OnEquipAccessory;
+            @ToggleEquipDown.started += instance.OnToggleEquipDown;
+            @ToggleEquipDown.performed += instance.OnToggleEquipDown;
+            @ToggleEquipDown.canceled += instance.OnToggleEquipDown;
         }
 
         private void UnregisterCallbacks(IOnFootActions instance)
@@ -988,6 +1092,18 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @LockCursor.started -= instance.OnLockCursor;
             @LockCursor.performed -= instance.OnLockCursor;
             @LockCursor.canceled -= instance.OnLockCursor;
+            @EquipMain.started -= instance.OnEquipMain;
+            @EquipMain.performed -= instance.OnEquipMain;
+            @EquipMain.canceled -= instance.OnEquipMain;
+            @EquipOff.started -= instance.OnEquipOff;
+            @EquipOff.performed -= instance.OnEquipOff;
+            @EquipOff.canceled -= instance.OnEquipOff;
+            @EquipAccessory.started -= instance.OnEquipAccessory;
+            @EquipAccessory.performed -= instance.OnEquipAccessory;
+            @EquipAccessory.canceled -= instance.OnEquipAccessory;
+            @ToggleEquipDown.started -= instance.OnToggleEquipDown;
+            @ToggleEquipDown.performed -= instance.OnToggleEquipDown;
+            @ToggleEquipDown.canceled -= instance.OnToggleEquipDown;
         }
 
         public void RemoveCallbacks(IOnFootActions instance)
@@ -1132,6 +1248,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnLockCursor(InputAction.CallbackContext context);
+        void OnEquipMain(InputAction.CallbackContext context);
+        void OnEquipOff(InputAction.CallbackContext context);
+        void OnEquipAccessory(InputAction.CallbackContext context);
+        void OnToggleEquipDown(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
