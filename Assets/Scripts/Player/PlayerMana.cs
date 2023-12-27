@@ -25,7 +25,7 @@ public class PlayerMana : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void IncrementPlayerManaServerRpc(int incr)
     {
         currentMana.Value += incr;

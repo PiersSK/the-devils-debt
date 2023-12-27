@@ -31,7 +31,7 @@ public class PlayerHealth : NetworkBehaviour
 
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void IncrementPlayerHealthServerRpc(int incr)
     {
         currentHealth.Value += incr;

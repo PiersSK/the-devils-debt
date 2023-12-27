@@ -72,6 +72,8 @@ public class Enemy : NetworkBehaviour
 
     private void Update()
     {
+        //if (!IsOwner) return;
+
         CanSeePlayer();
         currentState = stateMachine.activeState.ToString();
         isMoving = Agent.velocity != Vector3.zero;
