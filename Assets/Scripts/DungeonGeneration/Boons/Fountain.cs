@@ -34,7 +34,6 @@ public class Fountain : NetworkBehaviour
 
             if (localPlayerInRange && !playerMaxMana)
             {
-                UIManager.Instance.mana.ShowOverlay();
                 manaTimer += Time.deltaTime;
                 if (manaTimer >= manaRegenSpeed)
                 {

@@ -15,7 +15,14 @@ public class PlayerMana : NetworkBehaviour
     private void SyncPlayerMana(int prevVal, int newVal)
     {
         currentMana.Value = Math.Clamp(newVal, 0, maxMana);
-        if (IsOwner) UIManager.Instance.mana.UpdateBar(currentMana.Value, maxMana);
+        if (IsOwner)
+        {
+            UIManager.Instance.mana.UpdateBar(currentMana.Value, maxMana);
+            if (prevVal < newVal)
+            {
+                UIManager.Instance.mana.ShowOverlay(3f, false);
+            }
+        }
     }
 
     [ServerRpc]

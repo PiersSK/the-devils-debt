@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2221611596307666940}
   - component: {fileID: 1354254824992788447}
   - component: {fileID: 5121536637885933543}
-  - component: {fileID: 2023496733863519235}
+  - component: {fileID: 8613465823452504969}
   m_Layer: 0
   m_Name: ManaOrb
   m_TagString: Untagged
@@ -4922,7 +4922,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &2023496733863519235
+--- !u!114 &8613465823452504969
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4931,6 +4931,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1950060490699823590}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a73d82efb0ea4208a533835220ad6ae, type: 3}
+  m_Script: {fileID: 11500000, guid: ff502b8241dd34a9082a2ba31440953d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
