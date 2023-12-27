@@ -17,7 +17,7 @@ public class PlayerMotor : NetworkBehaviour
     private CharacterController controller;
 
     [SerializeField] private float staminaMax = 6f;
-    private float currentStamina;
+    public float currentStamina;
     private bool isSprinting;
     
 
@@ -52,7 +52,7 @@ public class PlayerMotor : NetworkBehaviour
             }
         } else
         {
-            currentStamina += Time.deltaTime;
+            currentStamina += Time.deltaTime / 2;
             currentStamina = Mathf.Clamp(currentStamina, 0f, staminaMax);
         }
 

@@ -9,6 +9,7 @@ public class PlayerAttack : NetworkBehaviour
     private AudioSource audioSource;
     private Camera cam;
 
+    [SerializeField] private float staminaCost = 0.5f;
     [SerializeField] private float attackDistance = 3f;
     [SerializeField] private float attackDelay = 0.4f;
     [SerializeField] private float attackSpeed = 1f;
@@ -25,6 +26,7 @@ public class PlayerAttack : NetworkBehaviour
     private bool attacking = false;
     private bool readyToAttack = true;
     private int attackCount;
+
 
     private string currentAnimationState;
     private const string IDLE = "Idle";
@@ -49,7 +51,9 @@ public class PlayerAttack : NetworkBehaviour
 
     public void Attack()
     {
-        if (!readyToAttack || attacking) return;
+        if (!readyToAttack || attacking || GetComponent<PlayerMotor>().currentStamina < staminaCost) return;
+
+        GetComponent<PlayerMotor>().currentStamina -= staminaCost;
 
         readyToAttack = false;
         attacking = true;
