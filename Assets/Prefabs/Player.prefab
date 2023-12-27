@@ -348,6 +348,7 @@ MonoBehaviour:
     m_Bits: 128
   swordSwing: {fileID: 8300000, guid: 7923190c5e80b4d4d9396acc5d0b48cf, type: 3}
   hitSound: {fileID: 8300000, guid: 11245d3945c564b45a1bafad5ecb70e5, type: 3}
+  hitmarkerSound: {fileID: 8300000, guid: 0f2af7cfa9621448da8a1ca9890d7ba4, type: 3}
 --- !u!114 &8013962463560532814
 MonoBehaviour:
   m_ObjectHideFlags: 0

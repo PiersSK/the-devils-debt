@@ -663,6 +663,7 @@ MonoBehaviour:
   path: {fileID: 0}
   sightDistance: 15
   sightFOV: 65
+  isMoving: 0
   maxHealth: 10
   healthBar: {fileID: 3535329296359593657}
 --- !u!114 &5031921162666065954

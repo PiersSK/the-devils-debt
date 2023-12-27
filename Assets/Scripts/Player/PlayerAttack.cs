@@ -17,6 +17,10 @@ public class PlayerAttack : NetworkBehaviour
 
     [SerializeField] private AudioClip swordSwing;
     [SerializeField] private AudioClip hitSound;
+    [SerializeField] private AudioClip hitmarkerSound;
+
+    private AudioClip queuedSound;
+
 
     private bool attacking = false;
     private bool readyToAttack = true;
@@ -54,7 +58,10 @@ public class PlayerAttack : NetworkBehaviour
         Invoke(nameof(ResetAttack), attackSpeed);
         Invoke(nameof(AttackRaycast), attackDelay);
 
-        PlaySwingSoundServerRpc();
+        //PlaySwingSoundServerRpc();
+        queuedSound = swordSwing;
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        PlaySoundForAllServerRpc();
 
         if (attackCount == 0)
         {
@@ -78,11 +85,14 @@ public class PlayerAttack : NetworkBehaviour
     {
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, attackLayer))
         {
-            HitTarget(hit.point);
             if(hit.transform.TryGetComponent(out Enemy enemy))
             {
+                HitTarget(true);
+                UIManager.Instance.ShowHitmarker();
                 enemy.DamageToEnemyServerRpc(attackDamage, NetworkObject);
             }
+            else
+                HitTarget(false);
         }
     }
 
@@ -97,9 +107,20 @@ public class PlayerAttack : NetworkBehaviour
         }
     }
 
-    private void HitTarget(Vector3 pos)
+    private void HitTarget(bool isEnemy)
     {
-        PlayHitSoundServerRpc();
+        if (isEnemy)
+        {
+            queuedSound = hitmarkerSound;
+            audioSource.pitch = 1f;
+            PlaySoundLocally();
+        }
+        else
+        {
+            queuedSound = hitSound;
+            audioSource.pitch = 1f;
+            PlaySoundForAllServerRpc();
+        }
     }
 
     private void ChangeAnimationState(string newState)
@@ -109,59 +130,20 @@ public class PlayerAttack : NetworkBehaviour
         animator.CrossFadeInFixedTime(currentAnimationState, 0.1f);
     }
 
-    [ServerRpc]
-    private void PlaySwingSoundServerRpc()
+    private void PlaySoundLocally()
     {
-        PlaySwingSoundClientRpc();
-    }
-
-    [ClientRpc]
-    private void PlaySwingSoundClientRpc()
-    {
-        audioSource.pitch = Random.Range(0.9f, 1.1f);
-        audioSource.PlayOneShot(swordSwing);
+        audioSource.PlayOneShot(queuedSound);
     }
 
     [ServerRpc]
-    private void PlayHitSoundServerRpc()
+    private void PlaySoundForAllServerRpc()
     {
-        PlayHitSoundClientRpc();
+        PlaySoundForAllClientRpc();
     }
 
     [ClientRpc]
-    private void PlayHitSoundClientRpc()
+    private void PlaySoundForAllClientRpc()
     {
-        audioSource.pitch = 1;
-        audioSource.PlayOneShot(hitSound);
+        audioSource.PlayOneShot(queuedSound);
     }
-
-    //[SerializeField] private float swingLength = 0.5f;
-
-    //private bool isSwinging = false;
-    //private float swingTimer = 0f;
-
-    //private void Update()
-    //{
-    //    if (isSwinging)
-    //    {
-    //        swingTimer += Time.deltaTime;
-    //        if (swingTimer > swingLength)
-    //        {
-    //            isSwinging = false;
-    //            swingTimer = 0f;
-    //            Debug.Log("Stopping Swinging Sword");
-    //            animator.SetBool("Swinging", false);
-    //        }
-    //    }
-    //}
-
-    //public void SwingSword()
-    //{
-    //    if (!IsOwner) return;
-    //    if (isSwinging) return;
-
-    //    isSwinging = true;
-    //    Debug.Log("Swinging Sword");
-    //    animator.SetBool("Swinging", true);
-    //}
 }

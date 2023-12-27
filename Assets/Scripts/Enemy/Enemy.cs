@@ -87,8 +87,11 @@ public class Enemy : NetworkBehaviour
     public void DamageToEnemyServerRpc(int damage, NetworkObjectReference damageSourceNOR)
     {
         currentHealth.Value = Math.Clamp(currentHealth.Value - damage, 0, maxHealth);
-
         damageSourceNOR.TryGet(out NetworkObject damageSourceNO);
+
+        //Vector3 knockbackForce = (damageSourceNO.transform.position - transform.position).normalized * 20f;
+        //GetComponent<Rigidbody>().AddForce(knockbackForce);
+
 
         if (damageSourceNO.GetComponent<Player>() != null)
             OnAttacked?.Invoke(this, new OnAttackedArgs(damageSourceNO.GetComponent<Player>()));

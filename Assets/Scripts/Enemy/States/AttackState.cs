@@ -126,6 +126,7 @@ public class AttackState : BaseState
 
         if(chargeComplete && !attackComplete)
         {
+            Debug.Log("Starting attack");
             enemy.ChangeAnimationState(Enemy.ATTACK);
 
             Ray ray = new(enemy.transform.position, enemy.transform.forward);
