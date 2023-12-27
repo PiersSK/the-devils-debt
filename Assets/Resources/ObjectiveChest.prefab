@@ -789,6 +789,7 @@ GameObject:
   - component: {fileID: 1938371987701136060}
   - component: {fileID: 6332015991366613959}
   - component: {fileID: 3545366068914926891}
+  - component: {fileID: 6162016483483504875}
   m_Layer: 0
   m_Name: ObjectiveChest
   m_TagString: Untagged
@@ -868,8 +869,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac179410b3a17254ca4115b081648f09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptMessage: 
+  promptMessage: Locked!
   anim: {fileID: 1938371987701136060}
+--- !u!114 &6162016483483504875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2210722613686822875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68bde97efeb2427691bac0c3322ce81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList:
+  - Layer: 0
+    OriginatingState: -1300071019
+    DestinationState: 1572279387
+    TransitionDuration: 0.24999994
+    TriggerNameHash: 1554329390
+    TransitionIndex: 0
+  m_Animator: {fileID: 1938371987701136060}
 --- !u!1 &2628140808755452063
 GameObject:
   m_ObjectHideFlags: 0

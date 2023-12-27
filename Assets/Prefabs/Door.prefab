@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 3448115824820601437}
   - component: {fileID: 8998564537567038187}
   - component: {fileID: 209587708309433417}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Option 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,6 +225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   promptMessage: Treasure [5]
   door: {fileID: 5996732164804061756}
+  manaCost: 5
   roomType: 2
 --- !u!1 &2930554981597641125
 GameObject:
@@ -344,7 +345,7 @@ GameObject:
   - component: {fileID: 8851952400567073190}
   - component: {fileID: 1711366850642514726}
   - component: {fileID: 2853799024873330561}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Option X
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -451,6 +452,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   promptMessage: Random [0]
   door: {fileID: 5996732164804061756}
+  manaCost: 0
   roomType: 3
 --- !u!1 &3718723680708975484
 GameObject:
@@ -465,7 +467,7 @@ GameObject:
   - component: {fileID: 6171803357305844651}
   - component: {fileID: 5240520273450032580}
   - component: {fileID: 8918723723632611019}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Option 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -572,6 +574,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   promptMessage: Boon [5]
   door: {fileID: 5996732164804061756}
+  manaCost: 5
   roomType: 1
 --- !u!1 &5703102233931842141
 GameObject:
@@ -688,6 +691,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1166406250387795355}
   - component: {fileID: 5996732164804061756}
+  - component: {fileID: -879357188410040694}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -733,6 +737,24 @@ MonoBehaviour:
   - {fileID: 209587708309433417}
   - {fileID: 8918723723632611019}
   - {fileID: 7249422221311868108}
+  portal: {fileID: 0}
+--- !u!191 &-879357188410040694
+OffMeshLink:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7813461379881142826}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_AreaIndex: 0
+  m_AgentTypeID: 0
+  m_Start: {fileID: 0}
+  m_End: {fileID: 0}
+  m_CostOverride: -1
+  m_BiDirectional: 1
+  m_Activated: 1
+  m_AutoUpdatePositions: 0
 --- !u!1 &7909492524320574999
 GameObject:
   m_ObjectHideFlags: 0
@@ -921,7 +943,7 @@ GameObject:
   - component: {fileID: 6909573673687094794}
   - component: {fileID: 2077128518404636618}
   - component: {fileID: 7249422221311868108}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Option 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1028,6 +1050,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   promptMessage: Enemy Camp [3]
   door: {fileID: 5996732164804061756}
+  manaCost: 3
   roomType: 0
 --- !u!1001 &7485370029192993841
 PrefabInstance:
@@ -1092,6 +1115,10 @@ PrefabInstance:
     - target: {fileID: 6229247520373792897, guid: 3ad7a1cffb2556547a8b7e60fd320431, type: 3}
       propertyPath: m_Name
       value: Block
+      objectReference: {fileID: 0}
+    - target: {fileID: 6229247520373792897, guid: 3ad7a1cffb2556547a8b7e60fd320431, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6229247520373792897, guid: 3ad7a1cffb2556547a8b7e60fd320431, type: 3}
       propertyPath: m_IsActive

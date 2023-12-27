@@ -1,22 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerMotor : MonoBehaviour
+public class PlayerMotor : NetworkBehaviour
 {
-    public float speed = 5.0f;
-    public float gravity = -9.8f;
-    public float jumpHeight = 1.0f;
+    public static PlayerMotor LocalInstance { get; private set; }
+
+    private float speed = 6f;
+    [SerializeField] private float baseSpeed = 6f;
+    [SerializeField] private float sprintSpeed = 10f;
+
+    [SerializeField] private float gravity = -9.8f;
+    [SerializeField] private float jumpHeight = 1.0f;
 
     private CharacterController controller;
 
-    private bool isMoving;
+    [SerializeField] private float staminaMax = 6f;
+    public float currentStamina;
+    private bool isSprinting;
+    
+
+    public bool isMoving;
     private bool isGrounded;
     private Vector3 playerVelocity;
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        if (IsOwner) LocalInstance = this;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        currentStamina = staminaMax;
         controller = GetComponent<CharacterController>();
     }
 
@@ -24,6 +42,21 @@ public class PlayerMotor : MonoBehaviour
     void Update()
     {
         isGrounded = controller.isGrounded;
+
+        if(isSprinting)
+        {
+            currentStamina -= Time.deltaTime;
+            if (currentStamina <= 0 || !isMoving)
+            {
+                ToggleSprint();
+            }
+        } else
+        {
+            currentStamina += Time.deltaTime / 2;
+            currentStamina = Mathf.Clamp(currentStamina, 0f, staminaMax);
+        }
+
+        UIManager.Instance.stamina.UpdateBar(currentStamina, staminaMax);
     }
 
     public void ProcessMove(Vector2 input)
@@ -43,7 +76,15 @@ public class PlayerMotor : MonoBehaviour
 
     public void Jump()
     {
+        Debug.Log("Jump");
         if (isGrounded)
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+    }
+
+    public void ToggleSprint()
+    {
+        isSprinting = !isSprinting;
+
+        speed = isSprinting ? sprintSpeed : baseSpeed;
     }
 }
