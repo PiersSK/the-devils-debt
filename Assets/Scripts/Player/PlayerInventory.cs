@@ -21,10 +21,7 @@ public class PlayerInventory : NetworkBehaviour
     private void Start()
     {
         input = GetComponent<InputManager>().onFoot;
-        mainHand.gameObject.SetActive(false);
-        offHand.gameObject.SetActive(false);
-        accessory.gameObject.SetActive(false);
-        currentEquipped.gameObject.SetActive(true);
+        EquipItem(currentEquipped.inventorySlot);
     }
 
     private void Update()
@@ -46,20 +43,34 @@ public class PlayerInventory : NetworkBehaviour
 
     private void EquipItem(Equipment.InventorySlot slot)
     {
-        currentEquipped.gameObject.SetActive(false);
+        ResetEquipmentActiveStates();
 
-        switch(slot) {
+        switch (slot) {
             case Equipment.InventorySlot.MainHand:
                 currentEquipped = mainHand;
+                UIManager.Instance.hotbarMain.SetEquipped(true);
                 break;
             case Equipment.InventorySlot.OffHand:
                 currentEquipped = offHand;
+                UIManager.Instance.hotbarOff.SetEquipped(true);
                 break;
             case Equipment.InventorySlot.Accessory:
                 currentEquipped = accessory;
+                UIManager.Instance.hotbarAccessory.SetEquipped(true);
                 break;
         }
 
         currentEquipped.gameObject.SetActive(true);
+    }
+
+    private void ResetEquipmentActiveStates()
+    {
+        mainHand.gameObject.SetActive(false);
+        offHand.gameObject.SetActive(false);
+        accessory.gameObject.SetActive(false);
+
+        UIManager.Instance.hotbarMain.SetEquipped(false);
+        UIManager.Instance.hotbarOff.SetEquipped(false);
+        UIManager.Instance.hotbarAccessory.SetEquipped(false);
     }
 }
