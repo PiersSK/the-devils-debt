@@ -6,10 +6,12 @@ public class EnemyStateMachine : MonoBehaviour
 {
     public BaseState activeState;
     public PatrolState patrolState;
+    public AttackState attackState;
 
     public void Initialise()
     {
         patrolState = new();
+        attackState = new();
         ChangeState(patrolState); 
     }
 

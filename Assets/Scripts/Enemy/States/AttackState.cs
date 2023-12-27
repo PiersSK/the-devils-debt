@@ -86,7 +86,7 @@ public class AttackState : BaseState
             if (losePlayerTimer >= 3f)
             {
                 //Change to search state
-                stateMachine.ChangeState(new PatrolState());
+                stateMachine.ChangeState(stateMachine.patrolState);
             }
         }
     }
@@ -126,19 +126,15 @@ public class AttackState : BaseState
 
         if(chargeComplete && !attackComplete)
         {
-            Debug.Log("Starting attack");
             enemy.ChangeAnimationState(Enemy.ATTACK);
 
             Ray ray = new(enemy.transform.position, enemy.transform.forward);
 
             if (Physics.Raycast(ray, out RaycastHit hit, attackRange))
             {
-                Debug.Log(hit.transform);
                 if (hit.transform.TryGetComponent(out Player player))
-                {
-                    Debug.Log("hit player");
                     player.GetComponent<PlayerHealth>().IncrementPlayerHealthServerRpc(-attackDamage);
-                }
+                
             }
             attackComplete = true;
         }

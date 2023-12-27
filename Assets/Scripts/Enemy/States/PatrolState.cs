@@ -21,7 +21,7 @@ public class PatrolState : BaseState
     {
         PatrolCycle();
         SetAnimations();
-        if (enemy.CanSeePlayer()) stateMachine.ChangeState(new AttackState());
+        if (enemy.CanSeePlayer()) stateMachine.ChangeState(stateMachine.attackState);
     }
 
     public void PatrolCycle()

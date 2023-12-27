@@ -58,7 +58,7 @@ public class Enemy : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void ChangeToAttackStateServerRpc()
     {
-        stateMachine.ChangeState(new AttackState());
+        stateMachine.ChangeState(stateMachine.attackState);
     }
 
     private void Start()
