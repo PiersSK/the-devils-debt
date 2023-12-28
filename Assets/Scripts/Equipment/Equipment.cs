@@ -14,6 +14,7 @@ public abstract class Equipment : NetworkBehaviour
 
     [Header("General")]
     public InventorySlot inventorySlot;
+    public bool onCooldown = false;
 
     public abstract void PerformAbility();
     public abstract void SetAnimations();

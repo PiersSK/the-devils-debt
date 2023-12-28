@@ -60,14 +60,18 @@ public class PlayerInventory : NetworkBehaviour
             case Equipment.InventorySlot.MainHand:
                 currentEquipped = mainHand;
                 UIManager.Instance.hotbarMain.SetEquipped(true);
+                UIManager.Instance.hotbarMain.itemInSlot = mainHand;
                 break;
             case Equipment.InventorySlot.OffHand:
                 currentEquipped = offHand;
                 UIManager.Instance.hotbarOff.SetEquipped(true);
+                UIManager.Instance.hotbarOff.itemInSlot = offHand;
                 break;
             case Equipment.InventorySlot.Accessory:
                 currentEquipped = accessory;
                 UIManager.Instance.hotbarAccessory.SetEquipped(true);
+                UIManager.Instance.hotbarAccessory.itemInSlot = accessory;
+
                 break;
         }
 
