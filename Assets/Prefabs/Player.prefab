@@ -995,7 +995,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventorySlot: 1
-  manaCost: 0
+  manaCost: 2
+  firerate: 10
 --- !u!1 &5889380182245915409
 GameObject:
   m_ObjectHideFlags: 0
