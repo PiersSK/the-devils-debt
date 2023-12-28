@@ -67,6 +67,42 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "EquipMain",
+                    "type": "Button",
+                    "id": "120dd662-7699-48da-8a30-af3c4ef5549e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "EquipOff",
+                    "type": "Button",
+                    "id": "a9776f9b-af09-40f6-8016-42a651be8a4d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "EquipAccessory",
+                    "type": "Button",
+                    "id": "d7a87819-ae69-472c-b51a-f2afcb0019b0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleEquipDown",
+                    "type": "Value",
+                    "id": "e88b6405-d6e9-4c93-9414-b08c6bcc3b8b",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -287,6 +323,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "LockCursor",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1d7cec16-67f8-4899-922c-8f5e196a02c9",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EquipMain",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "acb9a00b-3a8e-44c8-82ba-d432cb28ec67",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EquipOff",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5ffcbfa9-9e94-4683-9902-249d436b6ab2",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EquipAccessory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7865091f-025d-43af-9b41-59c4dbf76eba",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleEquipDown",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

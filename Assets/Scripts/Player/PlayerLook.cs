@@ -32,4 +32,9 @@ public class PlayerLook : NetworkBehaviour
 
         transform.Rotate(Vector3.up * (mouseX) * xSensitivity);
     }
+
+    public Vector3 GetLookDirection()
+    {
+        return cam.transform.forward;
+    }
 }

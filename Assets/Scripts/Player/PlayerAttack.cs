@@ -42,11 +42,11 @@ public class PlayerAttack : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner) return;
-        if (GetComponent<InputManager>().onFoot.Attack.IsPressed()) Attack();
-        else attackCount = 0;
+        //if (!IsOwner) return;
+        //if (GetComponent<InputManager>().onFoot.Attack.IsPressed()) Attack();
+        //else attackCount = 0;
 
-        SetAnimations();
+        //SetAnimations();
     }
 
     public void Attack()

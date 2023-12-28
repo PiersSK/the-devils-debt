@@ -15,6 +15,10 @@ public class UIManager : MonoBehaviour
     public ResourceBarUI mana;
     public ResourceBarUI health;
 
+    public HotbarIcon hotbarMain;
+    public HotbarIcon hotbarOff;
+    public HotbarIcon hotbarAccessory;
+
     private void Awake()
     {
         Instance = this;
