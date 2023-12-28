@@ -19,6 +19,8 @@ public class HotbarIcon : MonoBehaviour
     {
         if (cooldownTimer > 0f)
         {
+            if (itemInSlot != null) itemInSlot.onCooldown = true;
+            Debug.Log("On Cooldown: " + cooldownTimer + "/" + cooldownLength);
             cooldownTimer -= Time.deltaTime;
             cooldown.fillAmount = cooldownTimer / cooldownLength;
             cooldownDisplay.text = cooldownTimer.ToString("0.0");
@@ -26,6 +28,7 @@ public class HotbarIcon : MonoBehaviour
         else
         {
             if(itemInSlot != null) itemInSlot.onCooldown = false;
+            Debug.Log("Off Cooldown");
             cooldownTimer = 0f;
             cooldown.fillAmount = 0;
             cooldownDisplay.text = string.Empty;
@@ -46,6 +49,8 @@ public class HotbarIcon : MonoBehaviour
 
     public void PutOnCooldown(float cooldownLength)
     {
+        itemInSlot.onCooldown = true;
+
         this.cooldownLength = cooldownLength;
         cooldownTimer = cooldownLength;
 

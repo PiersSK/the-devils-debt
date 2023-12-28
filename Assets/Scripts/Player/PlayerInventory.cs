@@ -61,17 +61,19 @@ public class PlayerInventory : NetworkBehaviour
                 currentEquipped = mainHand;
                 UIManager.Instance.hotbarMain.SetEquipped(true);
                 UIManager.Instance.hotbarMain.itemInSlot = mainHand;
+                mainHand.equippedPlayer = Player.LocalInstance;
                 break;
             case Equipment.InventorySlot.OffHand:
                 currentEquipped = offHand;
                 UIManager.Instance.hotbarOff.SetEquipped(true);
                 UIManager.Instance.hotbarOff.itemInSlot = offHand;
+                offHand.equippedPlayer = Player.LocalInstance;
                 break;
             case Equipment.InventorySlot.Accessory:
                 currentEquipped = accessory;
                 UIManager.Instance.hotbarAccessory.SetEquipped(true);
                 UIManager.Instance.hotbarAccessory.itemInSlot = accessory;
-
+                accessory.equippedPlayer = Player.LocalInstance;
                 break;
         }
 
@@ -84,8 +86,14 @@ public class PlayerInventory : NetworkBehaviour
         offHand.gameObject.SetActive(false);
         accessory.gameObject.SetActive(false);
 
+        mainHand.equippedPlayer = Player.LocalInstance;
+        offHand.equippedPlayer = Player.LocalInstance;
+        accessory.equippedPlayer = Player.LocalInstance;
+
         UIManager.Instance.hotbarMain.SetEquipped(false);
         UIManager.Instance.hotbarOff.SetEquipped(false);
         UIManager.Instance.hotbarAccessory.SetEquipped(false);
+
+
     }
 }

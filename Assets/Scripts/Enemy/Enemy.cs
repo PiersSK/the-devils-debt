@@ -54,6 +54,7 @@ public class Enemy : NetworkBehaviour
 
     private void ChangeToAttackState(object caller, OnAttackedArgs e)
     {
+        transform.LookAt(e.attacker.transform);
         ChangeToAttackStateServerRpc();
     }
 

@@ -34,7 +34,6 @@ public class AttackState : BaseState
     {
         enemy.Agent.speed = 8f;
         enemy.Agent.stoppingDistance = 2f;
-        enemy.transform.LookAt(GetClosestPlayer());
     }
 
     public override void Exit()

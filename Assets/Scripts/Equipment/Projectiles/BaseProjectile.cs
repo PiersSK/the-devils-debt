@@ -7,16 +7,27 @@ public class BaseProjectile : MonoBehaviour
 {
     private float damage = 5f;
     public NetworkObject playerSourceNO;
+    public bool hasBeenfired = false;
     
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Fireball hit " + other.name);
-        if(other.GetComponent<Enemy>() != null)
+        if (hasBeenfired)
         {
-            other.GetComponent<Enemy>().DamageToEnemyServerRpc((int)damage, playerSourceNO);
+            Debug.Log("Fireball hit " + other.name);
+            if (other.GetComponent<Enemy>() != null)
+            {
+                other.GetComponent<Enemy>().DamageToEnemyServerRpc((int)damage, playerSourceNO);
+            }
+            DestroyProjectileServerRpc();
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DestroyProjectileServerRpc()
+    {
         Destroy(gameObject);
+        GetComponent<NetworkObject>().Despawn();
     }
 
     //private void OnTriggerEnter(Col collision)

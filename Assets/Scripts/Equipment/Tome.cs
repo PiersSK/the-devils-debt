@@ -11,23 +11,17 @@ public class Tome : Equipment
 
     public override void PerformAbility()
     {
-        if (!onCooldown && Player.LocalInstance.playerMana.currentMana.Value >= manaCost)
+        if (!onCooldown && equippedPlayer.playerMana.currentMana.Value >= manaCost)
         {
-            Debug.Log("Shoot Fireball");
-            Player.LocalInstance.playerMana.IncrementPlayerManaServerRpc(-(int)manaCost);
-
-            Transform fireballPrefab = Resources.Load<Transform>("Projectiles/FireProjectile");
-            fireballPrefab.position = Player.LocalInstance.playerLook.cam.transform.position + (Player.LocalInstance.playerLook.cam.transform.forward * 2);
-
-            Transform fireballObj = Instantiate(fireballPrefab);
-            fireballObj.GetComponent<BaseProjectile>().playerSourceNO = Player.LocalInstance.GetComponent<NetworkObject>();
-            fireballObj.GetComponent<NetworkObject>().Spawn();
-
-            fireballObj.GetComponent<Rigidbody>().velocity = Player.LocalInstance.playerLook.GetLookDirection() * 20;
-
-            onCooldown = true;
+            Debug.Log("Triggered tome attack");
             UIManager.Instance.hotbarOff.PutOnCooldown(firerate);
-        } 
+
+            equippedPlayer.playerMana.IncrementPlayerManaServerRpc(-(int)manaCost);
+
+            ShootFireballServerRpc(Player.LocalInstance.GetComponent<NetworkObject>());
+
+
+        }
     }
 
     public override void ResetAbility()
@@ -36,5 +30,24 @@ public class Tome : Equipment
 
     public override void SetAnimations()
     {
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ShootFireballServerRpc(NetworkObjectReference playerNOR)
+    {
+        Debug.Log("Shoot Fireball");
+        playerNOR.TryGet(out NetworkObject playerNO);
+        Player player = playerNO.GetComponent<Player>();
+
+        Transform fireballPrefab = Resources.Load<Transform>("Projectiles/FireProjectile");
+        fireballPrefab.position = player.playerLook.cam.transform.position + (player.playerLook.cam.transform.forward * 2);
+
+        Transform fireballObj = Instantiate(fireballPrefab);
+        fireballObj.GetComponent<BaseProjectile>().playerSourceNO = player.GetComponent<NetworkObject>();
+        fireballObj.GetComponent<NetworkObject>().Spawn();
+
+        fireballObj.GetComponent<Rigidbody>().velocity = player.playerLook.GetLookDirection() * 20;
+        fireballObj.GetComponent<BaseProjectile>().hasBeenfired = true;
+
     }
 }
