@@ -21,15 +21,19 @@ public class PlayerInventory : NetworkBehaviour
     private void Start()
     {
         input = GetComponent<InputManager>().onFoot;
-        EquipItem(currentEquipped.inventorySlot);
+        EquipItemServerRpc(currentEquipped.inventorySlot);
     }
 
     private void Update()
     {
-        if (input.EquipMain.IsPressed()) EquipItem(Equipment.InventorySlot.MainHand);
-        if (input.EquipOff.IsPressed()) EquipItem(Equipment.InventorySlot.OffHand);
-        if (input.EquipAccessory.IsPressed()) EquipItem(Equipment.InventorySlot.Accessory);
+        if (!IsOwner) return;
 
+        // Deal with switching equipment
+        if (input.EquipMain.IsPressed()) EquipItemServerRpc(Equipment.InventorySlot.MainHand);
+        if (input.EquipOff.IsPressed()) EquipItemServerRpc(Equipment.InventorySlot.OffHand);
+        if (input.EquipAccessory.IsPressed()) EquipItemServerRpc(Equipment.InventorySlot.Accessory);
+
+        // Check for equipment use
         if (input.Attack.IsPressed())
         {
             currentEquipped.PerformAbility();
@@ -41,7 +45,14 @@ public class PlayerInventory : NetworkBehaviour
         currentEquipped.SetAnimations();
     }
 
-    private void EquipItem(Equipment.InventorySlot slot)
+    [ServerRpc(RequireOwnership = false)]
+    private void EquipItemServerRpc(Equipment.InventorySlot slot)
+    {
+        EquipItemClientRpc(slot);
+    }
+
+    [ClientRpc]
+    private void EquipItemClientRpc(Equipment.InventorySlot slot)
     {
         ResetEquipmentActiveStates();
 
