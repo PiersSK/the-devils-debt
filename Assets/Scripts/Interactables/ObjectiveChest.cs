@@ -15,7 +15,7 @@ public class ObjectiveChest : TreasureChest
 
     protected override void Interact()
     {
-        if (ObjectiveController.Instance.objectiveComplete)
-            base.Interact();
+        if (!isOpen.Value)
+            isOpen.Value = true;
     }
 }

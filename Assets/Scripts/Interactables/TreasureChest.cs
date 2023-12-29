@@ -4,7 +4,7 @@ using UnityEngine;
 public class TreasureChest : NetworkInteractable
 {
     [SerializeField] private Animator anim;
-    private NetworkVariable<bool> isOpen = new(false);
+    protected NetworkVariable<bool> isOpen = new(false);
     private Vector3 lootOffset = new(0, 0.8f, 0.6f); // Do this better (make chest mid point actual position)
 
     public override void OnNetworkSpawn()
