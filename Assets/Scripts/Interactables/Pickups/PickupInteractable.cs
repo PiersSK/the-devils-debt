@@ -11,7 +11,7 @@ public class PickupInteractable : NetworkInteractable
     [SerializeField] private GameObject equipmentObject;
     private Collider interactCollider;
 
-    [SerializeField] protected Image objectSprite;
+    public Image objectSprite;
     private float spinSpeed = 20f;
     private float currentSpin = 0f;
     private Vector3 startPos;

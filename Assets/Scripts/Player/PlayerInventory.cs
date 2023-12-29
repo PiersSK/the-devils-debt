@@ -34,6 +34,7 @@ public class PlayerInventory : NetworkBehaviour
         hotbarIcons[(int)InventorySlot.Accessory] = ui.hotbarAccessory;
 
         // Initial setup of equipment
+        UpdateHotbarSprites();
         SetEquipmentToHands();
         FollowCameraRotation();
         EquipItemServerRpc(currentEquipped);
@@ -57,6 +58,17 @@ public class PlayerInventory : NetworkBehaviour
             equipment[(int)currentEquipped].ResetAbility();
 
         equipment[(int)currentEquipped].SetAnimations();
+    }
+
+    private void UpdateHotbarSprites()
+    {
+        foreach (Equipment item in equipment)
+        {
+            if (item.objectSprite != null)
+            {
+                hotbarIcons[(int)item.inventorySlot].UpdateSprite(item.objectSprite.sprite);
+            }
+        }
     }
 
     private void SetEquipmentToHands()
@@ -94,6 +106,7 @@ public class PlayerInventory : NetworkBehaviour
         // Update equipment positions
         SetEquipmentToHands();
         FollowCameraRotation();
+        UpdateHotbarSprites();
 
         //Refresh equipment
         EquipItemClientRpc(currentEquipped);

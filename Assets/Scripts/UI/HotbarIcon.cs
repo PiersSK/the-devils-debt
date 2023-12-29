@@ -55,4 +55,11 @@ public class HotbarIcon : MonoBehaviour
         cooldown.fillAmount = 1;
         cooldownDisplay.text = cooldownLength.ToString();
     }
+
+
+    public void UpdateSprite(Sprite newSprite)
+    {
+        icon.sprite = newSprite;
+    }
+
 }
