@@ -79,8 +79,7 @@ public class ObjectiveController : NetworkBehaviour
     private void SetObjective()
     {
         int objectiveOptions = Enum.GetValues(typeof(ObjectiveType)).Cast<int>().Max();
-        //objectiveSelected.Value = (ObjectiveType)UnityEngine.Random.Range(0, objectiveOptions+1);
-        objectiveSelected.Value = ObjectiveType.Keys;
+        objectiveSelected.Value = (ObjectiveType)UnityEngine.Random.Range(0, objectiveOptions+1);
         objectiveText.text = objectiveMessages[(int)objectiveSelected.Value];
 
     }

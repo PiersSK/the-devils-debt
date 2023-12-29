@@ -37,12 +37,18 @@ public class TreasureChest : NetworkInteractable
         if (!isOpen.Value) {
             isOpen.Value = true;
 
-            if (ObjectiveController.Instance.objectiveSelected.Value == ObjectiveController.ObjectiveType.Keys) {
+            if (ObjectiveController.Instance.objectiveSelected.Value == ObjectiveController.ObjectiveType.Keys
+                && !ObjectiveController.Instance.objectiveComplete) {
                 //ObjectiveController.Instance.ProgressObjective();
                 Transform keyObj = Instantiate(Resources.Load<Transform>("Pickups/ObjectiveKey"));
                 keyObj.GetComponent<PickupInteractable>().UpdateRootPosition(transform.position + lootOffset);
                 keyObj.GetComponent<NetworkObject>().Spawn();
             }
+            else
+            {
+                SpawnLoot("Equipment/Sword2", 10);
+            }
+
 
             SpawnPickup("Pickups/HealthOrb", 7);
             SpawnPickup("Pickups/ManaOrb", 3);
@@ -50,15 +56,16 @@ public class TreasureChest : NetworkInteractable
     }
 
 
-    ////Health Orb spawn
-    //SpawnPickup("Pickups/HealthOrb", 7);
-
-    ////Mana Orb spawn
-    //SpawnPickup("Pickups/ManaOrb", 3);
-
-    //Destroy(gameObject);
-    //NetworkObject.Despawn();
-    //}
+    private void SpawnLoot(string prefabName, int spawnChance)
+    {
+        if (Random.Range(0, 10) < spawnChance)
+        {
+            Transform loot = Resources.Load<Transform>(prefabName);
+            loot.position = transform.position + lootOffset;
+            Transform lootObj = Instantiate(loot);
+            lootObj.GetComponent<NetworkObject>().Spawn();
+        }
+    }
 
     private void SpawnPickup(string prefabName, int spawnChance)
     {
