@@ -426,6 +426,7 @@ MonoBehaviour:
   isPickedUp: 0
   onCooldown: 0
   equippedPlayer: {fileID: 0}
+  rarity: 4
   animator: {fileID: 0}
 --- !u!1 &8090418048480040870
 GameObject:

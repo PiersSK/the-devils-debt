@@ -758,6 +758,7 @@ MonoBehaviour:
   isPickedUp: 0
   onCooldown: 0
   equippedPlayer: {fileID: 0}
+  rarity: 4
   animator: {fileID: 0}
   manaCost: 0
   firerate: 1

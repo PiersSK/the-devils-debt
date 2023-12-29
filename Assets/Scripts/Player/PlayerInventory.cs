@@ -73,8 +73,6 @@ public class PlayerInventory : NetworkBehaviour
 
     public void PickupItem(GameObject itemObj)
     {
-        //TODO: Prevent if on cooldown?
-
         Equipment pickup = itemObj.GetComponent<Equipment>();
         Transform itemToDrop = equipment[(int)pickup.inventorySlot].transform;
 

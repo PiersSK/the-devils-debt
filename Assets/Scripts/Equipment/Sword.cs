@@ -39,8 +39,9 @@ public class Sword : Equipment
     private bool attacking = false;
     private int attackCount = 0; //Tracks if it's a foreswing or backswing
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         Debug.Log("start: rta true");
         readyToAttack = true;
         gameObject.SetActive(true);

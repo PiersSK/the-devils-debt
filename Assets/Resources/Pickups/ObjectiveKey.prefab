@@ -137,6 +137,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7359948733807829971}
+  - {fileID: 6903662801663760427}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7758140573866595888
@@ -182,7 +183,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   promptMessage: Objective Key
   inventorySlot: 0
+  spriteObject: {fileID: 1253733462899256160}
+  equipmentObject: {fileID: 8414444842901692314}
   objectSprite: {fileID: 8408126975984146992}
+  isPickedUp: 0
 --- !u!114 &2181600393663683350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,3 +304,34 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &8414444842901692314
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6903662801663760427}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6903662801663760427
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8414444842901692314}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7721381362460406546}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
