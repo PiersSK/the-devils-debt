@@ -48,12 +48,10 @@ public class Sword : Equipment
 
     public override void PerformAbility()
     {
-        Debug.Log("rta: "+readyToAttack+" att: " + attacking + " stm: " + (Player.LocalInstance.playerMotor.currentStamina < staminaCost));
         if (!readyToAttack || attacking || Player.LocalInstance.playerMotor.currentStamina < staminaCost) return;
 
         Player.LocalInstance.playerMotor.currentStamina -= staminaCost;
 
-        Debug.Log("Setting rta to false");
         readyToAttack = false;
         attacking = true;
 
@@ -95,7 +93,6 @@ public class Sword : Equipment
 
     private void ResetAttack()
     {
-        Debug.Log("rta set true");
         readyToAttack = true;
         attacking = false;
     }
@@ -110,7 +107,7 @@ public class Sword : Equipment
                 audioSource.pitch = 1f;
                 audioSource.PlayOneShot(hitmarkerSound);
                 UIManager.Instance.ShowHitmarker();
-                enemy.DamageToEnemyServerRpc(attackDamage, NetworkObject);
+                enemy.DamageToEnemyServerRpc(attackDamage, Player.LocalInstance.GetComponent<NetworkObject>());
             }
             else
             {
@@ -140,6 +137,6 @@ public class Sword : Equipment
     {
         if (currentAnimationState == newState) return;
         currentAnimationState = newState;
-        GetComponent<Animator>().CrossFadeInFixedTime(currentAnimationState, 0.1f);
+        animator.CrossFadeInFixedTime(currentAnimationState, 0.1f);
     }
 }

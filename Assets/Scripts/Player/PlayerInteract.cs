@@ -11,6 +11,7 @@ public class PlayerInteract : NetworkBehaviour
     [SerializeField]
     private LayerMask mask;
     private InputManager inputManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,6 +38,10 @@ public class PlayerInteract : NetworkBehaviour
                 {
                     interactable.BaseInteract();
                 }
+            }
+            else
+            {
+                UpdateText(string.Empty, true);
             }
         }
         else

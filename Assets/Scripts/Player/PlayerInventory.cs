@@ -5,95 +5,128 @@ using UnityEngine;
 
 public class PlayerInventory : NetworkBehaviour
 {
-     public Equipment currentEquipped;
+    public enum InventorySlot
+    {
+        MainHand,
+        OffHand,
+        Accessory
+    }
 
-    [SerializeField] private Equipment mainHand;
-    [SerializeField] private Equipment offHand;
-    [SerializeField] private Equipment accessory;
+    public InventorySlot currentEquipped = InventorySlot.MainHand;
+
+    // Assumes index of equipment always set by InventorySlot enum
+    [SerializeField] private List<Equipment> equipment = new List<Equipment>(3) { null, null, null };
+    private List<HotbarIcon> hotbarIcons = new List<HotbarIcon>(3) { null, null, null };
+
+    [SerializeField] private Vector3 handPos;
 
     private PlayerInput.OnFootActions input;
-
-    public override void OnNetworkSpawn()
-    {
-
-    }
+    private UIManager ui;
 
     private void Start()
     {
+        // Get other class references
+        ui = UIManager.Instance;
         input = GetComponent<InputManager>().onFoot;
-        EquipItemServerRpc(currentEquipped.inventorySlot);
+
+        hotbarIcons[(int)InventorySlot.MainHand] = ui.hotbarMain;
+        hotbarIcons[(int)InventorySlot.OffHand] = ui.hotbarOff;
+        hotbarIcons[(int)InventorySlot.Accessory] = ui.hotbarAccessory;
+
+        // Initial setup of equipment
+        SetEquipmentToHands();
+        FollowCameraRotation();
+        EquipItemServerRpc(currentEquipped);
     }
 
     private void Update()
     {
         if (!IsOwner) return;
 
+        FollowCameraRotation();
+
         // Deal with switching equipment
-        if (input.EquipMain.IsPressed()) EquipItemServerRpc(Equipment.InventorySlot.MainHand);
-        if (input.EquipOff.IsPressed()) EquipItemServerRpc(Equipment.InventorySlot.OffHand);
-        if (input.EquipAccessory.IsPressed()) EquipItemServerRpc(Equipment.InventorySlot.Accessory);
+        if (input.EquipMain.IsPressed()) EquipItemServerRpc(InventorySlot.MainHand);
+        if (input.EquipOff.IsPressed()) EquipItemServerRpc(InventorySlot.OffHand);
+        if (input.EquipAccessory.IsPressed()) EquipItemServerRpc(InventorySlot.Accessory);
 
         // Check for equipment use
         if (input.Attack.IsPressed())
+            equipment[(int)currentEquipped].PerformAbility();
+        else
+            equipment[(int)currentEquipped].ResetAbility();
+
+        equipment[(int)currentEquipped].SetAnimations();
+    }
+
+    private void SetEquipmentToHands()
+    {
+        foreach (Equipment item in equipment)
+            item.transform.localPosition = handPos;
+    }
+
+    private void FollowCameraRotation()
+    {
+        foreach (Equipment item in equipment)
+            item.transform.rotation = GetComponent<PlayerLook>().cam.transform.rotation;
+    }
+
+    public void PickupItem(GameObject itemObj)
+    {
+        //TODO: Prevent if on cooldown?
+
+        Equipment pickup = itemObj.GetComponent<Equipment>();
+        Transform itemToDrop = equipment[(int)pickup.inventorySlot].transform;
+
+        // Pick up new item
+        equipment[(int)pickup.inventorySlot] = pickup.GetComponent<Equipment>();
+        pickup.ToggleIsPickedUp();
+
+        // Drop item in that slot
+        if (itemToDrop != null)
         {
-            currentEquipped.PerformAbility();
-        } else
-        {
-            currentEquipped.ResetAbility();
+            itemToDrop.parent = null;
+            itemToDrop.GetComponent<Equipment>().UpdateRootPosition(itemObj.transform.position);
+            itemToDrop.GetComponent<Equipment>().ToggleIsPickedUp();
         }
 
-        currentEquipped.SetAnimations();
+        // Put new item in hand
+        itemObj.transform.parent = transform;
+
+        // Update equipment positions
+        SetEquipmentToHands();
+        FollowCameraRotation();
+
+        //Refresh equipment
+        EquipItemClientRpc(currentEquipped);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void EquipItemServerRpc(Equipment.InventorySlot slot)
+    private void EquipItemServerRpc(InventorySlot slot)
     {
         EquipItemClientRpc(slot);
     }
 
     [ClientRpc]
-    private void EquipItemClientRpc(Equipment.InventorySlot slot)
+    private void EquipItemClientRpc(InventorySlot slot)
     {
         ResetEquipmentActiveStates();
 
-        switch (slot) {
-            case Equipment.InventorySlot.MainHand:
-                currentEquipped = mainHand;
-                UIManager.Instance.hotbarMain.SetEquipped(true);
-                UIManager.Instance.hotbarMain.itemInSlot = mainHand;
-                mainHand.equippedPlayer = Player.LocalInstance;
-                break;
-            case Equipment.InventorySlot.OffHand:
-                currentEquipped = offHand;
-                UIManager.Instance.hotbarOff.SetEquipped(true);
-                UIManager.Instance.hotbarOff.itemInSlot = offHand;
-                offHand.equippedPlayer = Player.LocalInstance;
-                break;
-            case Equipment.InventorySlot.Accessory:
-                currentEquipped = accessory;
-                UIManager.Instance.hotbarAccessory.SetEquipped(true);
-                UIManager.Instance.hotbarAccessory.itemInSlot = accessory;
-                accessory.equippedPlayer = Player.LocalInstance;
-                break;
-        }
+        currentEquipped = slot;
+        hotbarIcons[(int)slot].SetEquipped(true);
+        hotbarIcons[(int)slot].itemInSlot = equipment[(int)slot];
+        equipment[(int)slot].equippedPlayer = Player.LocalInstance;
 
-        currentEquipped.gameObject.SetActive(true);
+        equipment[(int)slot].gameObject.SetActive(true);
     }
 
     private void ResetEquipmentActiveStates()
     {
-        mainHand.gameObject.SetActive(false);
-        offHand.gameObject.SetActive(false);
-        accessory.gameObject.SetActive(false);
-
-        mainHand.equippedPlayer = Player.LocalInstance;
-        offHand.equippedPlayer = Player.LocalInstance;
-        accessory.equippedPlayer = Player.LocalInstance;
-
-        UIManager.Instance.hotbarMain.SetEquipped(false);
-        UIManager.Instance.hotbarOff.SetEquipped(false);
-        UIManager.Instance.hotbarAccessory.SetEquipped(false);
-
-
+        foreach (Equipment item in equipment)
+        {
+            item.gameObject.SetActive(false);
+            item.equippedPlayer = Player.LocalInstance;
+            hotbarIcons[(int)item.inventorySlot].SetEquipped(false);
+        }
     }
 }

@@ -11,6 +11,7 @@ public class Tome : Equipment
 
     public override void PerformAbility()
     {
+        //TODO: Work out why it won't work if model spawns inactive
         if (!onCooldown && equippedPlayer.playerMana.currentMana.Value >= manaCost)
         {
             Debug.Log("Triggered tome attack");
@@ -18,6 +19,7 @@ public class Tome : Equipment
 
             equippedPlayer.playerMana.IncrementPlayerManaServerRpc(-(int)manaCost);
 
+            Debug.Log("Calling RPC, IsServer="+IsServer+", IsOwner="+IsOwner+", IsSpawned="+IsSpawned);
             ShootFireballServerRpc(Player.LocalInstance.GetComponent<NetworkObject>());
 
 

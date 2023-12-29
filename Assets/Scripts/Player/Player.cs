@@ -12,6 +12,7 @@ public class Player : NetworkBehaviour
     public PlayerInteract playerInteract;
     public PlayerAttack playerAttack;
     public PlayerMana playerMana;
+    public PlayerInventory playerInventory;
 
     public override void OnNetworkSpawn()
     {
@@ -26,6 +27,6 @@ public class Player : NetworkBehaviour
         playerInteract = GetComponent<PlayerInteract>();
         playerAttack = GetComponent<PlayerAttack>();
         playerMana = GetComponent<PlayerMana>();
+        playerInventory = GetComponent<PlayerInventory>();
     }
-
 }
