@@ -14,13 +14,14 @@ public class PickupInteractable : NetworkInteractable
     public Image objectSprite;
     private float spinSpeed = 20f;
     private float currentSpin = 0f;
-    private Vector3 startPos;
+
+    public Vector3 rootPosition;
 
     [SerializeField] private bool isPickedUp = false;
 
     private void Awake()
     {
-        startPos = transform.position;
+        rootPosition = transform.position;
         interactCollider = GetComponent<Collider>();
 
         spriteObject.SetActive(!isPickedUp);
@@ -38,14 +39,14 @@ public class PickupInteractable : NetworkInteractable
 
             transform.Rotate(Vector3.up * (Time.deltaTime * spinSpeed));
 
-            Vector3 currentPos = new Vector3(startPos.x, startPos.y + Mathf.Sin(currentSpin) / 8, startPos.z);
+            Vector3 currentPos = new Vector3(rootPosition.x, rootPosition.y + Mathf.Sin(currentSpin) / 8, rootPosition.z);
             transform.position = currentPos;
         }
     }
 
     public void UpdateRootPosition(Vector3 newPos)
     {
-        startPos = newPos;
+        rootPosition = newPos;
         transform.position = newPos;
     }
 
@@ -64,13 +65,9 @@ public class PickupInteractable : NetworkInteractable
     protected override void Interact()
     {
         if (isPickedUp) return;
-        //Spawn actual item
-        //Put in player hand
-        //Equip
+
         PlayerInventory inventory = Player.LocalInstance.GetComponent<PlayerInventory>();
-        inventory.PickupItem(gameObject);
-        //Drop current equipped
-        //Sawn old equipped interactable
+        inventory.PickupItemServerRpc(gameObject);
     }
 
 }

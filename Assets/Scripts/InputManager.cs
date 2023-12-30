@@ -9,7 +9,8 @@ public class InputManager : NetworkBehaviour
 
     private PlayerMotor motor;
     private PlayerLook look;
-    private PlayerAttack attack;
+
+    private PlayerInventory inventory;
     // Start is called before the first frame update
 
     private bool cursorIsLocked = true;
@@ -21,7 +22,7 @@ public class InputManager : NetworkBehaviour
 
         motor = GetComponent<PlayerMotor>();
         look = GetComponent<PlayerLook>();
-        attack = GetComponent<PlayerAttack>();
+        inventory = GetComponent<PlayerInventory>();
     }
 
     public override void OnNetworkSpawn()
@@ -32,6 +33,11 @@ public class InputManager : NetworkBehaviour
         onFoot.Jump.performed += ctx => motor.Jump();
         onFoot.Sprint.performed += ctx => motor.ToggleSprint();
         onFoot.LockCursor.performed += ctx => ToggleCursorLock();
+
+        onFoot.EquipMain.performed += ctx => inventory.EquipItemServerRpc(PlayerInventory.InventorySlot.MainHand);
+        onFoot.EquipOff.performed += ctx => inventory.EquipItemServerRpc(PlayerInventory.InventorySlot.OffHand);
+        onFoot.EquipAccessory.performed += ctx => inventory.EquipItemServerRpc(PlayerInventory.InventorySlot.Accessory);
+
     }
 
     private void ToggleCursorLock()
