@@ -37,7 +37,7 @@ public class Fountain : NetworkBehaviour
                 manaTimer += Time.deltaTime;
                 if (manaTimer >= manaRegenSpeed)
                 {
-                    Player.LocalInstance.playerMana.IncrementPlayerManaServerRpc(1);
+                    Player.LocalInstance.playerMana.IncrementPlayerMana(1);
                     SpendFountainManaServerRpc();
                     manaTimer = 0f;
                 }
