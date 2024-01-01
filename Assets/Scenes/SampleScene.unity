@@ -266,9 +266,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af39e483ce701364f8284356ad696e1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectiveUI: {fileID: 0}
-  objectiveText: {fileID: 0}
-  objectiveBar: {fileID: 0}
   objectiveSelected:
     m_InternalValue: 0
   objectiveComplete: 0
@@ -536,8 +533,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4858eb7607392b4290b545a8cf9b5b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectiveSpawnChance: 0
-  objectiveMaxRooms: 10
   navMeshSurface: {fileID: 1802736995}
   startingRoom: {fileID: 3090206515393875572}
   maxRoomRadius: 10
@@ -545,6 +540,9 @@ MonoBehaviour:
   roomWidth: 20
   roomHeight: 6
   stairSpawnChance: 10
+  objectiveMinRadius: 2
+  objectiveMaxRadius: 3
+  objectiveCanSpawnOnDifferentFloor: 0
 --- !u!4 &962900637
 Transform:
   m_ObjectHideFlags: 0

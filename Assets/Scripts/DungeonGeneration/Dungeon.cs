@@ -8,6 +8,8 @@ using Random = UnityEngine.Random;
 
 public class Dungeon : NetworkBehaviour
 {
+    public static Dungeon Instance;
+
     [Header("Starting Objects")]
     [SerializeField] private NavMeshSurface navMeshSurface;
     [SerializeField] private Room startingRoom;
@@ -30,10 +32,11 @@ public class Dungeon : NetworkBehaviour
 
     private void Start()
     {
+        Instance = this;
         InitiateGrid();
         dungeonGrid[maxRoomRadius, maxRoomRadius, maxFloors/2] = startingRoom;
         startingRoom.roomCoords = new Vector3(maxRoomRadius, maxRoomRadius, maxFloors / 2);
-
+        Debug.Log("Starting Room is at " + startingRoom.roomCoords);
         AssignObjectiveRoomCoords();
         Debug.Log("Objective Room is at " + objectiveCoords);
     }
@@ -45,6 +48,37 @@ public class Dungeon : NetworkBehaviour
         int z = objectiveCanSpawnOnDifferentFloor ? Random.Range(0, maxFloors) : (int)startingRoom.roomCoords.z;
 
         objectiveCoords = new Vector3(x, y, z);
+    }
+
+    private Vector3 GetGridOfPlayer()
+    {
+        Vector3 playerPos = Player.LocalInstance.transform.position;
+        int x = maxRoomRadius + (int)Mathf.Round(playerPos.x / roomWidth);
+        int y = maxRoomRadius + (int)Mathf.Round(playerPos.z / roomWidth);
+        int z = (maxFloors / 2) + (int)Mathf.Round(playerPos.y / roomHeight);
+
+        return new Vector3(x,y,z);
+    }
+
+    public DoorDirection GetPathToObjective()
+    {
+        float minDistance = Mathf.Infinity;
+        DoorDirection bestDirection = DoorDirection.None;
+        Vector3 playerRoomCoords = GetGridOfPlayer();
+
+        if (playerRoomCoords == objectiveCoords) return bestDirection;
+
+        foreach (DoorDirection dir in cardinals)
+        {
+            float dist = Vector3.Distance(objectiveCoords, (playerRoomCoords + DirectionToGrid(dir)));
+            if (dist < minDistance)
+            {
+                bestDirection = dir;
+                minDistance = dist;
+            }
+        }
+
+        return bestDirection;
     }
 
     private void InitiateGrid()

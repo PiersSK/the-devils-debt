@@ -14,7 +14,7 @@ public class PickupInteractable : NetworkInteractable
 
     public Vector3 rootPosition;
 
-    [SerializeField] private bool isPickedUp = false;
+    [SerializeField] protected bool isPickedUp = false;
 
     private void Awake()
     {

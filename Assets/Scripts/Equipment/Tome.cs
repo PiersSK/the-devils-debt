@@ -13,13 +13,8 @@ public class Tome : Equipment
     {
         if (!onCooldown && equippedPlayer.playerMana.IncrementPlayerMana(-(int)manaCost))
         {
-            Debug.Log("Triggered tome attack");
             UIManager.Instance.hotbarOff.PutOnCooldown(firerate);
-
-            Debug.Log("Calling RPC, IsServer="+IsServer+", IsOwner="+IsOwner+", IsSpawned="+IsSpawned);
             ShootFireballServerRpc(Player.LocalInstance.GetComponent<NetworkObject>());
-
-
         }
     }
 
