@@ -27,7 +27,7 @@ public class PlayerMana : NetworkBehaviour
 
     public void IncrementPlayerMana(int incr)
     {
-        if(currentMana.Value + incr <= 0)
+        if(currentMana.Value + incr < 0)
         {
             UIManager.Instance.notification.ShowNotification("Insufficient Mana!");
         }

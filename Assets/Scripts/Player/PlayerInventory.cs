@@ -137,7 +137,6 @@ public class PlayerInventory : NetworkBehaviour
             string prefabName = GetSlotPrefab((InventorySlot)i);
             if (equipment[i] == null && prefabName != string.Empty)
             {
-                Debug.Log("spawning item " + prefabName);
                 GameObject itemPrefabObj = Resources.Load<GameObject>(prefabName);
                 GameObject itemObj = Instantiate(itemPrefabObj.gameObject);
                 NetworkObject itemNO = itemObj.GetComponent<NetworkObject>();
