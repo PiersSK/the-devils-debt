@@ -11,6 +11,7 @@ public class PlayerInteract : NetworkBehaviour
     [SerializeField]
     private LayerMask mask;
     private InputManager inputManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,10 +34,14 @@ public class PlayerInteract : NetworkBehaviour
             {
                 IInteractable interactable = hitInfo.collider.GetComponent<IInteractable>();
                 UpdateText(interactable.GetPromptMessage(), interactable.CanInteract());
-                if (inputManager.onFoot.Interact.triggered)
+                if (inputManager.onFoot.Interact.triggered && interactable.CanInteract())
                 {
                     interactable.BaseInteract();
                 }
+            }
+            else
+            {
+                UpdateText(string.Empty, true);
             }
         }
         else

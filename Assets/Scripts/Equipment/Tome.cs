@@ -18,6 +18,7 @@ public class Tome : Equipment
 
             equippedPlayer.playerMana.IncrementPlayerManaServerRpc(-(int)manaCost);
 
+            Debug.Log("Calling RPC, IsServer="+IsServer+", IsOwner="+IsOwner+", IsSpawned="+IsSpawned);
             ShootFireballServerRpc(Player.LocalInstance.GetComponent<NetworkObject>());
 
 
