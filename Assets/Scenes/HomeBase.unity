@@ -2959,8 +2959,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   notificationBackground: {fileID: 1709412159}
   notificationText: {fileID: 1192143869}
-  visibilityTime: 2
-  fadeTime: 1
+  visibilityTime: 1
+  fadeTime: 0.5
 --- !u!1 &709275754
 GameObject:
   m_ObjectHideFlags: 0

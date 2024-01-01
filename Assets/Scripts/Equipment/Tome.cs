@@ -11,12 +11,10 @@ public class Tome : Equipment
 
     public override void PerformAbility()
     {
-        if (!onCooldown && equippedPlayer.playerMana.currentMana.Value >= manaCost)
+        if (!onCooldown && equippedPlayer.playerMana.IncrementPlayerMana(-(int)manaCost))
         {
             Debug.Log("Triggered tome attack");
             UIManager.Instance.hotbarOff.PutOnCooldown(firerate);
-
-            equippedPlayer.playerMana.IncrementPlayerMana(-(int)manaCost);
 
             Debug.Log("Calling RPC, IsServer="+IsServer+", IsOwner="+IsOwner+", IsSpawned="+IsSpawned);
             ShootFireballServerRpc(Player.LocalInstance.GetComponent<NetworkObject>());
