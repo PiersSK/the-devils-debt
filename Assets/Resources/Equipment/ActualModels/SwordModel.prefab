@@ -82,9 +82,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f38948f8c3427a438628158498a3b6b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 660188077863008366}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f38948f8c3427a438628158498a3b6b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4504008724628330356}
   m_SourcePrefab: {fileID: 100100000, guid: 4f38948f8c3427a438628158498a3b6b, type: 3}
 --- !u!1 &3783925879754015739 stripped
 GameObject:
@@ -126,29 +123,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TransitionStateInfoList: []
   m_Animator: {fileID: 5923978108909970464}
---- !u!114 &4504008724628330356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3783925879754015739}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 278e941704ae240d89ecced2865f1a09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1

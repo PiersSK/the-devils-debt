@@ -119,7 +119,7 @@ public class Sword : Equipment
         }
     }
 
-    [ServerRpc]
+    [ServerRpc (RequireOwnership = false)]
     private void PlaySoundForAllServerRpc(float pitch)
     {
         PlaySoundForAllClientRpc(pitch);

@@ -3,9 +3,6 @@ using UnityEngine.UI;
 
 public class PickupInteractable : NetworkInteractable
 {
-    // TODO: Combine with Equipment class????
-
-
     public PlayerInventory.InventorySlot inventorySlot;
     [SerializeField] private GameObject spriteObject;
     [SerializeField] private GameObject equipmentObject;
@@ -52,7 +49,6 @@ public class PickupInteractable : NetworkInteractable
 
     public void ToggleIsPickedUp()
     {
-        Debug.Log(IsSpawned);
         isPickedUp = !isPickedUp;
 
         if (!isPickedUp) gameObject.SetActive(true);

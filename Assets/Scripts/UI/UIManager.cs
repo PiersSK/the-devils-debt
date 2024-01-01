@@ -19,6 +19,11 @@ public class UIManager : MonoBehaviour
     public HotbarIcon hotbarOff;
     public HotbarIcon hotbarAccessory;
 
+    [Header("ObjectiveUI")]
+    public GameObject objectiveUI;
+    public TextMeshProUGUI objectiveText;
+    public Image objectiveBar;
+
     private void Awake()
     {
         Instance = this;

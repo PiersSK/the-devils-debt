@@ -34,7 +34,7 @@ public class PlayerInteract : NetworkBehaviour
             {
                 IInteractable interactable = hitInfo.collider.GetComponent<IInteractable>();
                 UpdateText(interactable.GetPromptMessage(), interactable.CanInteract());
-                if (inputManager.onFoot.Interact.triggered)
+                if (inputManager.onFoot.Interact.triggered && interactable.CanInteract())
                 {
                     interactable.BaseInteract();
                 }

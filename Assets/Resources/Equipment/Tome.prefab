@@ -99,6 +99,7 @@ MonoBehaviour:
   spriteObject: {fileID: 6289449397805949431}
   equipmentObject: {fileID: 7303679953419540662}
   objectSprite: {fileID: 969412171941164745}
+  rootPosition: {x: 0, y: 0, z: 0}
   isPickedUp: 0
   onCooldown: 0
   equippedPlayer: {fileID: 0}

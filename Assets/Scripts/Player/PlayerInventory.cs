@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -11,6 +13,14 @@ public class PlayerInventory : NetworkBehaviour
         OffHand,
         Accessory
     }
+
+    [Header("UI Settings")]
+    [SerializeField] private Sprite defaultMainSprite;
+    [SerializeField] private Sprite defaultOffSprite;
+    [SerializeField] private Sprite defaultAccessorySprite;
+
+    [Header("Player Settings")]
+    [SerializeField] private Vector3 handPos;
 
     [Header("Starting Equipment")]
     [SerializeField] private string startingMain;
@@ -24,19 +34,12 @@ public class PlayerInventory : NetworkBehaviour
     private List<Equipment> equipment;
     private List<HotbarIcon> hotbarIcons;
 
-    [SerializeField] private Vector3 handPos;
 
     private PlayerInput.OnFootActions input;
     private UIManager ui;
 
     private void Start()
     {
-
-        // TODO: fix spawning of equipment on player join:
-        // Currently, host correctly spawns and parents objects to players
-        // BUT the client spawns dupes, and fails to parent. On the client, the parented
-        // objects fail to follow the player?
-
         equipment = new List<Equipment>() { null, null, null };
         hotbarIcons = new List<HotbarIcon>() { null, null, null };
 
@@ -48,22 +51,15 @@ public class PlayerInventory : NetworkBehaviour
         hotbarIcons[(int)InventorySlot.OffHand] = ui.hotbarOff;
         hotbarIcons[(int)InventorySlot.Accessory] = ui.hotbarAccessory;
 
-        if (startingMain != null) SpawnStartingGearServerRpc(startingMain);
-        if (startingOff != null) SpawnStartingGearServerRpc(startingOff);
-        if (startingAccessory != null) SpawnStartingGearServerRpc(startingAccessory);
-
         // Initial setup of equipment
-        UpdateHotbarSprites();
-        SetEquipmentToHands();
-        FollowCameraRotation();
-        EquipItemServerRpc(currentEquipped);
+        RefreshEquipmentState();
     }
 
     private void Update()
     {
-        if (!IsOwner) return;
-
         FollowCameraRotation();
+
+        if (!IsOwner || equipment[(int)currentEquipped] == null) return;
 
         // Check for equipment use
         if (input.Attack.IsPressed())
@@ -72,6 +68,16 @@ public class PlayerInventory : NetworkBehaviour
             equipment[(int)currentEquipped].ResetAbility();
 
         equipment[(int)currentEquipped].SetAnimations();
+    }
+
+    private void RefreshEquipmentState()
+    {
+        // Initial setup of equipment
+        Debug.Log("RefestEquipmentState invoked");
+        if(IsOwner) UpdateHotbarSprites();
+        SetEquipmentToHands();
+        FollowCameraRotation();
+        EquipItemServerRpc(currentEquipped);
     }
 
     private void UpdateHotbarSprites()
@@ -107,32 +113,58 @@ public class PlayerInventory : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SpawnStartingGearServerRpc(string prefabName)
+    private string GetSlotPrefab(InventorySlot slot)
     {
-        Debug.Log("Spawning " + prefabName);
-        GameObject startingObj = Resources.Load<GameObject>(prefabName);
-        GameObject startingNO = Instantiate(startingObj.gameObject);
-        startingNO.GetComponent<NetworkObject>().Spawn();
-        PickupItem(startingNO);
+        switch(slot)
+        {
+            case InventorySlot.MainHand:
+                return startingMain;
+            case InventorySlot.OffHand:
+                return startingOff;
+            case InventorySlot.Accessory:
+                return startingAccessory;
+            default:
+                return string.Empty;
+        }
+    }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnStartingGearServerRpc()
+    {
+        int maxSlot = (int)Enum.GetValues(typeof(InventorySlot)).Cast<InventorySlot>().Max();
+        for (int i = 0; i <= maxSlot; i++)
+        {
+            string prefabName = GetSlotPrefab((InventorySlot)i);
+            if (equipment[i] == null && prefabName != string.Empty)
+            {
+                GameObject itemPrefabObj = Resources.Load<GameObject>(prefabName);
+                GameObject itemObj = Instantiate(itemPrefabObj.gameObject);
+                NetworkObject itemNO = itemObj.GetComponent<NetworkObject>();
+                itemNO.Spawn();
+                PickupItemClientRpc(itemNO);
+
+            }
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void PickupItemServerRpc(NetworkObjectReference itemNOR)
     {
-        itemNOR.TryGet(out NetworkObject itemNO);
-        GameObject itemObj = itemNO.gameObject;
-        PickupItem(itemObj);
+        PickupItemClientRpc(itemNOR);
     }
+
+    [ClientRpc]
+    private void PickupItemClientRpc(NetworkObjectReference itemNOR)
+    {
+        itemNOR.TryGet(out NetworkObject itemNO);
+        PickupItem(itemNO.gameObject);
+    }
+
 
     private void PickupItem(GameObject itemObj)
     {
         Equipment pickup = itemObj.GetComponent<Equipment>();
 
-        Debug.Log(equipment);
-        Debug.Log(equipment.Count);
-        Debug.Log(equipment[(int)pickup.inventorySlot]);
         // Drop item in that slot
         if (equipment[(int)pickup.inventorySlot] != null)
         {
@@ -143,19 +175,18 @@ public class PlayerInventory : NetworkBehaviour
         }
 
         // Pick up new item
-        equipment[(int)pickup.inventorySlot] = pickup.GetComponent<Equipment>();
+        equipment[(int)pickup.inventorySlot] = pickup;
         pickup.ToggleIsPickedUp();
 
         // Put new item in hand
         itemObj.GetComponent<NetworkObject>().TrySetParent(transform);
+        Debug.Log("Item is child of player?: " + (itemObj.transform.parent == transform));
 
-        // Update equipment positions
-        SetEquipmentToHands();
-        FollowCameraRotation();
-        UpdateHotbarSprites();
-
-        //Refresh equipment
-        EquipItemClientRpc(currentEquipped);
+        //TODO: Find a better solution than this for parent delay on client lol
+        if (itemObj.transform.parent != transform)
+            Invoke(nameof(RefreshEquipmentState), 0.1f);
+        else
+            RefreshEquipmentState();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -170,22 +201,31 @@ public class PlayerInventory : NetworkBehaviour
         ResetEquipmentActiveStates();
 
         currentEquipped = slot;
-        hotbarIcons[(int)slot].SetEquipped(true);
-        hotbarIcons[(int)slot].itemInSlot = equipment[(int)slot];
-        equipment[(int)slot].equippedPlayer = Player.LocalInstance;
 
-        equipment[(int)slot].gameObject.SetActive(true);
+        if (IsOwner)
+        {
+            hotbarIcons[(int)slot].SetEquipped(true);
+            hotbarIcons[(int)slot].itemInSlot = equipment[(int)slot];
+        }
+
+        if (equipment[(int)slot] != null)
+        {
+            equipment[(int)slot].equippedPlayer = Player.LocalInstance;
+            equipment[(int)slot].gameObject.SetActive(true);
+        }
     }
 
     private void ResetEquipmentActiveStates()
     {
+        if(IsOwner)
+            foreach (HotbarIcon icon in hotbarIcons) icon.SetEquipped(false);
+
         foreach (Equipment item in equipment)
         {
             if (item != null)
             {
                 item.gameObject.SetActive(false);
                 item.equippedPlayer = Player.LocalInstance;
-                hotbarIcons[(int)item.inventorySlot].SetEquipped(false);
             }
         }
     }

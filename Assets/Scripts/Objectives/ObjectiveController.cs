@@ -23,10 +23,6 @@ public class ObjectiveController : NetworkBehaviour
         ,"Slay Enemies" //Monsters
     };
 
-    [SerializeField] GameObject objectiveUI;
-    [SerializeField] private TextMeshProUGUI objectiveText;
-    [SerializeField] private Image objectiveBar;
-
     public NetworkVariable<ObjectiveType> objectiveSelected;
     public bool objectiveComplete = false;
     public float objectiveGoal = 3f;
@@ -44,7 +40,7 @@ public class ObjectiveController : NetworkBehaviour
         objectiveProgress.OnValueChanged += ProgressChanged;
 
         if (IsServer) SetObjective();
-        else objectiveText.text = objectiveMessages[(int)objectiveSelected.Value]; //Assumes host joins first and has already set NVs
+        else UIManager.Instance.objectiveText.text = objectiveMessages[(int)objectiveSelected.Value]; //Assumes host joins first and has already set NVs
 
     }
 
@@ -52,7 +48,7 @@ public class ObjectiveController : NetworkBehaviour
     {
         objectiveProgress.Value = newVal;
 
-        objectiveBar.fillAmount = objectiveProgress.Value / objectiveGoal;
+        UIManager.Instance.objectiveBar.fillAmount = objectiveProgress.Value / objectiveGoal;
 
         if (objectiveProgress.Value == objectiveGoal)
             objectiveComplete = true;
@@ -60,7 +56,7 @@ public class ObjectiveController : NetworkBehaviour
 
     public void ShowObjectiveUI()
     {
-        objectiveUI.SetActive(true);
+        UIManager.Instance.objectiveUI.SetActive(true);
     }
 
     public void ProgressObjective()
@@ -80,7 +76,7 @@ public class ObjectiveController : NetworkBehaviour
     {
         int objectiveOptions = Enum.GetValues(typeof(ObjectiveType)).Cast<int>().Max();
         objectiveSelected.Value = (ObjectiveType)UnityEngine.Random.Range(0, objectiveOptions+1);
-        objectiveText.text = objectiveMessages[(int)objectiveSelected.Value];
+        UIManager.Instance.objectiveText.text = objectiveMessages[(int)objectiveSelected.Value];
 
     }
 

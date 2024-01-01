@@ -14,10 +14,13 @@ public class Player : NetworkBehaviour
     public PlayerMana playerMana;
     public PlayerInventory playerInventory;
 
+    public bool playerIsHost = false;
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
         if (IsOwner) LocalInstance = this;
+        playerIsHost = IsHost;
     }
 
     private void Start()
