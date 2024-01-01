@@ -34,6 +34,7 @@ public class GameOverUI : MonoBehaviour
         NetworkManager.Singleton.SceneManager.LoadScene("HomeBase", UnityEngine.SceneManagement.LoadSceneMode.Single);
         //TODO make this work. Network and persistent objects need to only spawn on load.
 
+        gameObject.SetActive(false);
         Time.timeScale = 1f;
     }
 
