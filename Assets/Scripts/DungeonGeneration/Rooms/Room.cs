@@ -50,40 +50,28 @@ public class Room : NetworkBehaviour
         doors = orderedDoors.ToArray();
     }
 
-    public void SpawnObjectiveDoor()
-    {
-        foreach (Door door in doors) //This has a directional bias, could make it random
-        {
-            if (door.portal.activeSelf)
-            {
-                door.ConvertToObjective();
-                break;
-            }
-        }
-    }
     public void DisableDoorToNeighbour(Room neighbour)
     {
         Vector2 diff = neighbour.roomCoords - roomCoords;
-        Debug.Log("Disabling room to neighbor at: " + neighbour.roomCoords + "|| Direction: " + diff);
 
         if (diff.y == 1) // neighbour is north
         {
-            if (roomType != RoomType.Objective) doors[0].RemoveDoor();
+            doors[0].RemoveDoor();
             neighbour.doors[2].RemoveDoor();
         }
         if (diff.y == -1) // neighbour is south
         {
-            if (roomType != RoomType.Objective) doors[2].RemoveDoor();
+            doors[2].RemoveDoor();
             neighbour.doors[0].RemoveDoor();
         }
         if (diff.x == 1) // neighbour is east
         {
-            if (roomType != RoomType.Objective) doors[1].RemoveDoor();
+            doors[1].RemoveDoor();
             neighbour.doors[3].RemoveDoor();
         }
         if (diff.x == -1) // neighbour is west
         {
-            if (roomType != RoomType.Objective) doors[3].RemoveDoor();
+            doors[3].RemoveDoor();
             neighbour.doors[1].RemoveDoor();
         }
     }

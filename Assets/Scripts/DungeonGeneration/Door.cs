@@ -13,7 +13,8 @@ public class Door : NetworkBehaviour
         South,
         West,
         Down,
-        Up
+        Up,
+        None
     }
 
     public static DoorDirection[] cardinals = new DoorDirection[4]
@@ -33,6 +34,8 @@ public class Door : NetworkBehaviour
 
     public GameObject portal;
     private GameObject block;
+    [SerializeField] private Material objectiveMaterial;
+
 
     public override void OnNetworkSpawn()
     {
@@ -92,6 +95,7 @@ public class Door : NetworkBehaviour
 
         randomButton.roomType = Room.RoomType.Objective;
         randomButton.SetPromptMessage("Objective! [0]");
+        portal.GetComponent<MeshRenderer>().material = objectiveMaterial;
 
     }
     
@@ -114,6 +118,18 @@ public class Door : NetworkBehaviour
         }
 
         return Vector3.zero;
+    }
+
+    public static DoorDirection GridToDirection(Vector3 gridVector)
+    {
+        if (gridVector == new Vector3(0, 1, 0)) return DoorDirection.North;
+        else if (gridVector == new Vector3(0, -1, 0)) return DoorDirection.South;
+        else if (gridVector == new Vector3(1, 0, 0)) return DoorDirection.East;
+        else if (gridVector == new Vector3(-1, 0, 0)) return DoorDirection.West;
+        else if (gridVector == new Vector3(0, 0, 1)) return DoorDirection.Up;
+        else if (gridVector == new Vector3(0, 0, -1)) return DoorDirection.Down;
+
+        return DoorDirection.None;
     }
 
     public static Vector3 DirectionToWorldSpace(DoorDirection dir)
