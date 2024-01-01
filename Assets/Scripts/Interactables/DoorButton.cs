@@ -13,7 +13,7 @@ public class DoorButton : Interactable
     {
         if (manaCost <= Player.LocalInstance.playerMana.currentMana.Value)
         {
-            Player.LocalInstance.playerMana.IncrementPlayerManaServerRpc(-manaCost);
+            Player.LocalInstance.playerMana.IncrementPlayerMana(-manaCost);
             door.RemoveDoor();
             door.dungeon.AddRandomRoom(door.room, door.direction, roomType);
         }

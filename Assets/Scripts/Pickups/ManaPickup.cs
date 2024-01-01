@@ -11,7 +11,7 @@ public class ManaPickup : Pickup
     {
         if (CanPickUp(other.transform))
         {
-            other.GetComponent<PlayerMana>().IncrementPlayerManaServerRpc(manaValue);
+            other.GetComponent<PlayerMana>().IncrementPlayerMana(manaValue);
             DespawnServerRpc();
         }
     }

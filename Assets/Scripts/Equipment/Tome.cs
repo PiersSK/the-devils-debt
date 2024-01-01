@@ -16,7 +16,7 @@ public class Tome : Equipment
             Debug.Log("Triggered tome attack");
             UIManager.Instance.hotbarOff.PutOnCooldown(firerate);
 
-            equippedPlayer.playerMana.IncrementPlayerManaServerRpc(-(int)manaCost);
+            equippedPlayer.playerMana.IncrementPlayerMana(-(int)manaCost);
 
             Debug.Log("Calling RPC, IsServer="+IsServer+", IsOwner="+IsOwner+", IsSpawned="+IsSpawned);
             ShootFireballServerRpc(Player.LocalInstance.GetComponent<NetworkObject>());

@@ -19,6 +19,8 @@ public class UIManager : MonoBehaviour
     public HotbarIcon hotbarOff;
     public HotbarIcon hotbarAccessory;
 
+    public PlayerNotification notification;
+
     [Header("ObjectiveUI")]
     public GameObject objectiveUI;
     public TextMeshProUGUI objectiveText;

@@ -25,9 +25,22 @@ public class PlayerMana : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void IncrementPlayerManaServerRpc(int incr)
+    public void IncrementPlayerMana(int incr)
     {
+        if(currentMana.Value + incr <= 0)
+        {
+            UIManager.Instance.notification.ShowNotification("Insufficient Mana!");
+        }
+        else
+        {
+            IncrementPlayerManaServerRpc(incr);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void IncrementPlayerManaServerRpc(int incr)
+    {
+
         currentMana.Value += incr;
     }
 }
