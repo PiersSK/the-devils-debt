@@ -3,16 +3,18 @@ using UnityEngine;
 using Unity.Netcode;
 using static Door;
 using Unity.AI.Navigation;
+using System;
+using Random = UnityEngine.Random;
 
 public class Dungeon : NetworkBehaviour
 {
-    public float objectiveSpawnChance = 0f;
-    public float objectiveMaxRooms = 10f;
-    private bool objectiveSpawned = false;
+    public static Dungeon Instance;
 
+    [Header("Starting Objects")]
     [SerializeField] private NavMeshSurface navMeshSurface;
-
     [SerializeField] private Room startingRoom;
+
+    [Header("Generation Settings")]
     [SerializeField] private int maxRoomRadius = 10;
     [SerializeField] private int maxFloors = 3;
     [SerializeField] private float roomWidth = 20f;
@@ -20,13 +22,63 @@ public class Dungeon : NetworkBehaviour
     [SerializeField] private float stairSpawnChance = 10f;
     private Room[,,] dungeonGrid;
 
+    [Header("Objective Spawn")]
+    [SerializeField] private int objectiveMinRadius = 2;
+    [SerializeField] private int objectiveMaxRadius = 3;
+    [SerializeField] private bool objectiveCanSpawnOnDifferentFloor = false;
+    private Vector3 objectiveCoords;
+
     private NetworkObject lastSpawnedRoom;
 
     private void Start()
     {
+        Instance = this;
         InitiateGrid();
-        dungeonGrid[maxRoomRadius, maxRoomRadius, (int)maxFloors/2] = startingRoom;
-        startingRoom.roomCoords = new Vector3(maxRoomRadius, maxRoomRadius, (int)maxFloors / 2);
+        dungeonGrid[maxRoomRadius, maxRoomRadius, maxFloors/2] = startingRoom;
+        startingRoom.roomCoords = new Vector3(maxRoomRadius, maxRoomRadius, maxFloors / 2);
+        Debug.Log("Starting Room is at " + startingRoom.roomCoords);
+        AssignObjectiveRoomCoords();
+        Debug.Log("Objective Room is at " + objectiveCoords);
+    }
+
+    private void AssignObjectiveRoomCoords()
+    {
+        int x = (int)startingRoom.roomCoords.x + (Random.Range(0, 2) * 2 - 1) * Random.Range(objectiveMinRadius, objectiveMaxRadius + 1);
+        int y = (int)startingRoom.roomCoords.y + (Random.Range(0, 2) * 2 - 1) * Random.Range(objectiveMinRadius, objectiveMaxRadius + 1);
+        int z = objectiveCanSpawnOnDifferentFloor ? Random.Range(0, maxFloors) : (int)startingRoom.roomCoords.z;
+
+        objectiveCoords = new Vector3(x, y, z);
+    }
+
+    private Vector3 GetGridOfPlayer()
+    {
+        Vector3 playerPos = Player.LocalInstance.transform.position;
+        int x = maxRoomRadius + (int)Mathf.Round(playerPos.x / roomWidth);
+        int y = maxRoomRadius + (int)Mathf.Round(playerPos.z / roomWidth);
+        int z = (maxFloors / 2) + (int)Mathf.Round(playerPos.y / roomHeight);
+
+        return new Vector3(x,y,z);
+    }
+
+    public DoorDirection GetPathToObjective()
+    {
+        float minDistance = Mathf.Infinity;
+        DoorDirection bestDirection = DoorDirection.None;
+        Vector3 playerRoomCoords = GetGridOfPlayer();
+
+        if (playerRoomCoords == objectiveCoords) return bestDirection;
+
+        foreach (DoorDirection dir in cardinals)
+        {
+            float dist = Vector3.Distance(objectiveCoords, (playerRoomCoords + DirectionToGrid(dir)));
+            if (dist < minDistance)
+            {
+                bestDirection = dir;
+                minDistance = dist;
+            }
+        }
+
+        return bestDirection;
     }
 
     private void InitiateGrid()
@@ -78,8 +130,6 @@ public class Dungeon : NetworkBehaviour
 
     public void AddRandomRoom(Room currentRoom, DoorDirection dir, Room.RoomType roomType)
     {
-        Vector3 currentPos = currentRoom.gameObject.transform.position;
-        Vector3 currentCoords = currentRoom.roomCoords;
         NetworkObject currentRoomNO = currentRoom.GetComponent<NetworkObject>();
         string prefabName = "Rooms/";
         bool trySpawnStairs = false;
@@ -109,31 +159,17 @@ public class Dungeon : NetworkBehaviour
                 break;
         }
 
-        //InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
-
         if (Random.Range(0, 100) < stairSpawnChance && roomType != Room.RoomType.Objective && trySpawnStairs)
         {
             int upDown = Random.Range(0, 2); //0=up, 1=down
             if (CanSpawnDownStairs(currentRoom.roomCoords, dir) && upDown == 0)
             {
-                Debug.Log("Spawning stairs down");
-
                 InitiateNewRoomServerRpc(currentRoomNO, "Stairwell Top", dir, roomType);
-
-                Vector3 stairTopPos = currentPos + (DirectionToWorldSpace(dir) * roomWidth);
-                Vector3 stairTopGrid = currentCoords + DirectionToGrid(dir);
-
                 InitiateNewRoomServerRpc(lastSpawnedRoom, "Stairwell Bottom", DoorDirection.Down, roomType);
             }
             else if (CanSpawnUpStairs(currentRoom.roomCoords, dir) && upDown == 1)
             {
-                Debug.Log("Spawning stairs up");
-
                 InitiateNewRoomServerRpc(currentRoomNO, "Stairwell Bottom", dir, roomType);
-
-                Vector3 stairBottomPos = currentPos + (DirectionToWorldSpace(dir) * roomWidth);
-                Vector3 stairBottomGrid = currentCoords + DirectionToGrid(dir);
-
                 InitiateNewRoomServerRpc(lastSpawnedRoom, "Stairwell Top", DoorDirection.Up, roomType);
             }
             else
@@ -152,8 +188,6 @@ public class Dungeon : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void InitiateNewRoomServerRpc(NetworkObjectReference currentRoomNOR, string prefabName, DoorDirection dir, Room.RoomType roomType)
     {
-        
-
         // Server instantiates and spawns the room
         GameObject newRoomObj = Instantiate(Resources.Load<GameObject>(prefabName));
         newRoomObj.GetComponent<NetworkObject>().Spawn();
@@ -209,32 +243,19 @@ public class Dungeon : NetworkBehaviour
             newRoom.doors[((int)dir + 2) % 4].RemoveDoor(); //Remove door joining to entrance
         }
 
-        //Open doors to other adjacent rooms (leave Objective rooms as dead ends)
-        if (roomType != Room.RoomType.Objective)
+        //Open doors to other adjacent rooms
+        List<Room> neighbours = GetRoomNeighbours(newRoom);
+        foreach (Room room in neighbours)
         {
-            List<Room> neighbours = GetRoomNeighbours(newRoom);
-            foreach (Room room in neighbours)
-            {
-                if (room.roomCoords != currentCoords)
-                    room.DisableDoorToNeighbour(newRoom);
-            }
+            if (room.roomCoords != currentCoords)
+                room.DisableDoorToNeighbour(newRoom);
         }
 
-        //If the objective room hasn't spawned, give a chance for the door to be here
-        if (!objectiveSpawned)
+        Vector3 objectiveRelative = objectiveCoords - newRoom.roomCoords;
+        DoorDirection objectiveDoor = Door.GridToDirection(objectiveRelative);
+        if (Array.IndexOf(cardinals, objectiveDoor) > -1)
         {
-            float randSpawn = Random.Range(0, 100);
-            Debug.Log("Rolled " + randSpawn + " to spawn objective (currently needs " + objectiveSpawnChance + ")");
-            if (randSpawn < objectiveSpawnChance)
-            {
-                Debug.Log("Spawning Objective!");
-                newRoom.SpawnObjectiveDoor();
-                objectiveSpawned = true;
-            }
-            else
-            {
-                objectiveSpawnChance += 100 / objectiveMaxRooms;
-            }
+            newRoom.doors[(int)objectiveDoor].ConvertToObjective();
         }
 
         navMeshSurface.BuildNavMesh();

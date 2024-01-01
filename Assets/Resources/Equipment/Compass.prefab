@@ -105,6 +105,8 @@ MonoBehaviour:
   equippedPlayer: {fileID: 0}
   rarity: 0
   animator: {fileID: 0}
+  compassNeedle: {fileID: 1372950692208262186}
+  manaCost: 1
 --- !u!1 &1505836781337325974
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,6 +341,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a951db2031cca4719a604aaaacbca293, type: 3}
+--- !u!4 &1372950692208262186 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6809534148654529361, guid: a951db2031cca4719a604aaaacbca293, type: 3}
+  m_PrefabInstance: {fileID: 5588369396486817659}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4313721079507439207 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8525466020279027996, guid: a951db2031cca4719a604aaaacbca293, type: 3}

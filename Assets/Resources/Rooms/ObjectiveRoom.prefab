@@ -266,7 +266,7 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 0.11320752, g: 0.0927077, b: 0.015485938, a: 1}
+  m_Color: {r: 0.9245283, g: 0.7396227, b: 0, a: 1}
   m_Intensity: 8
   m_Range: 20
   m_SpotAngle: 130
@@ -402,7 +402,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3572440806016662704, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: room
@@ -418,7 +418,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7909492524320574999, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1346,7 +1346,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3572440806016662704, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: room
@@ -1358,7 +1358,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7909492524320574999, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1431,7 +1431,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3572440806016662704, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: room
@@ -1447,7 +1447,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7909492524320574999, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1617,9 +1617,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3191931218131160940, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5d625417d7a6bb2408a13ac424c28f69, type: 2}
     - target: {fileID: 3572440806016662704, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: room
@@ -1635,7 +1639,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7909492524320574999, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

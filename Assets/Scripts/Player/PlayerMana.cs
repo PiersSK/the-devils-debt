@@ -25,15 +25,18 @@ public class PlayerMana : NetworkBehaviour
         }
     }
 
-    public void IncrementPlayerMana(int incr)
+    //Returns bool to let you know if you could spend this or not
+    public bool IncrementPlayerMana(int incr)
     {
         if(currentMana.Value + incr < 0)
         {
             UIManager.Instance.notification.ShowNotification("Insufficient Mana!");
+            return false;
         }
         else
         {
             IncrementPlayerManaServerRpc(incr);
+            return true;
         }
     }
 
