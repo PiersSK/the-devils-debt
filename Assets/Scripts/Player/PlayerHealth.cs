@@ -29,6 +29,11 @@ public class PlayerHealth : NetworkBehaviour
             }
         }
 
+        if(currentHealth.Value == 0)
+        {
+            UIManager.Instance.gameOver.GameOver(false);
+        }
+
     }
 
     [ServerRpc(RequireOwnership = false)]

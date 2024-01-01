@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class ObjectiveChest : TreasureChest
 {
+    public override bool CanInteract()
+    {
+        return ObjectiveController.Instance.objectiveComplete;
+    }
 
     private void Update()
     {
@@ -17,5 +21,6 @@ public class ObjectiveChest : TreasureChest
     {
         if (!isOpen.Value)
             isOpen.Value = true;
+            UIManager.Instance.gameOver.GameOver(true);
     }
 }
