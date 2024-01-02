@@ -7,29 +7,35 @@ public class ObjectiveChest : TreasureChest
 {
     public override bool CanInteract()
     {
-        return ObjectiveController.Instance.objectiveComplete;
+        return ObjectiveController.Instance.objectiveComplete && !isOpen.Value;
     }
 
     private void Update()
     {
         if (!ObjectiveController.Instance.objectiveComplete)
-            SetPromptMessage(string.Empty);
-        else
+            SetPromptMessage("Locked!");
+        else if (!isOpen.Value)
             SetPromptMessage("Loot objective!");
+        else
+            SetPromptMessage("");
     }
 
     protected override void Interact()
     {
-        OpenChestServerRpc();
-        UIManager.Instance.gameOver.GameOverServerRpc(true);
+        OpenObjectiveChestServerRpc();
+
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void OpenChestServerRpc()
+    private void OpenObjectiveChestServerRpc()
     {
-        if (!isOpen.Value)
-        {
-            isOpen.Value = true;
-        }
+        isOpen.Value = true;
+        OpenObjectiveChestClientRpc();
+    }
+
+    [ClientRpc]
+    private void OpenObjectiveChestClientRpc()
+    {
+        UIManager.Instance.gameOver.GameOver(true);
     }
 }

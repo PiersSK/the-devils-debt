@@ -24,22 +24,24 @@ public class TreasureChest : NetworkInteractable
         }
     }
 
+    public override bool CanInteract()
+    {
+        return !isOpen.Value;
+    }
+
     protected override void Interact()
     {
-        Debug.Log("Chest interact happening");
         OpenChestServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void OpenChestServerRpc()
     {
-        Debug.Log("Chest serverRPC happening");
         if (!isOpen.Value) {
             isOpen.Value = true;
 
             if (ObjectiveController.Instance.objectiveSelected.Value == ObjectiveController.ObjectiveType.Keys
                 && !ObjectiveController.Instance.objectiveComplete) {
-                //ObjectiveController.Instance.ProgressObjective();
                 Transform keyObj = Instantiate(Resources.Load<Transform>("Pickups/ObjectiveKey"));
                 keyObj.GetComponent<PickupInteractable>().UpdateRootPosition(transform.position + lootOffset);
                 keyObj.GetComponent<NetworkObject>().Spawn();
@@ -70,13 +72,13 @@ public class TreasureChest : NetworkInteractable
     private void SpawnPickup(string prefabName, int spawnChance)
     {
         //Health Orb spawn
-        if (UnityEngine.Random.Range(0, 10) < spawnChance)
+        if (Random.Range(0, 10) < spawnChance)
         {
             Transform healthOrb = Resources.Load<Transform>(prefabName);
             healthOrb.position = new Vector3(
-                transform.position.x + UnityEngine.Random.Range(-1f, 1f)
+                transform.position.x + Random.Range(-1f, 1f)
                 , -1.6f
-                , transform.position.z + UnityEngine.Random.Range(-1f, 1f)
+                , transform.position.z + Random.Range(-1f, 1f)
             );
             Transform healthOrbObj = Instantiate(healthOrb);
             healthOrbObj.GetComponent<NetworkObject>().Spawn();

@@ -47,6 +47,11 @@ public class GameOverUI : MonoBehaviour
     [ClientRpc]
     public void GameOverClientRpc(bool success = true)
     {
+        GameOver(success);
+    }
+
+    public void GameOver(bool success)
+    {
         Cursor.lockState = CursorLockMode.None;
         Time.timeScale = 0f;
         gameObject.SetActive(true);
