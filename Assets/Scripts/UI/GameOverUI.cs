@@ -38,7 +38,14 @@ public class GameOverUI : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public void GameOver(bool success = true)
+    [ServerRpc(RequireOwnership = false)]
+    public void GameOverServerRpc(bool success = true)
+    {
+        GameOverClientRpc(success);
+    }
+
+    [ClientRpc]
+    public void GameOverClientRpc(bool success = true)
     {
         Cursor.lockState = CursorLockMode.None;
         Time.timeScale = 0f;

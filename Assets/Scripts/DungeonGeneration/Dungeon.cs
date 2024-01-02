@@ -41,6 +41,7 @@ public class Dungeon : NetworkBehaviour
         Debug.Log("Objective Room is at " + objectiveCoords);
     }
 
+    //TODO: NEEDS TO BE SET BY SERVER
     private void AssignObjectiveRoomCoords()
     {
         int x = (int)startingRoom.roomCoords.x + (Random.Range(0, 2) * 2 - 1) * Random.Range(objectiveMinRadius, objectiveMaxRadius + 1);
