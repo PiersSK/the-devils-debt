@@ -12,6 +12,7 @@ public class Player : NetworkBehaviour
     public PlayerInteract playerInteract;
     public PlayerAttack playerAttack;
     public PlayerMana playerMana;
+    public PlayerHealth playerHealth;
     public PlayerInventory playerInventory;
 
     public bool playerIsHost = false;
@@ -30,6 +31,7 @@ public class Player : NetworkBehaviour
         playerInteract = GetComponent<PlayerInteract>();
         playerAttack = GetComponent<PlayerAttack>();
         playerMana = GetComponent<PlayerMana>();
+        playerHealth = GetComponent<PlayerHealth>();
         playerInventory = GetComponent<PlayerInventory>();
     }
 }

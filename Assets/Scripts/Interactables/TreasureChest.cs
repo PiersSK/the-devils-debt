@@ -44,7 +44,7 @@ public class TreasureChest : NetworkInteractable
                 && !ObjectiveController.Instance.objectiveComplete) {
                 Transform keyObj = Instantiate(Resources.Load<Transform>("Pickups/ObjectiveKey"));
                 keyObj.GetComponent<PickupInteractable>().UpdateRootPosition(transform.position + lootOffset);
-                keyObj.GetComponent<NetworkObject>().Spawn();
+                keyObj.GetComponent<NetworkObject>().Spawn(true);
             }
             else
             {
@@ -65,7 +65,7 @@ public class TreasureChest : NetworkInteractable
             Transform loot = Resources.Load<Transform>(prefabName);
             loot.position = transform.position + lootOffset;
             Transform lootObj = Instantiate(loot);
-            lootObj.GetComponent<NetworkObject>().Spawn();
+            lootObj.GetComponent<NetworkObject>().Spawn(true);
         }
     }
 
@@ -81,7 +81,7 @@ public class TreasureChest : NetworkInteractable
                 , transform.position.z + Random.Range(-1f, 1f)
             );
             Transform healthOrbObj = Instantiate(healthOrb);
-            healthOrbObj.GetComponent<NetworkObject>().Spawn();
+            healthOrbObj.GetComponent<NetworkObject>().Spawn(true);
         }
 }
 }

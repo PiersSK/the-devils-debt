@@ -25,17 +25,6 @@ public class ObjectiveRoom : Room
         Transform chestPrefab = Resources.Load<Transform>(CHESTPREFAB);
         Transform chestObj = Instantiate(chestPrefab);
         chestObj.position = new Vector3(transform.position.x, transform.position.y - 1.7f, transform.position.z);
-        chestObj.GetComponent<NetworkObject>().Spawn();
-        //chestObj.GetComponent<NetworkObject>().TrySetParent(transform);
-
+        chestObj.GetComponent<NetworkObject>().Spawn(true);
     }
-
-    //[ClientRpc]
-    //private void SetEnemyPatrolClientRpc(NetworkObjectReference enemy, NetworkObjectReference path)
-    //{
-    //    enemy.TryGet(out NetworkObject enemyNO);
-    //    path.TryGet(out NetworkObject pathNO);
-
-    //    enemyNO.GetComponent<Enemy>().path = pathNO.GetComponent<Path>();
-    //}
 }

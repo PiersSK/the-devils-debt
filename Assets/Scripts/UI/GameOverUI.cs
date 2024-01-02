@@ -17,6 +17,8 @@ public class GameOverUI : MonoBehaviour
     private const string HOSTBUTTON = "Play Again";
     private const string CLIENTBUTTON = "Waiting For Host...";
 
+    private const string HOMESCENE = "HomeBase";
+
     private void Start()
     {
         restartButton.interactable = Player.LocalInstance.playerIsHost;
@@ -28,14 +30,34 @@ public class GameOverUI : MonoBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void ResetGameServerRpc()
     {
+        NetworkManager.Singleton.SceneManager.LoadScene(HOMESCENE, UnityEngine.SceneManagement.LoadSceneMode.Single);
+
         foreach (Player player in FindObjectsOfType<Player>())
+        {
+            player.GetComponent<CharacterController>().enabled = false;
             player.transform.position = Vector3.zero;
+            player.GetComponent<CharacterController>().enabled = true;
+        }
 
-        NetworkManager.Singleton.SceneManager.LoadScene("HomeBase", UnityEngine.SceneManagement.LoadSceneMode.Single);
-        //TODO make this work. Network and persistent objects need to only spawn on load.
+        ResetGameClientRpc();
+    }
 
-        gameObject.SetActive(false);
+    [ClientRpc]
+    private void ResetGameClientRpc()
+    {
+        // Clear inventory
+        Player.LocalInstance.playerInventory.ClearEquipiment();
+        // Reset Objective UI
+        UIManager.Instance.objectiveUI.SetActive(false);
+        UIManager.Instance.objectiveBar.fillAmount = 0;
+        // Reset player health and mana
+        Player.LocalInstance.playerMana.currentMana.Value = Player.LocalInstance.playerMana.maxMana;
+        Player.LocalInstance.playerHealth.currentHealth.Value = Player.LocalInstance.playerHealth.maxHealth;
+
+        // Unpause game
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        gameObject.SetActive(false);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -53,6 +75,7 @@ public class GameOverUI : MonoBehaviour
     public void GameOver(bool success)
     {
         Cursor.lockState = CursorLockMode.None;
+        Player.LocalInstance.transform.position = Vector3.zero;
         Time.timeScale = 0f;
         gameObject.SetActive(true);
         gameOverMessage.text = success ? SUCCESS : FAILURE;

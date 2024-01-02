@@ -70,10 +70,24 @@ public class PlayerInventory : NetworkBehaviour
         equipment[(int)currentEquipped].SetAnimations();
     }
 
+    public void ClearEquipiment()
+    {
+
+        foreach(Equipment item in equipment)
+        {
+            Destroy(item.gameObject);
+            item.GetComponent<NetworkObject>().Despawn();
+        }
+
+        equipment = new List<Equipment>() { null, null, null };
+
+        UpdateHotbarSprites();
+
+    }
+
     private void RefreshEquipmentState()
     {
         // Initial setup of equipment
-        Debug.Log("RefestEquipmentState invoked");
         if(IsOwner) UpdateHotbarSprites();
         SetEquipmentToHands();
         FollowCameraRotation();
@@ -82,9 +96,13 @@ public class PlayerInventory : NetworkBehaviour
 
     private void UpdateHotbarSprites()
     {
+        hotbarIcons[(int)InventorySlot.MainHand].UpdateSprite(defaultMainSprite);
+        hotbarIcons[(int)InventorySlot.OffHand].UpdateSprite(defaultOffSprite);
+        hotbarIcons[(int)InventorySlot.Accessory].UpdateSprite(defaultAccessorySprite);
+
         foreach (Equipment item in equipment)
         {
-            if (item!= null && item.objectSprite != null)
+            if (item != null && item.objectSprite != null)
             {
                 hotbarIcons[(int)item.inventorySlot].UpdateSprite(item.objectSprite.sprite);
             }
@@ -140,7 +158,7 @@ public class PlayerInventory : NetworkBehaviour
                 GameObject itemPrefabObj = Resources.Load<GameObject>(prefabName);
                 GameObject itemObj = Instantiate(itemPrefabObj.gameObject);
                 NetworkObject itemNO = itemObj.GetComponent<NetworkObject>();
-                itemNO.Spawn();
+                itemNO.Spawn(true);
                 PickupItemClientRpc(itemNO);
 
             }

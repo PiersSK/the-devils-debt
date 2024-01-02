@@ -248,6 +248,7 @@ MonoBehaviour:
   staminaMax: 3
   currentStamina: 0
   isMoving: 0
+  isGrounded: 0
 --- !u!114 &1217013688447386999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,6 +436,7 @@ MonoBehaviour:
   playerAttack: {fileID: 0}
   playerMana: {fileID: 0}
   playerInventory: {fileID: 0}
+  playerIsHost: 0
 --- !u!114 &-1125552691098008853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,11 +479,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 334ff49cac3c44d1d85d2424aee8b5cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultMainSprite: {fileID: 21300000, guid: 8c9a98aabeafe4d888e210dd35cc1b5f, type: 3}
+  defaultOffSprite: {fileID: 21300000, guid: e248468ee1cd4476e8b1ea31696ed5c9, type: 3}
+  defaultAccessorySprite: {fileID: 21300000, guid: f8f25e3b36cb04810a5ab2aa65a459b9, type: 3}
+  handPos: {x: 0.5, y: 0, z: 0.1}
   startingMain: Equipment/Sword
   startingOff: Equipment/Tome
   startingAccessory: Equipment/Compass
   currentEquipped: 0
-  handPos: {x: 0.5, y: 0, z: 0.1}
 --- !u!1 &6189434249826500495
 GameObject:
   m_ObjectHideFlags: 0
