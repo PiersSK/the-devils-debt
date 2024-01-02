@@ -30,6 +30,7 @@ public class GameOverUI : MonoBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void ResetGameServerRpc()
     {
+        Debug.Log("ResetGameServerRpc called");
         NetworkManager.Singleton.SceneManager.LoadScene(HOMESCENE, UnityEngine.SceneManagement.LoadSceneMode.Single);
 
         foreach (Player player in FindObjectsOfType<Player>())
@@ -42,9 +43,10 @@ public class GameOverUI : MonoBehaviour
         ResetGameClientRpc();
     }
 
-    [ClientRpc]
+    [ClientRpc] //TODO Doesn't run on non host client????
     private void ResetGameClientRpc()
     {
+        Debug.Log("Server resetting game through clientRPC");
         // Clear inventory
         Player.LocalInstance.playerInventory.ClearEquipiment();
         // Reset Objective UI
