@@ -70,14 +70,23 @@ public class PlayerInventory : NetworkBehaviour
         equipment[(int)currentEquipped].SetAnimations();
     }
 
-    public void ClearEquipiment()
+    public void DestroyEquipment()
     {
+        Debug.Log("Destroying equipment of player " + OwnerClientId);
 
-        foreach(Equipment item in equipment)
+        foreach (Equipment item in equipment)
         {
-            Destroy(item.gameObject);
-            item.GetComponent<NetworkObject>().Despawn();
+            if (item != null)
+            {
+                Debug.Log("Destroying item: " + item.name + "(is spawned " + item.IsSpawned + ")");
+                item.GetComponent<NetworkObject>().TryRemoveParent();
+                Destroy(item.gameObject);
+            }
         }
+    }
+
+    public void ClearEquipment()
+    {
 
         equipment = new List<Equipment>() { null, null, null };
 
@@ -198,7 +207,6 @@ public class PlayerInventory : NetworkBehaviour
 
         // Put new item in hand
         itemObj.GetComponent<NetworkObject>().TrySetParent(transform);
-        Debug.Log("Item is child of player?: " + (itemObj.transform.parent == transform));
 
         //TODO: Find a better solution than this for parent delay on client lol
         if (itemObj.transform.parent != transform)

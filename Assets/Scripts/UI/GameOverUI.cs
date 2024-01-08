@@ -25,6 +25,14 @@ public class GameOverUI : MonoBehaviour
         restartButtonText.text = Player.LocalInstance.playerIsHost ? HOSTBUTTON : CLIENTBUTTON;
 
         restartButton.onClick.AddListener(ResetGameServerRpc);
+
+        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+    }
+
+    private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        if(sceneName == HOMESCENE)
+            ResetSelf();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -35,26 +43,31 @@ public class GameOverUI : MonoBehaviour
 
         foreach (Player player in FindObjectsOfType<Player>())
         {
+            // Reset player position
             player.GetComponent<CharacterController>().enabled = false;
             player.transform.position = Vector3.zero;
             player.GetComponent<CharacterController>().enabled = true;
-        }
 
-        ResetGameClientRpc();
+            // Reset player equipment
+            player.playerInventory.DestroyEquipment();
+            player.playerInventory.ClearEquipment();
+
+            // Reset player health and mana
+            player.playerMana.currentMana.Value = Player.LocalInstance.playerMana.maxMana;
+            player.playerHealth.currentHealth.Value = Player.LocalInstance.playerHealth.maxHealth;
+
+        }
     }
 
-    [ClientRpc] //TODO Doesn't run on non host client????
-    private void ResetGameClientRpc()
+    private void ResetSelf()
     {
-        Debug.Log("Server resetting game through clientRPC");
+        Debug.Log("Resetting self");
         // Clear inventory
-        Player.LocalInstance.playerInventory.ClearEquipiment();
+        Player.LocalInstance.playerInventory.ClearEquipment();
+
         // Reset Objective UI
         UIManager.Instance.objectiveUI.SetActive(false);
         UIManager.Instance.objectiveBar.fillAmount = 0;
-        // Reset player health and mana
-        Player.LocalInstance.playerMana.currentMana.Value = Player.LocalInstance.playerMana.maxMana;
-        Player.LocalInstance.playerHealth.currentHealth.Value = Player.LocalInstance.playerHealth.maxHealth;
 
         // Unpause game
         Time.timeScale = 1f;
