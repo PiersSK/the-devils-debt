@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class StartGame : NetworkInteractable
 {
+    private const string DUNGEONSCENE = "Dungeon";
     
     public override bool CanInteract()
     {
@@ -18,6 +19,6 @@ public class StartGame : NetworkInteractable
             player.playerInventory.SpawnStartingGearServerRpc();
         }
 
-        NetworkManager.SceneManager.LoadScene("SampleScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
+        NetworkManager.SceneManager.LoadScene(DUNGEONSCENE, UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 }

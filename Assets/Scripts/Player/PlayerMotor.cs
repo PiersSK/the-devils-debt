@@ -22,7 +22,7 @@ public class PlayerMotor : NetworkBehaviour
     
 
     public bool isMoving;
-    private bool isGrounded;
+    public bool isGrounded;
     private Vector3 playerVelocity;
 
     public override void OnNetworkSpawn()
@@ -57,6 +57,15 @@ public class PlayerMotor : NetworkBehaviour
         }
 
         UIManager.Instance.stamina.UpdateBar(currentStamina, staminaMax);
+
+        //Fell OOB
+        if(transform.position.y < -100f)
+        {
+            Debug.Log("OOB! Resetting player to zero " + transform.position.y);
+            controller.enabled = false;
+            transform.position = Vector3.zero;
+            controller.enabled = true;
+        }
     }
 
     public void ProcessMove(Vector2 input)

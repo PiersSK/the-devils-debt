@@ -19,7 +19,7 @@ public class EnemyCamp : Room
     {
         Transform defaultPath = Instantiate(Resources.Load<Transform>("RoomPatrol"));
         defaultPath.position = transform.position + new Vector3(0, -1.6f, 0);
-        defaultPath.GetComponent<NetworkObject>().Spawn();
+        defaultPath.GetComponent<NetworkObject>().Spawn(true);
 
         Transform enemyPrefab = Resources.Load<Transform>(prefabName);
 
@@ -28,7 +28,7 @@ public class EnemyCamp : Room
             enemyPrefab.position = transform.position + new Vector3(Random.Range(-5f, 5f), -1f, Random.Range(-5f, 5f));
 
             Transform enemyObj = Instantiate(enemyPrefab);
-            enemyObj.GetComponent<NetworkObject>().Spawn();
+            enemyObj.GetComponent<NetworkObject>().Spawn(true);
 
             SetEnemyPatrolClientRpc(enemyObj.GetComponent<NetworkObject>(), defaultPath.GetComponent<NetworkObject>());
         }

@@ -131,7 +131,7 @@ public class Enemy : NetworkBehaviour
                 , transform.position.z + UnityEngine.Random.Range(-1f, 1f)
             );
             Transform healthOrbObj = Instantiate(healthOrb);
-            healthOrbObj.GetComponent<NetworkObject>().Spawn();
+            healthOrbObj.GetComponent<NetworkObject>().Spawn(true);
         }
     }
 

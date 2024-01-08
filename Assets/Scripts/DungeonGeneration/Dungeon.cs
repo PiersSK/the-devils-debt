@@ -36,9 +36,19 @@ public class Dungeon : NetworkBehaviour
         InitiateGrid();
         dungeonGrid[maxRoomRadius, maxRoomRadius, maxFloors/2] = startingRoom;
         startingRoom.roomCoords = new Vector3(maxRoomRadius, maxRoomRadius, maxFloors / 2);
-        Debug.Log("Starting Room is at " + startingRoom.roomCoords);
-        AssignObjectiveRoomCoords();
-        Debug.Log("Objective Room is at " + objectiveCoords);
+
+        if(Player.LocalInstance.playerIsHost)
+        {
+            AssignObjectiveRoomCoords();
+            SetupObjectiveClientRpc(objectiveCoords);
+        }
+    }
+
+    [ClientRpc]
+    private void SetupObjectiveClientRpc(Vector3 objCoords)
+    {
+        Debug.Log("Setting objective coordinates to: " + objCoords);
+        objectiveCoords = objCoords;
     }
 
     private void AssignObjectiveRoomCoords()
@@ -261,6 +271,7 @@ public class Dungeon : NetworkBehaviour
         navMeshSurface.BuildNavMesh();
         //currentRoomNO.GetComponent<Room>().floor.GetComponent<NavMeshSurface>().BuildNavMesh();
 
+        Debug.Log("Setting lastSpawnedRoom");
         lastSpawnedRoom = roomNetworkObject;
     }
 

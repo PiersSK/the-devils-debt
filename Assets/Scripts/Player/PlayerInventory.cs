@@ -70,10 +70,33 @@ public class PlayerInventory : NetworkBehaviour
         equipment[(int)currentEquipped].SetAnimations();
     }
 
+    public void DestroyEquipment()
+    {
+        Debug.Log("Destroying equipment of player " + OwnerClientId);
+
+        foreach (Equipment item in equipment)
+        {
+            if (item != null)
+            {
+                Debug.Log("Destroying item: " + item.name + "(is spawned " + item.IsSpawned + ")");
+                item.GetComponent<NetworkObject>().TryRemoveParent();
+                Destroy(item.gameObject);
+            }
+        }
+    }
+
+    public void ClearEquipment()
+    {
+
+        equipment = new List<Equipment>() { null, null, null };
+
+        UpdateHotbarSprites();
+
+    }
+
     private void RefreshEquipmentState()
     {
         // Initial setup of equipment
-        Debug.Log("RefestEquipmentState invoked");
         if(IsOwner) UpdateHotbarSprites();
         SetEquipmentToHands();
         FollowCameraRotation();
@@ -82,9 +105,13 @@ public class PlayerInventory : NetworkBehaviour
 
     private void UpdateHotbarSprites()
     {
+        hotbarIcons[(int)InventorySlot.MainHand].UpdateSprite(defaultMainSprite);
+        hotbarIcons[(int)InventorySlot.OffHand].UpdateSprite(defaultOffSprite);
+        hotbarIcons[(int)InventorySlot.Accessory].UpdateSprite(defaultAccessorySprite);
+
         foreach (Equipment item in equipment)
         {
-            if (item!= null && item.objectSprite != null)
+            if (item != null && item.objectSprite != null)
             {
                 hotbarIcons[(int)item.inventorySlot].UpdateSprite(item.objectSprite.sprite);
             }
@@ -140,7 +167,7 @@ public class PlayerInventory : NetworkBehaviour
                 GameObject itemPrefabObj = Resources.Load<GameObject>(prefabName);
                 GameObject itemObj = Instantiate(itemPrefabObj.gameObject);
                 NetworkObject itemNO = itemObj.GetComponent<NetworkObject>();
-                itemNO.Spawn();
+                itemNO.Spawn(true);
                 PickupItemClientRpc(itemNO);
 
             }
@@ -180,7 +207,6 @@ public class PlayerInventory : NetworkBehaviour
 
         // Put new item in hand
         itemObj.GetComponent<NetworkObject>().TrySetParent(transform);
-        Debug.Log("Item is child of player?: " + (itemObj.transform.parent == transform));
 
         //TODO: Find a better solution than this for parent delay on client lol
         if (itemObj.transform.parent != transform)

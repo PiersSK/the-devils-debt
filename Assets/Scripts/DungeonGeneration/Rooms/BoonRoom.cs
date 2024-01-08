@@ -33,7 +33,7 @@ public class BoonRoom : Room
     {
         Transform fountainObj = Instantiate(Resources.Load<Transform>("Fountain"));
         fountainObj.localPosition = transform.position;
-        fountainObj.GetComponent<NetworkObject>().Spawn();
+        fountainObj.GetComponent<NetworkObject>().Spawn(true);
     }
 
 
