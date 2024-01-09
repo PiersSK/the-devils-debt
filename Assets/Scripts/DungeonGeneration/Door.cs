@@ -34,6 +34,7 @@ public class Door : NetworkBehaviour
 
     public GameObject portal;
     private GameObject block;
+    private GameObject frame;
     [SerializeField] private Material objectiveMaterial;
 
 
@@ -46,20 +47,36 @@ public class Door : NetworkBehaviour
     {
         portal = gameObject.transform.Find("Portal").gameObject;
         block = gameObject.transform.Find("Block").gameObject;
+        frame = gameObject.transform.Find("Frame").gameObject;
     }
 
-    public void RemoveDoor()
+    public void RemoveDoor(bool removeFrame = false)
     {
         if (IsClient)
         {
-            RemoveDoorServerRpc();
+            RemoveDoorServerRpc(removeFrame);
         }
         else
         {
             portal.SetActive(false);
             block.SetActive(false);
+            frame.SetActive(!removeFrame);
         }
 
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RemoveDoorServerRpc(bool removeFrame = false)
+    {
+        RemoveDoorClientRpc(removeFrame);
+    }
+
+    [ClientRpc]
+    private void RemoveDoorClientRpc(bool removeFrame = false)
+    {
+        portal.SetActive(false);
+        block.SetActive(false);
+        frame.SetActive(!removeFrame);
     }
 
     public void SetNavMeshLink(Transform linkedFloor)
@@ -67,18 +84,6 @@ public class Door : NetworkBehaviour
         GetComponent<OffMeshLink>().endTransform = linkedFloor;
     }
 
-    [ClientRpc]
-    private void RemoveDoorClientRpc()
-    {
-        portal.SetActive(false);
-        block.SetActive(false);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void RemoveDoorServerRpc()
-    {
-        RemoveDoorClientRpc();
-    }
 
     public void BlockDoor()
     {

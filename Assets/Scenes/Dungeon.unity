@@ -539,7 +539,8 @@ MonoBehaviour:
   maxFloors: 3
   roomWidth: 20
   roomHeight: 6
-  stairSpawnChance: 10
+  stairSpawnChance: 15
+  roomExpandChance: 10
   objectiveMinRadius: 2
   objectiveMaxRadius: 3
   objectiveCanSpawnOnDifferentFloor: 0

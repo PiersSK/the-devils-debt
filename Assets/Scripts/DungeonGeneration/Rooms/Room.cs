@@ -13,12 +13,15 @@ public class Room : NetworkBehaviour
         Boon,
         Treasure,
         Random,
+        Stairs,
         Objective
     }
 
     public RoomType roomType;
 
     public Door[] doors = new Door[4];
+    public GameObject[] walls = new GameObject[4];
+
     public Vector3 roomCoords;
     public Light roomLight;
        
@@ -29,7 +32,7 @@ public class Room : NetworkBehaviour
 
     private void OrderDoorArray()
     {
-        List<Door> orderedDoors = new List<Door> ();
+        List<Door> orderedDoors = new List<Door>();
 
         for (int i = 0; i < 4; i++)
         {
@@ -48,6 +51,33 @@ public class Room : NetworkBehaviour
         }
 
         doors = orderedDoors.ToArray();
+    }
+
+    public void RemoveWall(int wallIndex)
+    {
+        if (IsClient)
+        {
+            RemoveWallServerRpc(wallIndex);
+        }
+        else
+        {
+            walls[wallIndex].SetActive(false);
+            doors[wallIndex].RemoveDoor(true);
+        }
+
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RemoveWallServerRpc(int wallIndex)
+    {
+        RemoveWallClientRpc(wallIndex);
+    }
+
+    [ClientRpc]
+    public void RemoveWallClientRpc(int wallIndex)
+    {
+        walls[wallIndex].SetActive(false);
+        doors[wallIndex].RemoveDoor(true);
     }
 
     public void DisableDoorToNeighbour(Room neighbour)
