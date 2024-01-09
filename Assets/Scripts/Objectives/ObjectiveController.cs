@@ -28,10 +28,12 @@ public class ObjectiveController : NetworkBehaviour
     public float objectiveGoal = 3f;
     private NetworkVariable<float> objectiveProgress = new NetworkVariable<float>(0f);
 
+    [Range(10,3600)]
     public float timeLimit = 60f;
+
     private NetworkVariable<float> timeRemaining = new(0f);
     private bool timeLimitReached = false;
-    private float lowTimePerc = 0.2f;
+    private float lowTimeStart = 10f;
 
     private void Awake()
     {
@@ -87,15 +89,15 @@ public class ObjectiveController : NetworkBehaviour
         {
             // Update UI
             UIManager.Instance.timer.text = TimeRemainingAsString();
-            UIManager.Instance.timer.color = (timeRemaining.Value / timeLimit) > lowTimePerc ? Color.white : Color.red;
+            UIManager.Instance.timer.color = timeRemaining.Value > lowTimeStart ? Color.white : Color.red;
             // Update Camera shake
-            Player.LocalInstance.playerLook.cameraShake = (timeRemaining.Value / timeLimit) <= lowTimePerc;
-            Player.LocalInstance.playerLook.cameraShakeMagnitude = (lowTimePerc - (timeRemaining.Value / timeLimit)) * 3;
+            Player.LocalInstance.playerLook.cameraShake = timeRemaining.Value <= lowTimeStart;
+            Player.LocalInstance.playerLook.cameraShakeMagnitude = (lowTimeStart - timeRemaining.Value) / (lowTimeStart * 2);
         } else
         {
             // Update UI
             UIManager.Instance.timer.text = "00:00";
-            UIManager.Instance.timer.color = (timeRemaining.Value / timeLimit) > lowTimePerc ? Color.white : Color.red;
+            UIManager.Instance.timer.color = timeRemaining.Value > lowTimeStart ? Color.white : Color.red;
             // Update Camera shake
             Player.LocalInstance.playerLook.cameraShake = false;
             Player.LocalInstance.playerLook.cameraShakeMagnitude = 0f;
