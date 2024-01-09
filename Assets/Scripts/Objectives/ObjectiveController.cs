@@ -49,7 +49,7 @@ public class ObjectiveController : NetworkBehaviour
             {
                 timeRemaining.Value = 0;
                 timeLimitReached = true;
-                UIManager.Instance.gameOver.GameOverServerRpc(false);
+                GameOverSystem.Instance.GameOverServerRpc(false);
             } 
         }
     }
