@@ -29,8 +29,9 @@ public class ObjectiveController : NetworkBehaviour
     private NetworkVariable<float> objectiveProgress = new NetworkVariable<float>(0f);
 
     public float timeLimit = 60f;
-    private NetworkVariable<float> timeRemaining = new(60f);
+    private NetworkVariable<float> timeRemaining = new(0f);
     private bool timeLimitReached = false;
+    private float lowTimePerc = 0.2f;
 
     private void Awake()
     {
@@ -46,6 +47,7 @@ public class ObjectiveController : NetworkBehaviour
             timeRemaining.Value -= Time.deltaTime;
             if (timeRemaining.Value <= 0)
             {
+                timeRemaining.Value = 0;
                 timeLimitReached = true;
             }
         }
@@ -77,14 +79,18 @@ public class ObjectiveController : NetworkBehaviour
     private string TimeRemainingAsString()
     {
         TimeSpan ts = TimeSpan.FromSeconds(timeRemaining.Value);
-        return string.Format("{0:00}:{1:00}", ts.TotalMinutes, ts.Seconds);
+        return string.Format("{0:00}:{1:00}", ts.Minutes, ts.Seconds);
     }
 
     private void TimeSync(float prevVal, float newVal)
     {
         timeRemaining.Value = newVal;
         UIManager.Instance.timer.text = TimeRemainingAsString();
-        UIManager.Instance.timer.color = (timeRemaining.Value / timeLimit) > 0.2 ? Color.white : Color.red;
+        UIManager.Instance.timer.color = (timeRemaining.Value / timeLimit) > lowTimePerc ? Color.white : Color.red;
+
+        Player.LocalInstance.playerLook.cameraShake = (timeRemaining.Value / timeLimit) <= lowTimePerc;
+
+        Player.LocalInstance.playerLook.cameraShakeMagnitude = (lowTimePerc - (timeRemaining.Value / timeLimit)) * 3;
     }
 
     private void ProgressChanged(float prevVal, float newVal)

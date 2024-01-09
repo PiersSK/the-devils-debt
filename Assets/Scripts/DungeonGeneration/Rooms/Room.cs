@@ -24,10 +24,29 @@ public class Room : NetworkBehaviour
 
     public Vector3 roomCoords;
     public Light roomLight;
-       
+
+    public ParticleSystem dustParticles;
+
     private void Awake()
     {
         OrderDoorArray();
+    }
+
+    private void Update()
+    {
+        if (dustParticles != null)
+        {
+            if (Player.LocalInstance.playerLook.cameraShake)
+            {
+                var emission = dustParticles.emission;
+                emission.rateOverTime = Player.LocalInstance.playerLook.cameraShakeMagnitude * 50;
+            }
+            else
+            {
+                var emission = dustParticles.emission;
+                emission.rateOverTime = 0f;
+            }
+        }
     }
 
     private void OrderDoorArray()
