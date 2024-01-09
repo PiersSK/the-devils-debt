@@ -67,6 +67,7 @@ public class GameOverUI : MonoBehaviour
 
         // Reset Objective UI
         UIManager.Instance.objectiveUI.SetActive(false);
+        UIManager.Instance.timer.gameObject.SetActive(false);
         UIManager.Instance.objectiveBar.fillAmount = 0;
 
         // Unpause game

@@ -28,9 +28,27 @@ public class ObjectiveController : NetworkBehaviour
     public float objectiveGoal = 3f;
     private NetworkVariable<float> objectiveProgress = new NetworkVariable<float>(0f);
 
+    public float timeLimit = 60f;
+    private NetworkVariable<float> timeRemaining = new(60f);
+    private bool timeLimitReached = false;
+
     private void Awake()
     {
         Instance = this;
+    }
+
+    private void Update()
+    {
+        if (!IsServer) return;
+
+        if (!timeLimitReached)
+        {
+            timeRemaining.Value -= Time.deltaTime;
+            if (timeRemaining.Value <= 0)
+            {
+                timeLimitReached = true;
+            }
+        }
     }
 
     public override void OnNetworkSpawn()
@@ -38,10 +56,35 @@ public class ObjectiveController : NetworkBehaviour
         base.OnNetworkSpawn();
 
         objectiveProgress.OnValueChanged += ProgressChanged;
+        timeRemaining.OnValueChanged += TimeSync;
 
-        if (IsServer) SetObjective();
-        else UIManager.Instance.objectiveText.text = objectiveMessages[(int)objectiveSelected.Value]; //Assumes host joins first and has already set NVs
+        UIManager.Instance.timer.gameObject.SetActive(true);
 
+        if (IsServer)
+        {
+            SetObjective();
+            timeRemaining.Value = timeLimit;
+        }
+        else
+        {
+            UIManager.Instance.objectiveText.text = objectiveMessages[(int)objectiveSelected.Value]; //Assumes host joins first and has already set NVs
+            UIManager.Instance.timer.text = TimeRemainingAsString();
+
+        }
+
+    }
+
+    private string TimeRemainingAsString()
+    {
+        TimeSpan ts = TimeSpan.FromSeconds(timeRemaining.Value);
+        return string.Format("{0:00}:{1:00}", ts.TotalMinutes, ts.Seconds);
+    }
+
+    private void TimeSync(float prevVal, float newVal)
+    {
+        timeRemaining.Value = newVal;
+        UIManager.Instance.timer.text = TimeRemainingAsString();
+        UIManager.Instance.timer.color = (timeRemaining.Value / timeLimit) > 0.2 ? Color.white : Color.red;
     }
 
     private void ProgressChanged(float prevVal, float newVal)

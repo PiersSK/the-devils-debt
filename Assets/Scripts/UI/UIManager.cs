@@ -21,6 +21,8 @@ public class UIManager : MonoBehaviour
 
     public PlayerNotification notification;
 
+    public TextMeshProUGUI timer;
+
     public GameOverUI gameOver;
 
     [Header("ObjectiveUI")]
