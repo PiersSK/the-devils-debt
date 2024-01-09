@@ -48,33 +48,9 @@ public class PlayerLook : NetworkBehaviour
 
         if(cameraShake)
         {
-            cam.transform.localPosition = rootPosition + Random.insideUnitSphere * cameraShakeMagnitude; 
-            //if (!shakeLerpOut && !shakeLerpIn)
-            //{
-            //    lerpToPosition = rootPosition + Random.insideUnitSphere * cameraShakeMagnitude;
-            //    cam.transform.localPosition = Vector3.Lerp(rootPosition, lerpToPosition, cameraShakeLerpTime);
-            //    shakeLerpOut = true;
-            //    cameraShakeLerpTimer = 0f;
-            //}
-            //else if (shakeLerpOut)
-            //{
-            //    cameraShakeLerpTimer += Time.deltaTime;
-            //    if (cameraShakeLerpTimer >= cameraShakeLerpTime)
-            //    {
-            //        shakeLerpOut = false;
-            //        cam.transform.localPosition = Vector3.Lerp(lerpToPosition, rootPosition, cameraShakeLerpTime);
-            //        shakeLerpIn = true;
-            //        cameraShakeLerpTimer = 0f;
-            //    }
-            //}
-            //else if (shakeLerpIn)
-            //{
-            //    cameraShakeLerpTimer += Time.deltaTime;
-            //    if (cameraShakeLerpTimer >= cameraShakeLerpTime)
-            //    {
-            //        shakeLerpIn = false;
-            //    }
-            //}
+            Vector3 offset = Random.insideUnitSphere * cameraShakeMagnitude;
+            cam.transform.localPosition = rootPosition + offset;
+            Player.LocalInstance.playerInventory.OffsetEquipmentInHand(offset * 0.9f);
         } else
         {
             cam.transform.localPosition = rootPosition;

@@ -49,14 +49,13 @@ public class ObjectiveController : NetworkBehaviour
             {
                 timeRemaining.Value = 0;
                 timeLimitReached = true;
-            }
+                UIManager.Instance.gameOver.GameOverServerRpc(false);
+            } 
         }
     }
 
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkSpawn();
-
         objectiveProgress.OnValueChanged += ProgressChanged;
         timeRemaining.OnValueChanged += TimeSync;
 
@@ -71,7 +70,6 @@ public class ObjectiveController : NetworkBehaviour
         {
             UIManager.Instance.objectiveText.text = objectiveMessages[(int)objectiveSelected.Value]; //Assumes host joins first and has already set NVs
             UIManager.Instance.timer.text = TimeRemainingAsString();
-
         }
 
     }
@@ -85,12 +83,23 @@ public class ObjectiveController : NetworkBehaviour
     private void TimeSync(float prevVal, float newVal)
     {
         timeRemaining.Value = newVal;
-        UIManager.Instance.timer.text = TimeRemainingAsString();
-        UIManager.Instance.timer.color = (timeRemaining.Value / timeLimit) > lowTimePerc ? Color.white : Color.red;
-
-        Player.LocalInstance.playerLook.cameraShake = (timeRemaining.Value / timeLimit) <= lowTimePerc;
-
-        Player.LocalInstance.playerLook.cameraShakeMagnitude = (lowTimePerc - (timeRemaining.Value / timeLimit)) * 3;
+        if (timeRemaining.Value > 0)
+        {
+            // Update UI
+            UIManager.Instance.timer.text = TimeRemainingAsString();
+            UIManager.Instance.timer.color = (timeRemaining.Value / timeLimit) > lowTimePerc ? Color.white : Color.red;
+            // Update Camera shake
+            Player.LocalInstance.playerLook.cameraShake = (timeRemaining.Value / timeLimit) <= lowTimePerc;
+            Player.LocalInstance.playerLook.cameraShakeMagnitude = (lowTimePerc - (timeRemaining.Value / timeLimit)) * 3;
+        } else
+        {
+            // Update UI
+            UIManager.Instance.timer.text = "00:00";
+            UIManager.Instance.timer.color = (timeRemaining.Value / timeLimit) > lowTimePerc ? Color.white : Color.red;
+            // Update Camera shake
+            Player.LocalInstance.playerLook.cameraShake = false;
+            Player.LocalInstance.playerLook.cameraShakeMagnitude = 0f;
+        }
     }
 
     private void ProgressChanged(float prevVal, float newVal)

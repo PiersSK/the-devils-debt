@@ -39,7 +39,7 @@ public class Room : NetworkBehaviour
             if (Player.LocalInstance.playerLook.cameraShake)
             {
                 var emission = dustParticles.emission;
-                emission.rateOverTime = Player.LocalInstance.playerLook.cameraShakeMagnitude * 50;
+                emission.rateOverTime = Player.LocalInstance.playerLook.cameraShakeMagnitude * 100;
             }
             else
             {
