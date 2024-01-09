@@ -70,6 +70,11 @@ public class PlayerInventory : NetworkBehaviour
         equipment[(int)currentEquipped].SetAnimations();
     }
 
+    public void OffsetEquipmentInHand(Vector3 offset)
+    {
+        equipment[(int)currentEquipped].transform.localPosition = handPos + offset;
+    }
+
     public void DestroyEquipment()
     {
         Debug.Log("Destroying equipment of player " + OwnerClientId);

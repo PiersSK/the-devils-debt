@@ -36,6 +36,6 @@ public class ObjectiveChest : TreasureChest
     [ClientRpc]
     private void OpenObjectiveChestClientRpc()
     {
-        UIManager.Instance.gameOver.GameOver(true);
+        GameOverSystem.Instance.GameOver(true);
     }
 }

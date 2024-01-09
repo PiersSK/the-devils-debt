@@ -270,6 +270,7 @@ MonoBehaviour:
     m_InternalValue: 0
   objectiveComplete: 0
   objectiveGoal: 3
+  timeLimit: 300
 --- !u!4 &538035581
 Transform:
   m_ObjectHideFlags: 0

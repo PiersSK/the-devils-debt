@@ -28,20 +28,80 @@ public class ObjectiveController : NetworkBehaviour
     public float objectiveGoal = 3f;
     private NetworkVariable<float> objectiveProgress = new NetworkVariable<float>(0f);
 
+    [Range(10,3600)]
+    public float timeLimit = 60f;
+
+    private NetworkVariable<float> timeRemaining = new(0f);
+    private bool timeLimitReached = false;
+    private float lowTimeStart = 10f;
+
     private void Awake()
     {
         Instance = this;
     }
 
+    private void Update()
+    {
+        if (!IsServer) return;
+
+        if (!timeLimitReached)
+        {
+            timeRemaining.Value -= Time.deltaTime;
+            if (timeRemaining.Value <= 0)
+            {
+                timeRemaining.Value = 0;
+                timeLimitReached = true;
+                GameOverSystem.Instance.GameOverServerRpc(false);
+            } 
+        }
+    }
+
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkSpawn();
-
         objectiveProgress.OnValueChanged += ProgressChanged;
+        timeRemaining.OnValueChanged += TimeSync;
 
-        if (IsServer) SetObjective();
-        else UIManager.Instance.objectiveText.text = objectiveMessages[(int)objectiveSelected.Value]; //Assumes host joins first and has already set NVs
+        UIManager.Instance.timer.gameObject.SetActive(true);
 
+        if (IsServer)
+        {
+            SetObjective();
+            timeRemaining.Value = timeLimit;
+        }
+        else
+        {
+            UIManager.Instance.objectiveText.text = objectiveMessages[(int)objectiveSelected.Value]; //Assumes host joins first and has already set NVs
+            UIManager.Instance.timer.text = TimeRemainingAsString();
+        }
+
+    }
+
+    private string TimeRemainingAsString()
+    {
+        TimeSpan ts = TimeSpan.FromSeconds(timeRemaining.Value);
+        return string.Format("{0:00}:{1:00}", ts.Minutes, ts.Seconds);
+    }
+
+    private void TimeSync(float prevVal, float newVal)
+    {
+        timeRemaining.Value = newVal;
+        if (timeRemaining.Value > 0)
+        {
+            // Update UI
+            UIManager.Instance.timer.text = TimeRemainingAsString();
+            UIManager.Instance.timer.color = timeRemaining.Value > lowTimeStart ? Color.white : Color.red;
+            // Update Camera shake
+            Player.LocalInstance.playerLook.cameraShake = timeRemaining.Value <= lowTimeStart;
+            Player.LocalInstance.playerLook.cameraShakeMagnitude = (lowTimeStart - timeRemaining.Value) / (lowTimeStart * 2);
+        } else
+        {
+            // Update UI
+            UIManager.Instance.timer.text = "00:00";
+            UIManager.Instance.timer.color = timeRemaining.Value > lowTimeStart ? Color.white : Color.red;
+            // Update Camera shake
+            Player.LocalInstance.playerLook.cameraShake = false;
+            Player.LocalInstance.playerLook.cameraShakeMagnitude = 0f;
+        }
     }
 
     private void ProgressChanged(float prevVal, float newVal)
