@@ -12,9 +12,10 @@ public class Room : NetworkBehaviour
         Monster,
         Boon,
         Treasure,
-        Random,
+        Puzzle,
+        Objective,
         Stairs,
-        Objective
+        Random
     }
 
     public RoomType roomType;
