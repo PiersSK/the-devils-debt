@@ -239,7 +239,8 @@ public class Dungeon : NetworkBehaviour
         foreach (Room room in neighbours) neighbourCoords.Add(room.roomCoords);
 
         //Chance for room to expand
-        if (roomType != Room.RoomType.Objective && roomType != Room.RoomType.Stairs && tryExpand)
+        List<Room.RoomType> invalidExpandTypes = new() { Room.RoomType.Objective, Room.RoomType.Stairs, Room.RoomType.Puzzle };
+        if (!invalidExpandTypes.Contains(roomType) && tryExpand)
         {
             Debug.Log("Attempting to expand room");
             foreach (DoorDirection possibleDir in cardinals)
@@ -249,6 +250,7 @@ public class Dungeon : NetworkBehaviour
 
                 if (!neighbourCoords.Contains(possibleLoc)
                     && possibleLoc != objectiveCoords
+                    && possibleLoc != puzzleCoords
                     && !IsOutOfBounds(newRoom.roomCoords, possibleDir))
                 {
                     Debug.Log("Expanding to the " + possibleDir);
