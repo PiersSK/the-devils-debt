@@ -733,6 +733,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overlayImage: {fileID: 6898554928677166483}
+  plateIndex: 5
 --- !u!1 &4806697751411830302
 GameObject:
   m_ObjectHideFlags: 0
@@ -955,6 +956,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overlayImage: {fileID: 5694266973084845552}
+  plateIndex: 4
 --- !u!1 &5178436464225929102
 GameObject:
   m_ObjectHideFlags: 0
@@ -1313,6 +1315,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overlayImage: {fileID: 2119495879825718630}
+  plateIndex: 3
 --- !u!1 &6711309413686853713
 GameObject:
   m_ObjectHideFlags: 0
@@ -1433,6 +1436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overlayImage: {fileID: 5836959800120565074}
+  plateIndex: 2
 --- !u!1 &7675802119341101275
 GameObject:
   m_ObjectHideFlags: 0
@@ -1865,6 +1869,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overlayImage: {fileID: 5400277873933038737}
+  plateIndex: 1
 --- !u!1 &9042483080185975205
 GameObject:
   m_ObjectHideFlags: 0

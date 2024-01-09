@@ -123,6 +123,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &17472084
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 17472086}
+  - component: {fileID: 17472085}
+  m_Layer: 0
+  m_Name: PuzzleSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &17472085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17472084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76ec61e194ebe4ad3ba4d0ee1581ee97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &17472086
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17472084}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 42.974854, y: -1.6022148, z: -42.65062}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &352734245 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 140468008236305045, guid: e251e68868ae2ac439064d91368b59da, type: 3}
@@ -1425,6 +1469,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 962900637}
   - {fileID: 538035581}
+  - {fileID: 17472086}
   - {fileID: 3495701753111960048}
   - {fileID: 5314347270289279717}
   - {fileID: 6803487642412027970}

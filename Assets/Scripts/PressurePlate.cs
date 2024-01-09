@@ -6,20 +6,35 @@ using UnityEngine.UI;
 public class PressurePlate : MonoBehaviour
 {
     [SerializeField] private Image overlayImage;
+    [SerializeField] private int plateIndex;
     private bool isActive = false;
+
+    public bool canToggle = true;
+
+    private void Start()
+    {
+        PuzzleController.Instance.OnPuzzleComplete += Instance_OnPuzzleComplete;
+    }
+
+    private void Instance_OnPuzzleComplete(object sender, System.EventArgs e)
+    {
+        canToggle = false;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Something hit plate");
-        if(other.TryGetComponent<Player>(out Player player))
+        if(other.TryGetComponent(out Player player) && canToggle)
         {
-            Debug.Log("Player hit plate, toggling active state to " + !isActive);
             isActive = !isActive;
             if (overlayImage != null)
             {
-                Debug.Log("Changing overlay image color");
                 overlayImage.color = isActive ? Color.white : new Color(0.2f, 0.2f, 0.2f);
             }
+
+            if (isActive)
+                PuzzleController.Instance.AddToPlayerInput(plateIndex);
+            else
+                PuzzleController.Instance.RemoveFromPlayerInput(plateIndex);
         }
     }
 }
