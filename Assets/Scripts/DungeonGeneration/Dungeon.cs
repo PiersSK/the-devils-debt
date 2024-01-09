@@ -32,6 +32,12 @@ public class Dungeon : NetworkBehaviour
     [SerializeField] private bool objectiveCanSpawnOnDifferentFloor = false;
     private Vector3 objectiveCoords;
 
+    [Header("Puzzle Spawn")]
+    [SerializeField] private int puzzleMinRadius = 2;
+    [SerializeField] private int puzzleMaxRadius = 2;
+    [SerializeField] private bool puzzleCanSpawnOnDifferentFloor = false;
+    private Vector3 puzzleCoords;
+
     private NetworkObject lastSpawnedRoom;
 
     private void Start()
@@ -43,25 +49,35 @@ public class Dungeon : NetworkBehaviour
 
         if (Player.LocalInstance.playerIsHost)
         {
-            AssignObjectiveRoomCoords();
-            SetupObjectiveClientRpc(objectiveCoords);
+            AssignSpecialRoomCoords();
+            SetupSpecialClientRpc(objectiveCoords, puzzleCoords);
         }
     }
 
     [ClientRpc]
-    private void SetupObjectiveClientRpc(Vector3 objCoords)
+    private void SetupSpecialClientRpc(Vector3 objCoords, Vector3 puzCoords)
     {
         Debug.Log("Setting objective coordinates to: " + objCoords);
+        Debug.Log("Setting puzzle coordinates to: " + puzCoords);
         objectiveCoords = objCoords;
+        puzzleCoords = puzCoords;
     }
 
-    private void AssignObjectiveRoomCoords()
+    private void AssignSpecialRoomCoords()
     {
-        int x = (int)startingRoom.roomCoords.x + (Random.Range(0, 2) * 2 - 1) * Random.Range(objectiveMinRadius, objectiveMaxRadius + 1);
-        int y = (int)startingRoom.roomCoords.y + (Random.Range(0, 2) * 2 - 1) * Random.Range(objectiveMinRadius, objectiveMaxRadius + 1);
-        int z = objectiveCanSpawnOnDifferentFloor ? Random.Range(0, maxFloors) : (int)startingRoom.roomCoords.z;
+        objectiveCoords = GetRandomCoordsAtRange(startingRoom.roomCoords, objectiveMinRadius, objectiveMaxRadius, objectiveCanSpawnOnDifferentFloor);
 
-        objectiveCoords = new Vector3(x, y, z);
+        do puzzleCoords = GetRandomCoordsAtRange(startingRoom.roomCoords, puzzleMinRadius, puzzleMaxRadius, puzzleCanSpawnOnDifferentFloor);
+        while (puzzleCoords == objectiveCoords);
+    }
+
+    private Vector3 GetRandomCoordsAtRange(Vector3 coords, int minRange, int maxRange, bool canSpawnOnDifferentFloor)
+    {
+        int x = (int)coords.x + (Random.Range(0, 2) * 2 - 1) * Random.Range(minRange, maxRange + 1);
+        int y = (int)coords.y + (Random.Range(0, 2) * 2 - 1) * Random.Range(minRange, maxRange + 1);
+        int z = canSpawnOnDifferentFloor ? Random.Range(0, maxFloors) : (int)coords.z;
+
+        return new Vector3(x, y, z);
     }
 
     private Vector3 GetGridOfPlayer()
@@ -167,6 +183,9 @@ public class Dungeon : NetworkBehaviour
                 break;
             case Room.RoomType.Objective:
                 prefabName += "ObjectiveRoom";
+                break;
+            case Room.RoomType.Puzzle:
+                prefabName += "PuzzleRoom";
                 break;
             default:
                 prefabName += "Room";
@@ -301,15 +320,17 @@ public class Dungeon : NetworkBehaviour
                 room.DisableDoorToNeighbour(newRoom);
         }
 
-        Vector3 objectiveRelative = objectiveCoords - newRoom.roomCoords;
-        DoorDirection objectiveDoor = Door.GridToDirection(objectiveRelative);
+        DoorDirection objectiveDoor = Door.GridToDirection(objectiveCoords - newRoom.roomCoords);
+        DoorDirection puzzleDoor = Door.GridToDirection(puzzleCoords - newRoom.roomCoords);
+
         if (Array.IndexOf(cardinals, objectiveDoor) > -1)
-        {
             newRoom.doors[(int)objectiveDoor].ConvertToObjective();
-        }
+
+        if (Array.IndexOf(cardinals, puzzleDoor) > -1)
+            newRoom.doors[(int)puzzleDoor].ConvertToPuzzle();
+
 
         navMeshSurface.BuildNavMesh();
-        //currentRoomNO.GetComponent<Room>().floor.GetComponent<NavMeshSurface>().BuildNavMesh();
 
     }
 

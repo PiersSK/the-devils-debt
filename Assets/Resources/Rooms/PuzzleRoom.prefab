@@ -150,7 +150,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5692442084366614259}
   - component: {fileID: 819281973847560120}
-  - component: {fileID: 59671847128900703}
+  - component: {fileID: 4371094453423025757}
   m_Layer: 0
   m_Name: PuzzleRoom
   m_TagString: Untagged
@@ -194,7 +194,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &59671847128900703
+--- !u!114 &4371094453423025757
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -203,7 +203,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1936926810206918120}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 242467384cc214089adb4d5832e2b93e, type: 3}
+  m_Script: {fileID: 11500000, guid: 2be41ab760d3840aa9459b7ac31a4205, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   roomType: 3
@@ -533,10 +533,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
-      propertyPath: room
-      value: 
-      objectReference: {fileID: 59671847128900703}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: portal
       value: 
@@ -6220,10 +6216,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
-      propertyPath: room
-      value: 
-      objectReference: {fileID: 59671847128900703}
-    - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: portal
       value: 
       objectReference: {fileID: 4307432713044067720}
@@ -6305,10 +6297,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
-      propertyPath: room
-      value: 
-      objectReference: {fileID: 59671847128900703}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: portal
       value: 
@@ -6494,10 +6482,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
-      propertyPath: room
+    - target: {fileID: 3191931218131160940, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 59671847128900703}
+      objectReference: {fileID: 2100000, guid: 5d625417d7a6bb2408a13ac424c28f69, type: 2}
     - target: {fileID: 5996732164804061756, guid: 2748fcd7b6002264aae960334a35b37a, type: 3}
       propertyPath: portal
       value: 

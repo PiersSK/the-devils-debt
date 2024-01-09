@@ -13,13 +13,6 @@ public class PlayerLook : NetworkBehaviour
 
     private Vector3 rootPosition;
 
-    private Vector3 lerpToPosition;
-    private bool shakeLerpOut = false;
-    private bool shakeLerpIn = false;
-
-    private float cameraShakeLerpTimer = 0f;
-    private float cameraShakeLerpTime = 0.1f;
-
     public bool cameraShake = false;
     public float cameraShakeMagnitude = 0f;
 

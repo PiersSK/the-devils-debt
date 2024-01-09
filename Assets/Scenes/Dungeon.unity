@@ -270,7 +270,7 @@ MonoBehaviour:
     m_InternalValue: 0
   objectiveComplete: 0
   objectiveGoal: 3
-  timeLimit: 30
+  timeLimit: 3600
 --- !u!4 &538035581
 Transform:
   m_ObjectHideFlags: 0
@@ -545,6 +545,9 @@ MonoBehaviour:
   objectiveMinRadius: 2
   objectiveMaxRadius: 3
   objectiveCanSpawnOnDifferentFloor: 0
+  puzzleMinRadius: 2
+  puzzleMaxRadius: 2
+  puzzleCanSpawnOnDifferentFloor: 0
 --- !u!4 &962900637
 Transform:
   m_ObjectHideFlags: 0
