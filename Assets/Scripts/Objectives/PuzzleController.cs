@@ -55,7 +55,8 @@ public class PuzzleController : NetworkBehaviour
             if (solution.SequenceEqual(playerInput))
             {
                 CompletePuzzleClientRpc();
-                ObjectiveController.Instance.ProgressObjective();
+                if(ObjectiveController.Instance.objectiveSelected.Value == ObjectiveController.ObjectiveType.Puzzle)
+                    ObjectiveController.Instance.ProgressObjective();
             }
         }
     }

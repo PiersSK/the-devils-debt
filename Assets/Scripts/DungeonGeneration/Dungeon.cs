@@ -228,7 +228,6 @@ public class Dungeon : NetworkBehaviour
         }
     }
 
-    //[ServerRpc(RequireOwnership = false)]
     private void InitiateNewRoom(
         NetworkObjectReference currentRoomNOR,
         string prefabName,
