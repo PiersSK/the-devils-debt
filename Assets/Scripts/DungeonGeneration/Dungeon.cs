@@ -168,9 +168,11 @@ public class Dungeon : NetworkBehaviour
         return !RoomExistsAtCoords(spawnAttemptLoc);
     }
 
-    public void AddRandomRoom(Room currentRoom, DoorDirection dir, Room.RoomType roomType)
+    [ServerRpc(RequireOwnership = false)]
+    public void AddRandomRoomServerRpc(NetworkObjectReference currentRoomNOR, DoorDirection dir, Room.RoomType roomType)
     {
-        NetworkObject currentRoomNO = currentRoom.GetComponent<NetworkObject>();
+        currentRoomNOR.TryGet(out NetworkObject currentRoomNO);
+        Room currentRoom = currentRoomNO.GetComponent<Room>();
         string prefabName = "Rooms/";
         bool trySpawnStairs = false;
 
@@ -207,27 +209,27 @@ public class Dungeon : NetworkBehaviour
             int upDown = Random.Range(0, 2); //0=up, 1=down
             if (CanSpawnDownStairs(currentRoom.roomCoords, dir) && upDown == 0)
             {
-                InitiateNewRoomServerRpc(currentRoomNO, "Stairwell Top", dir, Room.RoomType.Stairs);
-                InitiateNewRoomServerRpc(lastSpawnedRoom, "Stairwell Bottom", DoorDirection.Down, Room.RoomType.Stairs);
+                InitiateNewRoom(currentRoomNO, "Stairwell Top", dir, Room.RoomType.Stairs);
+                InitiateNewRoom(lastSpawnedRoom, "Stairwell Bottom", DoorDirection.Down, Room.RoomType.Stairs);
             }
             else if (CanSpawnUpStairs(currentRoom.roomCoords, dir) && upDown == 1)
             {
-                InitiateNewRoomServerRpc(currentRoomNO, "Stairwell Bottom", dir, Room.RoomType.Stairs);
-                InitiateNewRoomServerRpc(lastSpawnedRoom, "Stairwell Top", DoorDirection.Up, Room.RoomType.Stairs);
+                InitiateNewRoom(currentRoomNO, "Stairwell Bottom", dir, Room.RoomType.Stairs);
+                InitiateNewRoom(lastSpawnedRoom, "Stairwell Top", DoorDirection.Up, Room.RoomType.Stairs);
             }
             else
             {
-                InitiateNewRoomServerRpc(currentRoomNO, prefabName, dir, roomType);
+                InitiateNewRoom(currentRoomNO, prefabName, dir, roomType);
             }
         }
         else
         {
-            InitiateNewRoomServerRpc(currentRoomNO, prefabName, dir, roomType);
+            InitiateNewRoom(currentRoomNO, prefabName, dir, roomType);
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void InitiateNewRoomServerRpc(
+    //[ServerRpc(RequireOwnership = false)]
+    private void InitiateNewRoom(
         NetworkObjectReference currentRoomNOR,
         string prefabName,
         DoorDirection dir,
@@ -263,7 +265,7 @@ public class Dungeon : NetworkBehaviour
                     && !IsOutOfBounds(newRoom.roomCoords, possibleDir))
                 {
                     newRoom.RemoveWallClientRpc((int)possibleDir); // Remove room to new room
-                    InitiateNewRoomServerRpc(newRoomObj.GetComponent<NetworkObject>(), prefabName, possibleDir, roomType, false); //Spawn new room
+                    InitiateNewRoom(newRoomObj.GetComponent<NetworkObject>(), prefabName, possibleDir, roomType, false); //Spawn new room
                     lastSpawnedRoom.GetComponent<Room>().RemoveWallClientRpc(((int)possibleDir + 2) % 4); //Remove wall of new room to this one
                     navMeshSurface.BuildNavMesh();
                 }
