@@ -153,7 +153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76ec61e194ebe4ad3ba4d0ee1581ee97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  combinationLength: 3
 --- !u!4 &17472086
 Transform:
   m_ObjectHideFlags: 0
@@ -331,8 +330,7 @@ MonoBehaviour:
   objectiveSelected:
     m_InternalValue: 0
   objectiveComplete: 0
-  objectiveGoal: 3
-  timeLimit: 3600
+  timeLimit: 300
 --- !u!4 &538035581
 Transform:
   m_ObjectHideFlags: 0
@@ -605,7 +603,7 @@ MonoBehaviour:
   stairSpawnChance: 15
   roomExpandChance: 10
   objectiveMinRadius: 2
-  objectiveMaxRadius: 3
+  objectiveMaxRadius: 4
   objectiveCanSpawnOnDifferentFloor: 0
   puzzleMinRadius: 2
   puzzleMaxRadius: 2
