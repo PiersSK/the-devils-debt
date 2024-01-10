@@ -7,9 +7,9 @@ public class PressurePlate : MonoBehaviour
 {
     [SerializeField] private Image overlayImage;
     [SerializeField] private int plateIndex;
-    private bool isActive = false;
+    private bool isActive = false; // Sync
 
-    public bool canToggle = true;
+    public bool canToggle = true; // Sync
 
     private void Start()
     {
