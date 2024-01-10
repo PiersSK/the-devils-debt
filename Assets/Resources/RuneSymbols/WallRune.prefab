@@ -186,6 +186,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3763203691946791155}
+  - component: {fileID: 4455340885973594572}
+  - component: {fileID: 1706717098845724275}
+  - component: {fileID: 921914007419818923}
   m_Layer: 0
   m_Name: WallRune
   m_TagString: Untagged
@@ -209,3 +212,64 @@ Transform:
   - {fileID: 590258180827297677}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &4455340885973594572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6652820141637198061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &1706717098845724275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6652820141637198061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 0
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 0
+  Interpolate: 1
+--- !u!114 &921914007419818923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6652820141637198061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa53f4861716c4e7f90d87e600af7f22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  runeImg: {fileID: 6400485743255543804}
+  runeImgSprites:
+  - {fileID: 21300000, guid: 4ae2a784c416b4ce2b46fbff3e9a0169, type: 3}
+  - {fileID: 21300000, guid: 815a3722c05cc48ff95bdd4eb6eea8e9, type: 3}
+  - {fileID: 21300000, guid: 6ad0e98864be0465181b6973531bac82, type: 3}
+  - {fileID: 21300000, guid: 87acae344240f44ae81a49ab6168b91b, type: 3}
+  - {fileID: 21300000, guid: 465a303892baf441487db61506a1d72d, type: 3}

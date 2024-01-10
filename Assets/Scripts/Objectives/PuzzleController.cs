@@ -2,25 +2,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public class PuzzleController : MonoBehaviour
+public class PuzzleController : NetworkBehaviour
 {
     public static PuzzleController Instance { get; private set; }
 
     public event EventHandler OnPuzzleComplete;
 
-    [Range(1, 5)]
-    [SerializeField] private int combinationLength = 3;
+    private int combinationLength = 3;
 
-    private List<int> solution = new(); // Sync
-    private List<int> playerInput = new(); // Sync
+    private List<int> solution = new();
+    private List<int> playerInput = new();
 
     private List<int> runeCluesSpawned = new();
 
-    private bool puzzleComplete = false; // Sync
+    private bool puzzleComplete = false;
 
     private void Awake()
     {
@@ -30,19 +30,48 @@ public class PuzzleController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Dungeon.Instance.OnRoomSpawn += Instance_OnRoomSpawn;
-
-        do
+        if (IsServer)
         {
-            int val = Random.Range(1, 6);
-            if(!solution.Contains(val)) solution.Add(val);
-        }
-        while (solution.Count < combinationLength);
+            Dungeon.Instance.OnRoomSpawn += Instance_OnRoomSpawn;
 
-        solution.Sort();
-        string combinationString = "";
-        foreach (int val in solution) combinationString += val.ToString()+ " ";
-        Debug.Log("Solution to puzzle is " + combinationString);
+            do
+            {
+                int val = Random.Range(1, 6);
+                if (!solution.Contains(val)) solution.Add(val);
+            }
+            while (solution.Count < combinationLength);
+
+            solution.Sort();
+            SetupSolutionClientRpc(solution[0], solution[1], solution[2]);
+        }
+    }
+
+    private void Update()
+    {
+        if (!puzzleComplete && IsServer) // Only server tracks progress
+        {
+            playerInput.Sort();
+
+            if (solution.SequenceEqual(playerInput))
+            {
+                CompletePuzzleClientRpc();
+            }
+        }
+    }
+
+    // NOTE: This hardcodes the puzzle to being a solution of 3 runes.
+    [ClientRpc]
+    private void SetupSolutionClientRpc(int sol1, int sol2, int sol3)
+    {
+        solution = new() { sol1, sol2, sol3 };
+    }
+
+    [ClientRpc]
+    private void CompletePuzzleClientRpc()
+    {
+        UIManager.Instance.notification.ShowNotification("Puzzle Complete", Color.blue);
+        puzzleComplete = true;
+        OnPuzzleComplete?.Invoke(this, new EventArgs());
     }
 
     private void Instance_OnRoomSpawn(object sender, Dungeon.OnRoomSpawnArgs e)
@@ -57,9 +86,9 @@ public class PuzzleController : MonoBehaviour
             int runeToSpawn = cluesToSpawn[Random.Range(0, cluesToSpawn.Count)];
 
             Transform wallRune = Instantiate(Resources.Load<Transform>("RuneSymbols/WallRune"));
-            wallRune.GetChild(0).GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("RuneSymbols/Rune" + runeToSpawn);
+            wallRune.GetComponent<NetworkObject>().Spawn();
+            SyncWallRuneImgClientRpc(wallRune.GetComponent<NetworkObject>(), runeToSpawn);
 
-            wallRune.parent = e.RoomTransform;
             bool isEastWest = Random.Range(0, 2) == 0;
             Vector3 runePos = Vector3.zero;
             Vector3 runeRot = Vector3.zero;
@@ -77,7 +106,7 @@ public class PuzzleController : MonoBehaviour
                 runePos.z = (Random.Range(0, 2) * 2 - 1) * 9.8f;
             }
 
-            wallRune.localPosition = runePos;
+            wallRune.localPosition = e.RoomTransform.position + runePos;
             wallRune.localEulerAngles = runeRot;
 
             runeCluesSpawned.Add(runeToSpawn);
@@ -85,20 +114,15 @@ public class PuzzleController : MonoBehaviour
         
     }
 
-    private void Update()
+    [ClientRpc]
+    private void SyncWallRuneImgClientRpc(NetworkObjectReference runeNOR, int index)
     {
-        if (!puzzleComplete)
-        {
-            playerInput.Sort();
+        runeNOR.TryGet(out NetworkObject runeNO);
+        runeNO.GetComponent<WallRune>().SetRuneImage(index - 1);
 
-            if (solution.SequenceEqual(playerInput))
-            {
-                UIManager.Instance.notification.ShowNotification("Puzzle Complete", Color.blue);
-                puzzleComplete = true;
-                OnPuzzleComplete?.Invoke(this, new EventArgs());
-            }
-        }
     }
+
+
 
     public void AddToPlayerInput(int input)
     {

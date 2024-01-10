@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PressurePlate : MonoBehaviour
+public class PressurePlate : NetworkBehaviour
 {
     [SerializeField] private Image overlayImage;
     [SerializeField] private int plateIndex;
@@ -23,18 +24,33 @@ public class PressurePlate : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.TryGetComponent(out Player player) && canToggle)
+        if(other.TryGetComponent(out Player player) && player == Player.LocalInstance && canToggle)
         {
-            isActive = !isActive;
-            if (overlayImage != null)
-            {
-                overlayImage.color = isActive ? Color.white : new Color(0.2f, 0.2f, 0.2f);
-            }
-
-            if (isActive)
-                PuzzleController.Instance.AddToPlayerInput(plateIndex);
-            else
-                PuzzleController.Instance.RemoveFromPlayerInput(plateIndex);
+            TogglePlateActiveServerRpc();
         }
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void TogglePlateActiveServerRpc() // Client toggles off immediately?
+    {
+
+        TogglePlateActiveClientRpc();
+    }
+
+    [ClientRpc]
+    private void TogglePlateActiveClientRpc()
+    {
+
+        isActive = !isActive;
+        if (overlayImage != null)
+        {
+            overlayImage.color = isActive ? Color.white : new Color(0.2f, 0.2f, 0.2f);
+        }
+
+        if (isActive)
+            PuzzleController.Instance.AddToPlayerInput(plateIndex);
+        else
+            PuzzleController.Instance.RemoveFromPlayerInput(plateIndex);
+    }
+
 }
