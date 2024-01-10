@@ -43,7 +43,7 @@ public class PlayerNotification : MonoBehaviour
 
     public void ShowNotification(string message)
     {
-        Color backgroundColor = notificationBackground.color;
+        Color backgroundColor = Color.red;
         backgroundColor.a = 1;
 
         notificationBackground.color = backgroundColor;

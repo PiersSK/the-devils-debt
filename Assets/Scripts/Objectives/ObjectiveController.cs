@@ -142,8 +142,7 @@ public class ObjectiveController : NetworkBehaviour
     private void SetObjective()
     {
         int objectiveOptions = Enum.GetValues(typeof(ObjectiveType)).Cast<int>().Max();
-        //objectiveSelected.Value = (ObjectiveType)UnityEngine.Random.Range(0, objectiveOptions+1);
-        objectiveSelected.Value = ObjectiveType.Puzzle;
+        objectiveSelected.Value = (ObjectiveType)UnityEngine.Random.Range(0, objectiveOptions+1);
         UIManager.Instance.objectiveText.text = objectiveMessages[(int)objectiveSelected.Value];
 
         if (objectiveSelected.Value == ObjectiveType.Puzzle) objectiveGoal.Value = 1f;

@@ -20,7 +20,7 @@ public class Compass : Equipment
             string compassResponse = Dungeon.Instance.GetPathToObjective().ToString();
             if (compassResponse == "None") compassResponse = "Destination Reached";
 
-            UIManager.Instance.notification.ShowNotification(compassResponse);
+            UIManager.Instance.notification.ShowNotification(compassResponse, Color.cyan);
             UIManager.Instance.hotbarAccessory.PutOnCooldown(1f);
         }
     }
