@@ -13,19 +13,20 @@ public class ObjectiveController : NetworkBehaviour
     public enum ObjectiveType
     {
         Keys
-        , Monsters
-        //,Puzzle
+        ,Monsters
+        ,Puzzle
     }
 
     private List<string> objectiveMessages = new List<string>
     {
         "Find Keys" //Keys
         ,"Slay Enemies" //Monsters
+        ,"Solve The Puzzle Room" //Puzzle
     };
 
     public NetworkVariable<ObjectiveType> objectiveSelected;
     public bool objectiveComplete = false;
-    public float objectiveGoal = 3f;
+    private NetworkVariable<float> objectiveGoal = new(3f);
     private NetworkVariable<float> objectiveProgress = new NetworkVariable<float>(0f);
 
     [Range(10,3600)]
@@ -59,6 +60,7 @@ public class ObjectiveController : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         objectiveProgress.OnValueChanged += ProgressChanged;
+        objectiveGoal.OnValueChanged += GoalSync;
         timeRemaining.OnValueChanged += TimeSync;
 
         UIManager.Instance.timer.gameObject.SetActive(true);
@@ -80,6 +82,11 @@ public class ObjectiveController : NetworkBehaviour
     {
         TimeSpan ts = TimeSpan.FromSeconds(timeRemaining.Value);
         return string.Format("{0:00}:{1:00}", ts.Minutes, ts.Seconds);
+    }
+
+    private void GoalSync(float prevVal, float newVal)
+    {
+        objectiveGoal.Value = newVal;
     }
 
     private void TimeSync(float prevVal, float newVal)
@@ -108,9 +115,9 @@ public class ObjectiveController : NetworkBehaviour
     {
         objectiveProgress.Value = newVal;
 
-        UIManager.Instance.objectiveBar.fillAmount = objectiveProgress.Value / objectiveGoal;
+        UIManager.Instance.objectiveBar.fillAmount = objectiveProgress.Value / objectiveGoal.Value;
 
-        if (objectiveProgress.Value == objectiveGoal)
+        if (objectiveProgress.Value == objectiveGoal.Value)
             objectiveComplete = true;
     }
 
@@ -137,6 +144,8 @@ public class ObjectiveController : NetworkBehaviour
         int objectiveOptions = Enum.GetValues(typeof(ObjectiveType)).Cast<int>().Max();
         objectiveSelected.Value = (ObjectiveType)UnityEngine.Random.Range(0, objectiveOptions+1);
         UIManager.Instance.objectiveText.text = objectiveMessages[(int)objectiveSelected.Value];
+
+        if (objectiveSelected.Value == ObjectiveType.Puzzle) objectiveGoal.Value = 1f;
 
     }
 

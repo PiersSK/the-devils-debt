@@ -36,6 +36,7 @@ public class Door : NetworkBehaviour
     private GameObject block;
     private GameObject frame;
     [SerializeField] private Material objectiveMaterial;
+    [SerializeField] private Material puzzleMaterial;
 
 
     public override void OnNetworkSpawn()
@@ -103,7 +104,20 @@ public class Door : NetworkBehaviour
         portal.GetComponent<MeshRenderer>().material = objectiveMaterial;
 
     }
-    
+
+    public void ConvertToPuzzle()
+    {
+        foreach (DoorButton button in chooseButtons)
+        {
+            button.gameObject.SetActive(false);
+        }
+
+        randomButton.roomType = Room.RoomType.Puzzle;
+        randomButton.SetPromptMessage("Puzzle! [0]");
+        portal.GetComponent<MeshRenderer>().material = puzzleMaterial;
+
+    }
+
     public static Vector3 DirectionToGrid(DoorDirection dir)
     {
         switch (dir)

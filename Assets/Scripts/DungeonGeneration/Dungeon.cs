@@ -8,7 +8,13 @@ using Random = UnityEngine.Random;
 
 public class Dungeon : NetworkBehaviour
 {
-    public static Dungeon Instance;
+    public static Dungeon Instance { get; private set; }
+    public event EventHandler<OnRoomSpawnArgs> OnRoomSpawn;
+    public class OnRoomSpawnArgs : EventArgs
+    {
+        public Transform RoomTransform;
+    }
+
 
     [Header("Starting Objects")]
     [SerializeField] private NavMeshSurface navMeshSurface;
@@ -32,36 +38,56 @@ public class Dungeon : NetworkBehaviour
     [SerializeField] private bool objectiveCanSpawnOnDifferentFloor = false;
     private Vector3 objectiveCoords;
 
+    [Header("Puzzle Spawn")]
+    [SerializeField] private int puzzleMinRadius = 2;
+    [SerializeField] private int puzzleMaxRadius = 2;
+    [SerializeField] private bool puzzleCanSpawnOnDifferentFloor = false;
+    private Vector3 puzzleCoords;
+
     private NetworkObject lastSpawnedRoom;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
-        Instance = this;
         InitiateGrid();
         dungeonGrid[maxRoomRadius, maxRoomRadius, maxFloors/2] = startingRoom;
         startingRoom.roomCoords = new Vector3(maxRoomRadius, maxRoomRadius, maxFloors / 2);
 
         if (Player.LocalInstance.playerIsHost)
         {
-            AssignObjectiveRoomCoords();
-            SetupObjectiveClientRpc(objectiveCoords);
+            AssignSpecialRoomCoords();
+            SetupSpecialClientRpc(objectiveCoords, puzzleCoords);
         }
     }
 
     [ClientRpc]
-    private void SetupObjectiveClientRpc(Vector3 objCoords)
+    private void SetupSpecialClientRpc(Vector3 objCoords, Vector3 puzCoords)
     {
         Debug.Log("Setting objective coordinates to: " + objCoords);
+        Debug.Log("Setting puzzle coordinates to: " + puzCoords);
         objectiveCoords = objCoords;
+        puzzleCoords = puzCoords;
     }
 
-    private void AssignObjectiveRoomCoords()
+    private void AssignSpecialRoomCoords()
     {
-        int x = (int)startingRoom.roomCoords.x + (Random.Range(0, 2) * 2 - 1) * Random.Range(objectiveMinRadius, objectiveMaxRadius + 1);
-        int y = (int)startingRoom.roomCoords.y + (Random.Range(0, 2) * 2 - 1) * Random.Range(objectiveMinRadius, objectiveMaxRadius + 1);
-        int z = objectiveCanSpawnOnDifferentFloor ? Random.Range(0, maxFloors) : (int)startingRoom.roomCoords.z;
+        objectiveCoords = GetRandomCoordsAtRange(startingRoom.roomCoords, objectiveMinRadius, objectiveMaxRadius, objectiveCanSpawnOnDifferentFloor);
 
-        objectiveCoords = new Vector3(x, y, z);
+        do puzzleCoords = GetRandomCoordsAtRange(startingRoom.roomCoords, puzzleMinRadius, puzzleMaxRadius, puzzleCanSpawnOnDifferentFloor);
+        while (puzzleCoords == objectiveCoords);
+    }
+
+    private Vector3 GetRandomCoordsAtRange(Vector3 coords, int minRange, int maxRange, bool canSpawnOnDifferentFloor)
+    {
+        int x = (int)coords.x + (Random.Range(0, 2) * 2 - 1) * Random.Range(minRange, maxRange + 1);
+        int y = (int)coords.y + (Random.Range(0, 2) * 2 - 1) * Random.Range(minRange, maxRange + 1);
+        int z = canSpawnOnDifferentFloor ? Random.Range(0, maxFloors) : (int)coords.z;
+
+        return new Vector3(x, y, z);
     }
 
     private Vector3 GetGridOfPlayer()
@@ -168,6 +194,9 @@ public class Dungeon : NetworkBehaviour
             case Room.RoomType.Objective:
                 prefabName += "ObjectiveRoom";
                 break;
+            case Room.RoomType.Puzzle:
+                prefabName += "PuzzleRoom";
+                break;
             default:
                 prefabName += "Room";
                 break;
@@ -214,15 +243,15 @@ public class Dungeon : NetworkBehaviour
         InitiateNewRoomClientRpc(newRoomObj.GetComponent<NetworkObject>(), currentRoomNOR, dir, roomType);
 
         Room newRoom = newRoomObj.GetComponent<Room>();
-        //Open doors to other adjacent rooms
+
+        //Chance for room to expand
         List<Room> neighbours = GetRoomNeighbours(newRoom);
         List<Vector3> neighbourCoords = new();
         foreach (Room room in neighbours) neighbourCoords.Add(room.roomCoords);
 
-        //Chance for room to expand
-        if (roomType != Room.RoomType.Objective && roomType != Room.RoomType.Stairs && tryExpand)
+        List<Room.RoomType> invalidExpandTypes = new() { Room.RoomType.Objective, Room.RoomType.Stairs, Room.RoomType.Puzzle };
+        if (!invalidExpandTypes.Contains(roomType) && tryExpand)
         {
-            Debug.Log("Attempting to expand room");
             foreach (DoorDirection possibleDir in cardinals)
             {
                 Vector3 possibleLoc = newRoom.roomCoords + DirectionToGrid(possibleDir);
@@ -230,9 +259,9 @@ public class Dungeon : NetworkBehaviour
 
                 if (!neighbourCoords.Contains(possibleLoc)
                     && possibleLoc != objectiveCoords
+                    && possibleLoc != puzzleCoords
                     && !IsOutOfBounds(newRoom.roomCoords, possibleDir))
                 {
-                    Debug.Log("Expanding to the " + possibleDir);
                     newRoom.RemoveWallClientRpc((int)possibleDir); // Remove room to new room
                     InitiateNewRoomServerRpc(newRoomObj.GetComponent<NetworkObject>(), prefabName, possibleDir, roomType, false); //Spawn new room
                     lastSpawnedRoom.GetComponent<Room>().RemoveWallClientRpc(((int)possibleDir + 2) % 4); //Remove wall of new room to this one
@@ -263,7 +292,6 @@ public class Dungeon : NetworkBehaviour
         roomNOR.TryGet(out NetworkObject roomNetworkObject);
         Room newRoom = roomNetworkObject.GetComponent<Room>();
 
-        Debug.Log("Setting lastSpawnedRoom");
         lastSpawnedRoom = roomNetworkObject;
 
         //Move room to correct position
@@ -277,7 +305,6 @@ public class Dungeon : NetworkBehaviour
         newGridIndex += DirectionToGrid(dir);
         dungeonGrid[(int)newGridIndex.x, (int)newGridIndex.y, (int)newGridIndex.z] = newRoom;
         newRoom.roomCoords = newGridIndex; // Let room object know what co-ords it's at
-        Debug.Log("Room added to grid at " + newGridIndex);
 
         // Block doors to OOB
         foreach (Door door in newRoom.doors)
@@ -301,16 +328,19 @@ public class Dungeon : NetworkBehaviour
                 room.DisableDoorToNeighbour(newRoom);
         }
 
-        Vector3 objectiveRelative = objectiveCoords - newRoom.roomCoords;
-        DoorDirection objectiveDoor = Door.GridToDirection(objectiveRelative);
+        DoorDirection objectiveDoor = Door.GridToDirection(objectiveCoords - newRoom.roomCoords);
+        DoorDirection puzzleDoor = Door.GridToDirection(puzzleCoords - newRoom.roomCoords);
+
         if (Array.IndexOf(cardinals, objectiveDoor) > -1)
-        {
             newRoom.doors[(int)objectiveDoor].ConvertToObjective();
-        }
+
+        if (Array.IndexOf(cardinals, puzzleDoor) > -1)
+            newRoom.doors[(int)puzzleDoor].ConvertToPuzzle();
+
 
         navMeshSurface.BuildNavMesh();
-        //currentRoomNO.GetComponent<Room>().floor.GetComponent<NavMeshSurface>().BuildNavMesh();
-
+        Debug.Log("Invoking Room Spawn");
+        OnRoomSpawn?.Invoke(this, new OnRoomSpawnArgs { RoomTransform = roomNetworkObject.transform });
     }
 
     private bool IsOutOfBounds(Vector3 coords, DoorDirection dir)

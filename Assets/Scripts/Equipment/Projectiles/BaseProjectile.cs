@@ -14,7 +14,6 @@ public class BaseProjectile : MonoBehaviour
     {
         if (hasBeenfired)
         {
-            Debug.Log("Fireball hit " + other.name);
             if (other.GetComponent<Enemy>() != null)
             {
                 other.GetComponent<Enemy>().DamageToEnemyServerRpc((int)damage, playerSourceNO);
@@ -29,10 +28,4 @@ public class BaseProjectile : MonoBehaviour
         Destroy(gameObject);
         GetComponent<NetworkObject>().Despawn();
     }
-
-    //private void OnTriggerEnter(Col collision)
-    //{
-    //    Debug.Log("Fireball hit " + collision.collider.name);
-    //    Destroy(gameObject);
-    //}
 }

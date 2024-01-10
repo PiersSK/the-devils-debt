@@ -35,12 +35,15 @@ public class PlayerNotification : MonoBehaviour
                     isVisible = false;
                 }
             }
+        } else
+        {
+            notificationText.color = new Color(1, 1, 1, 0);
         }
     }
 
     public void ShowNotification(string message)
     {
-        Color backgroundColor = notificationBackground.color;
+        Color backgroundColor = Color.red;
         backgroundColor.a = 1;
 
         notificationBackground.color = backgroundColor;
@@ -51,4 +54,18 @@ public class PlayerNotification : MonoBehaviour
         timer = 0f;
         isVisible = true;
     }
+
+    public void ShowNotification(string message, Color backgroundColor)
+    {
+        backgroundColor.a = 1;
+
+        notificationBackground.color = backgroundColor;
+        notificationText.color = new Color(1, 1, 1, 1);
+
+        notificationText.text = message;
+
+        timer = 0f;
+        isVisible = true;
+    }
+
 }
