@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class DoorButton : Interactable
@@ -13,9 +14,9 @@ public class DoorButton : Interactable
     {
         if (manaCost <= Player.LocalInstance.playerMana.currentMana.Value)
         {
-            Player.LocalInstance.playerMana.IncrementPlayerManaServerRpc(-manaCost);
+            Player.LocalInstance.playerMana.IncrementPlayerMana(-manaCost);
             door.RemoveDoor();
-            door.dungeon.AddRandomRoom(door.room, door.direction, roomType);
+            door.dungeon.AddRandomRoomServerRpc(door.room.GetComponent<NetworkObject>(), door.direction, roomType);
         }
     }
 

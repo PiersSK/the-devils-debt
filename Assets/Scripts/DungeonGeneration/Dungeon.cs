@@ -3,30 +3,122 @@ using UnityEngine;
 using Unity.Netcode;
 using static Door;
 using Unity.AI.Navigation;
+using System;
+using Random = UnityEngine.Random;
 
 public class Dungeon : NetworkBehaviour
 {
-    public float objectiveSpawnChance = 0f;
-    public float objectiveMaxRooms = 10f;
-    private bool objectiveSpawned = false;
+    public static Dungeon Instance { get; private set; }
+    public event EventHandler<OnRoomSpawnArgs> OnRoomSpawn;
+    public class OnRoomSpawnArgs : EventArgs
+    {
+        public Transform RoomTransform;
+    }
 
+
+    [Header("Starting Objects")]
     [SerializeField] private NavMeshSurface navMeshSurface;
-
     [SerializeField] private Room startingRoom;
+
+    [Header("Generation Settings")]
     [SerializeField] private int maxRoomRadius = 10;
     [SerializeField] private int maxFloors = 3;
     [SerializeField] private float roomWidth = 20f;
     [SerializeField] private float roomHeight = 6f;
     [SerializeField] private float stairSpawnChance = 10f;
+    [SerializeField] private float roomExpandChance = 20f;
+
+    //private NetworkVariable<float> roomExpandCurrentChance = new(20f);
+
     private Room[,,] dungeonGrid;
 
+    [Header("Objective Spawn")]
+    [SerializeField] private int objectiveMinRadius = 2;
+    [SerializeField] private int objectiveMaxRadius = 3;
+    [SerializeField] private bool objectiveCanSpawnOnDifferentFloor = false;
+    private Vector3 objectiveCoords;
+
+    [Header("Puzzle Spawn")]
+    [SerializeField] private int puzzleMinRadius = 2;
+    [SerializeField] private int puzzleMaxRadius = 2;
+    [SerializeField] private bool puzzleCanSpawnOnDifferentFloor = false;
+    private Vector3 puzzleCoords;
+
     private NetworkObject lastSpawnedRoom;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
         InitiateGrid();
-        dungeonGrid[maxRoomRadius, maxRoomRadius, (int)maxFloors/2] = startingRoom;
-        startingRoom.roomCoords = new Vector3(maxRoomRadius, maxRoomRadius, (int)maxFloors / 2);
+        dungeonGrid[maxRoomRadius, maxRoomRadius, maxFloors/2] = startingRoom;
+        startingRoom.roomCoords = new Vector3(maxRoomRadius, maxRoomRadius, maxFloors / 2);
+
+        if (Player.LocalInstance.playerIsHost)
+        {
+            AssignSpecialRoomCoords();
+            SetupSpecialClientRpc(objectiveCoords, puzzleCoords);
+        }
+    }
+
+    [ClientRpc]
+    private void SetupSpecialClientRpc(Vector3 objCoords, Vector3 puzCoords)
+    {
+        Debug.Log("Setting objective coordinates to: " + objCoords);
+        Debug.Log("Setting puzzle coordinates to: " + puzCoords);
+        objectiveCoords = objCoords;
+        puzzleCoords = puzCoords;
+    }
+
+    private void AssignSpecialRoomCoords()
+    {
+        objectiveCoords = GetRandomCoordsAtRange(startingRoom.roomCoords, objectiveMinRadius, objectiveMaxRadius, objectiveCanSpawnOnDifferentFloor);
+
+        do puzzleCoords = GetRandomCoordsAtRange(startingRoom.roomCoords, puzzleMinRadius, puzzleMaxRadius, puzzleCanSpawnOnDifferentFloor);
+        while (puzzleCoords == objectiveCoords);
+    }
+
+    private Vector3 GetRandomCoordsAtRange(Vector3 coords, int minRange, int maxRange, bool canSpawnOnDifferentFloor)
+    {
+        int x = (int)coords.x + (Random.Range(0, 2) * 2 - 1) * Random.Range(minRange, maxRange + 1);
+        int y = (int)coords.y + (Random.Range(0, 2) * 2 - 1) * Random.Range(minRange, maxRange + 1);
+        int z = canSpawnOnDifferentFloor ? Random.Range(0, maxFloors) : (int)coords.z;
+
+        return new Vector3(x, y, z);
+    }
+
+    private Vector3 GetGridOfPlayer()
+    {
+        Vector3 playerPos = Player.LocalInstance.transform.position;
+        int x = maxRoomRadius + (int)Mathf.Round(playerPos.x / roomWidth);
+        int y = maxRoomRadius + (int)Mathf.Round(playerPos.z / roomWidth);
+        int z = (maxFloors / 2) + (int)Mathf.Round(playerPos.y / roomHeight);
+
+        return new Vector3(x,y,z);
+    }
+
+    public DoorDirection GetPathToObjective()
+    {
+        float minDistance = Mathf.Infinity;
+        DoorDirection bestDirection = DoorDirection.None;
+        Vector3 playerRoomCoords = GetGridOfPlayer();
+
+        if (playerRoomCoords == objectiveCoords) return bestDirection;
+
+        foreach (DoorDirection dir in cardinals)
+        {
+            float dist = Vector3.Distance(objectiveCoords, (playerRoomCoords + DirectionToGrid(dir)));
+            if (dist < minDistance)
+            {
+                bestDirection = dir;
+                minDistance = dist;
+            }
+        }
+
+        return bestDirection;
     }
 
     private void InitiateGrid()
@@ -76,11 +168,11 @@ public class Dungeon : NetworkBehaviour
         return !RoomExistsAtCoords(spawnAttemptLoc);
     }
 
-    public void AddRandomRoom(Room currentRoom, DoorDirection dir, Room.RoomType roomType)
+    [ServerRpc(RequireOwnership = false)]
+    public void AddRandomRoomServerRpc(NetworkObjectReference currentRoomNOR, DoorDirection dir, Room.RoomType roomType)
     {
-        Vector3 currentPos = currentRoom.gameObject.transform.position;
-        Vector3 currentCoords = currentRoom.roomCoords;
-        NetworkObject currentRoomNO = currentRoom.GetComponent<NetworkObject>();
+        currentRoomNOR.TryGet(out NetworkObject currentRoomNO);
+        Room currentRoom = currentRoomNO.GetComponent<Room>();
         string prefabName = "Rooms/";
         bool trySpawnStairs = false;
 
@@ -104,56 +196,45 @@ public class Dungeon : NetworkBehaviour
             case Room.RoomType.Objective:
                 prefabName += "ObjectiveRoom";
                 break;
+            case Room.RoomType.Puzzle:
+                prefabName += "PuzzleRoom";
+                break;
             default:
                 prefabName += "Room";
                 break;
         }
-
-        //InitiateNewRoomServerRpc("Room", currentPos, currentCoords, dir, roomType);
 
         if (Random.Range(0, 100) < stairSpawnChance && roomType != Room.RoomType.Objective && trySpawnStairs)
         {
             int upDown = Random.Range(0, 2); //0=up, 1=down
             if (CanSpawnDownStairs(currentRoom.roomCoords, dir) && upDown == 0)
             {
-                Debug.Log("Spawning stairs down");
-
-                InitiateNewRoomServerRpc(currentRoomNO, "Stairwell Top", dir, roomType);
-
-                Vector3 stairTopPos = currentPos + (DirectionToWorldSpace(dir) * roomWidth);
-                Vector3 stairTopGrid = currentCoords + DirectionToGrid(dir);
-
-                InitiateNewRoomServerRpc(lastSpawnedRoom, "Stairwell Bottom", DoorDirection.Down, roomType);
+                InitiateNewRoom(currentRoomNO, "Stairwell Top", dir, Room.RoomType.Stairs);
+                InitiateNewRoom(lastSpawnedRoom, "Stairwell Bottom", DoorDirection.Down, Room.RoomType.Stairs);
             }
             else if (CanSpawnUpStairs(currentRoom.roomCoords, dir) && upDown == 1)
             {
-                Debug.Log("Spawning stairs up");
-
-                InitiateNewRoomServerRpc(currentRoomNO, "Stairwell Bottom", dir, roomType);
-
-                Vector3 stairBottomPos = currentPos + (DirectionToWorldSpace(dir) * roomWidth);
-                Vector3 stairBottomGrid = currentCoords + DirectionToGrid(dir);
-
-                InitiateNewRoomServerRpc(lastSpawnedRoom, "Stairwell Top", DoorDirection.Up, roomType);
+                InitiateNewRoom(currentRoomNO, "Stairwell Bottom", dir, Room.RoomType.Stairs);
+                InitiateNewRoom(lastSpawnedRoom, "Stairwell Top", DoorDirection.Up, Room.RoomType.Stairs);
             }
             else
             {
-                InitiateNewRoomServerRpc(currentRoomNO, prefabName, dir, roomType);
-
+                InitiateNewRoom(currentRoomNO, prefabName, dir, roomType);
             }
         }
         else
         {
-            InitiateNewRoomServerRpc(currentRoomNO, prefabName, dir, roomType);
-
+            InitiateNewRoom(currentRoomNO, prefabName, dir, roomType);
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void InitiateNewRoomServerRpc(NetworkObjectReference currentRoomNOR, string prefabName, DoorDirection dir, Room.RoomType roomType)
+    private void InitiateNewRoom(
+        NetworkObjectReference currentRoomNOR,
+        string prefabName,
+        DoorDirection dir,
+        Room.RoomType roomType,
+        bool tryExpand = true)
     {
-        
-
         // Server instantiates and spawns the room
         GameObject newRoomObj = Instantiate(Resources.Load<GameObject>(prefabName));
         newRoomObj.GetComponent<NetworkObject>().Spawn();
@@ -162,12 +243,45 @@ public class Dungeon : NetworkBehaviour
         // Server sets room up and sends to clients
         InitiateNewRoomClientRpc(newRoomObj.GetComponent<NetworkObject>(), currentRoomNOR, dir, roomType);
 
+        Room newRoom = newRoomObj.GetComponent<Room>();
+
+        //Chance for room to expand
+        List<Room> neighbours = GetRoomNeighbours(newRoom);
+        List<Vector3> neighbourCoords = new();
+        foreach (Room room in neighbours) neighbourCoords.Add(room.roomCoords);
+
+        List<Room.RoomType> invalidExpandTypes = new() { Room.RoomType.Objective, Room.RoomType.Stairs, Room.RoomType.Puzzle };
+        if (!invalidExpandTypes.Contains(roomType) && tryExpand)
+        {
+            foreach (DoorDirection possibleDir in cardinals)
+            {
+                Vector3 possibleLoc = newRoom.roomCoords + DirectionToGrid(possibleDir);
+                if (Random.Range(0, 100) > roomExpandChance) continue;
+
+                if (!neighbourCoords.Contains(possibleLoc)
+                    && possibleLoc != objectiveCoords
+                    && possibleLoc != puzzleCoords
+                    && !IsOutOfBounds(newRoom.roomCoords, possibleDir))
+                {
+                    newRoom.RemoveWallClientRpc((int)possibleDir); // Remove room to new room
+                    InitiateNewRoom(newRoomObj.GetComponent<NetworkObject>(), prefabName, possibleDir, roomType, false); //Spawn new room
+                    lastSpawnedRoom.GetComponent<Room>().RemoveWallClientRpc(((int)possibleDir + 2) % 4); //Remove wall of new room to this one
+                    navMeshSurface.BuildNavMesh();
+                }
+
+            }
+        }
+
         // Server spawns room contents
         newRoomObj.GetComponent<Room>().SpawnRoomContents();
     }
 
     [ClientRpc]
-    private void InitiateNewRoomClientRpc(NetworkObjectReference roomNOR, NetworkObjectReference currentRoomNOR, DoorDirection dir, Room.RoomType roomType)
+    private void InitiateNewRoomClientRpc(
+        NetworkObjectReference roomNOR,
+        NetworkObjectReference currentRoomNOR,
+        DoorDirection dir,
+        Room.RoomType roomType)
     {
         currentRoomNOR.TryGet(out NetworkObject currentRoomNO);
         Vector3 currentPos = currentRoomNO.transform.position;
@@ -178,6 +292,8 @@ public class Dungeon : NetworkBehaviour
 
         roomNOR.TryGet(out NetworkObject roomNetworkObject);
         Room newRoom = roomNetworkObject.GetComponent<Room>();
+
+        lastSpawnedRoom = roomNetworkObject;
 
         //Move room to correct position
         Vector3 newRoomPos = currentPos;
@@ -195,13 +311,7 @@ public class Dungeon : NetworkBehaviour
         foreach (Door door in newRoom.doors)
         {
             door.dungeon = this;
-            if ((newRoom.roomCoords.x + DirectionToGrid(door.direction).x) < 0
-                || (newRoom.roomCoords.x + DirectionToGrid(door.direction).x) > maxRoomRadius * 2
-                || (newRoom.roomCoords.y + DirectionToGrid(door.direction).y) < 0
-                || (newRoom.roomCoords.y + DirectionToGrid(door.direction).y) > maxRoomRadius * 2)
-            {
-                door.BlockDoor();
-            }
+            if(IsOutOfBounds(newRoom.roomCoords, door.direction)) door.BlockDoor();
         }
         
         if (dir != DoorDirection.Up && dir != DoorDirection.Down)
@@ -209,38 +319,37 @@ public class Dungeon : NetworkBehaviour
             newRoom.doors[((int)dir + 2) % 4].RemoveDoor(); //Remove door joining to entrance
         }
 
-        //Open doors to other adjacent rooms (leave Objective rooms as dead ends)
-        if (roomType != Room.RoomType.Objective)
+        //Open doors to other adjacent rooms
+        List<Room> neighbours = GetRoomNeighbours(newRoom);
+        List<Vector3> neighbourCoords = new();
+        foreach (Room room in neighbours)
         {
-            List<Room> neighbours = GetRoomNeighbours(newRoom);
-            foreach (Room room in neighbours)
-            {
-                if (room.roomCoords != currentCoords)
-                    room.DisableDoorToNeighbour(newRoom);
-            }
+            neighbourCoords.Add(room.roomCoords);
+            if (room.roomCoords != currentCoords)
+                room.DisableDoorToNeighbour(newRoom);
         }
 
-        //If the objective room hasn't spawned, give a chance for the door to be here
-        if (!objectiveSpawned)
-        {
-            float randSpawn = Random.Range(0, 100);
-            Debug.Log("Rolled " + randSpawn + " to spawn objective (currently needs " + objectiveSpawnChance + ")");
-            if (randSpawn < objectiveSpawnChance)
-            {
-                Debug.Log("Spawning Objective!");
-                newRoom.SpawnObjectiveDoor();
-                objectiveSpawned = true;
-            }
-            else
-            {
-                objectiveSpawnChance += 100 / objectiveMaxRooms;
-            }
-        }
+        DoorDirection objectiveDoor = Door.GridToDirection(objectiveCoords - newRoom.roomCoords);
+        DoorDirection puzzleDoor = Door.GridToDirection(puzzleCoords - newRoom.roomCoords);
+
+        if (Array.IndexOf(cardinals, objectiveDoor) > -1)
+            newRoom.doors[(int)objectiveDoor].ConvertToObjective();
+
+        if (Array.IndexOf(cardinals, puzzleDoor) > -1)
+            newRoom.doors[(int)puzzleDoor].ConvertToPuzzle();
+
 
         navMeshSurface.BuildNavMesh();
-        //currentRoomNO.GetComponent<Room>().floor.GetComponent<NavMeshSurface>().BuildNavMesh();
+        Debug.Log("Invoking Room Spawn");
+        OnRoomSpawn?.Invoke(this, new OnRoomSpawnArgs { RoomTransform = roomNetworkObject.transform });
+    }
 
-        lastSpawnedRoom = roomNetworkObject;
+    private bool IsOutOfBounds(Vector3 coords, DoorDirection dir)
+    {
+        return (coords.x + DirectionToGrid(dir).x) < 0
+        || (coords.x + DirectionToGrid(dir).x) > maxRoomRadius * 2
+        || (coords.y + DirectionToGrid(dir).y) < 0
+        || (coords.y + DirectionToGrid(dir).y) > maxRoomRadius * 2;
     }
 
     private List<Room> GetRoomNeighbours(Room room)

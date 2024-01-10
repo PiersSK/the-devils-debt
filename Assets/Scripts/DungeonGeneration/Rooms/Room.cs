@@ -12,24 +12,47 @@ public class Room : NetworkBehaviour
         Monster,
         Boon,
         Treasure,
-        Random,
-        Objective
+        Puzzle,
+        Objective,
+        Stairs,
+        Random
     }
 
     public RoomType roomType;
 
     public Door[] doors = new Door[4];
+    public GameObject[] walls = new GameObject[4];
+
     public Vector3 roomCoords;
     public Light roomLight;
-       
+
+    public ParticleSystem dustParticles;
+
     private void Awake()
     {
         OrderDoorArray();
     }
 
+    private void Update()
+    {
+        if (dustParticles != null)
+        {
+            if (Player.LocalInstance.playerLook.cameraShake)
+            {
+                var emission = dustParticles.emission;
+                emission.rateOverTime = Player.LocalInstance.playerLook.cameraShakeMagnitude * 100;
+            }
+            else
+            {
+                var emission = dustParticles.emission;
+                emission.rateOverTime = 0f;
+            }
+        }
+    }
+
     private void OrderDoorArray()
     {
-        List<Door> orderedDoors = new List<Door> ();
+        List<Door> orderedDoors = new List<Door>();
 
         for (int i = 0; i < 4; i++)
         {
@@ -50,40 +73,55 @@ public class Room : NetworkBehaviour
         doors = orderedDoors.ToArray();
     }
 
-    public void SpawnObjectiveDoor()
+    public void RemoveWall(int wallIndex)
     {
-        foreach (Door door in doors) //This has a directional bias, could make it random
+        if (IsClient)
         {
-            if (door.portal.activeSelf)
-            {
-                door.ConvertToObjective();
-                break;
-            }
+            RemoveWallServerRpc(wallIndex);
         }
+        else
+        {
+            walls[wallIndex].SetActive(false);
+            doors[wallIndex].RemoveDoor(true);
+        }
+
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RemoveWallServerRpc(int wallIndex)
+    {
+        RemoveWallClientRpc(wallIndex);
+    }
+
+    [ClientRpc]
+    public void RemoveWallClientRpc(int wallIndex)
+    {
+        walls[wallIndex].SetActive(false);
+        doors[wallIndex].RemoveDoor(true);
+    }
+
     public void DisableDoorToNeighbour(Room neighbour)
     {
         Vector2 diff = neighbour.roomCoords - roomCoords;
-        Debug.Log("Disabling room to neighbor at: " + neighbour.roomCoords + "|| Direction: " + diff);
 
         if (diff.y == 1) // neighbour is north
         {
-            if (roomType != RoomType.Objective) doors[0].RemoveDoor();
+            doors[0].RemoveDoor();
             neighbour.doors[2].RemoveDoor();
         }
         if (diff.y == -1) // neighbour is south
         {
-            if (roomType != RoomType.Objective) doors[2].RemoveDoor();
+            doors[2].RemoveDoor();
             neighbour.doors[0].RemoveDoor();
         }
         if (diff.x == 1) // neighbour is east
         {
-            if (roomType != RoomType.Objective) doors[1].RemoveDoor();
+            doors[1].RemoveDoor();
             neighbour.doors[3].RemoveDoor();
         }
         if (diff.x == -1) // neighbour is west
         {
-            if (roomType != RoomType.Objective) doors[3].RemoveDoor();
+            doors[3].RemoveDoor();
             neighbour.doors[1].RemoveDoor();
         }
     }

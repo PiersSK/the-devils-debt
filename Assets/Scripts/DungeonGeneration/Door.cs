@@ -13,7 +13,8 @@ public class Door : NetworkBehaviour
         South,
         West,
         Down,
-        Up
+        Up,
+        None
     }
 
     public static DoorDirection[] cardinals = new DoorDirection[4]
@@ -33,6 +34,10 @@ public class Door : NetworkBehaviour
 
     public GameObject portal;
     private GameObject block;
+    private GameObject frame;
+    [SerializeField] private Material objectiveMaterial;
+    [SerializeField] private Material puzzleMaterial;
+
 
     public override void OnNetworkSpawn()
     {
@@ -43,20 +48,36 @@ public class Door : NetworkBehaviour
     {
         portal = gameObject.transform.Find("Portal").gameObject;
         block = gameObject.transform.Find("Block").gameObject;
+        frame = gameObject.transform.Find("Frame").gameObject;
     }
 
-    public void RemoveDoor()
+    public void RemoveDoor(bool removeFrame = false)
     {
         if (IsClient)
         {
-            RemoveDoorServerRpc();
+            RemoveDoorServerRpc(removeFrame);
         }
         else
         {
             portal.SetActive(false);
             block.SetActive(false);
+            frame.SetActive(!removeFrame);
         }
 
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RemoveDoorServerRpc(bool removeFrame = false)
+    {
+        RemoveDoorClientRpc(removeFrame);
+    }
+
+    [ClientRpc]
+    private void RemoveDoorClientRpc(bool removeFrame = false)
+    {
+        portal.SetActive(false);
+        block.SetActive(false);
+        frame.SetActive(!removeFrame);
     }
 
     public void SetNavMeshLink(Transform linkedFloor)
@@ -64,18 +85,6 @@ public class Door : NetworkBehaviour
         GetComponent<OffMeshLink>().endTransform = linkedFloor;
     }
 
-    [ClientRpc]
-    private void RemoveDoorClientRpc()
-    {
-        portal.SetActive(false);
-        block.SetActive(false);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void RemoveDoorServerRpc()
-    {
-        RemoveDoorClientRpc();
-    }
 
     public void BlockDoor()
     {
@@ -92,9 +101,23 @@ public class Door : NetworkBehaviour
 
         randomButton.roomType = Room.RoomType.Objective;
         randomButton.SetPromptMessage("Objective! [0]");
+        portal.GetComponent<MeshRenderer>().material = objectiveMaterial;
 
     }
-    
+
+    public void ConvertToPuzzle()
+    {
+        foreach (DoorButton button in chooseButtons)
+        {
+            button.gameObject.SetActive(false);
+        }
+
+        randomButton.roomType = Room.RoomType.Puzzle;
+        randomButton.SetPromptMessage("Puzzle! [0]");
+        portal.GetComponent<MeshRenderer>().material = puzzleMaterial;
+
+    }
+
     public static Vector3 DirectionToGrid(DoorDirection dir)
     {
         switch (dir)
@@ -114,6 +137,18 @@ public class Door : NetworkBehaviour
         }
 
         return Vector3.zero;
+    }
+
+    public static DoorDirection GridToDirection(Vector3 gridVector)
+    {
+        if (gridVector == new Vector3(0, 1, 0)) return DoorDirection.North;
+        else if (gridVector == new Vector3(0, -1, 0)) return DoorDirection.South;
+        else if (gridVector == new Vector3(1, 0, 0)) return DoorDirection.East;
+        else if (gridVector == new Vector3(-1, 0, 0)) return DoorDirection.West;
+        else if (gridVector == new Vector3(0, 0, 1)) return DoorDirection.Up;
+        else if (gridVector == new Vector3(0, 0, -1)) return DoorDirection.Down;
+
+        return DoorDirection.None;
     }
 
     public static Vector3 DirectionToWorldSpace(DoorDirection dir)

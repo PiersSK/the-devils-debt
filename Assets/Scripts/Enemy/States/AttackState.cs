@@ -32,7 +32,7 @@ public class AttackState : BaseState
 
     public override void Enter()
     {
-        enemy.Agent.speed = 6f;
+        enemy.Agent.speed = 8f;
         enemy.Agent.stoppingDistance = 2f;
     }
 

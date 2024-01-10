@@ -15,12 +15,35 @@ public class PlayerMana : NetworkBehaviour
     private void SyncPlayerMana(int prevVal, int newVal)
     {
         currentMana.Value = Math.Clamp(newVal, 0, maxMana);
-        if (IsOwner) UIManager.Instance.mana.UpdateBar(currentMana.Value, maxMana);
+        if (IsOwner)
+        {
+            UIManager.Instance.mana.UpdateBar(currentMana.Value, maxMana);
+            if (prevVal < newVal)
+            {
+                UIManager.Instance.mana.ShowOverlay(3f, false);
+            }
+        }
     }
 
-    [ServerRpc]
-    public void IncrementPlayerManaServerRpc(int incr)
+    //Returns bool to let you know if you could spend this or not
+    public bool IncrementPlayerMana(int incr)
     {
+        if(currentMana.Value + incr < 0)
+        {
+            UIManager.Instance.notification.ShowNotification("Insufficient Mana!");
+            return false;
+        }
+        else
+        {
+            IncrementPlayerManaServerRpc(incr);
+            return true;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void IncrementPlayerManaServerRpc(int incr)
+    {
+
         currentMana.Value += incr;
     }
 }

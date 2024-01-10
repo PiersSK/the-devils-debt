@@ -8,13 +8,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Player
+  - Interactable
   - Water
   - UI
-  - Interactable
+  - Player
   - Hittable
-  - Self
-  - NavMeshIgnore
+  - RaycastIgnore
+  - Camera
   - 
   - 
   - 

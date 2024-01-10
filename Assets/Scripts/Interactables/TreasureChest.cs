@@ -4,7 +4,8 @@ using UnityEngine;
 public class TreasureChest : NetworkInteractable
 {
     [SerializeField] private Animator anim;
-    private NetworkVariable<bool> isOpen = new(false);
+    protected NetworkVariable<bool> isOpen = new(false);
+    private Vector3 lootOffset = new(0, 0.8f, 0.6f); // Do this better (make chest mid point actual position)
 
     public override void OnNetworkSpawn()
     {
@@ -23,19 +24,64 @@ public class TreasureChest : NetworkInteractable
         }
     }
 
+    public override bool CanInteract()
+    {
+        return !isOpen.Value;
+    }
+
     protected override void Interact()
     {
-        Debug.Log("Chest interact happening");
         OpenChestServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void OpenChestServerRpc()
     {
-        Debug.Log("Chest serverRPC happening");
-        if (!isOpen.Value)
+        if (!isOpen.Value) {
             isOpen.Value = true;
-            if (ObjectiveController.Instance.objectiveSelected.Value == ObjectiveController.ObjectiveType.Keys)
-                ObjectiveController.Instance.ProgressObjective();
+
+            if (ObjectiveController.Instance.objectiveSelected.Value == ObjectiveController.ObjectiveType.Keys
+                && !ObjectiveController.Instance.objectiveComplete) {
+                Transform keyObj = Instantiate(Resources.Load<Transform>("Pickups/ObjectiveKey"));
+                keyObj.GetComponent<PickupInteractable>().UpdateRootPosition(transform.position + lootOffset);
+                keyObj.GetComponent<NetworkObject>().Spawn(true);
+            }
+            else
+            {
+                SpawnLoot("Equipment/Sword2", 10);
+            }
+
+
+            SpawnPickup("Pickups/HealthOrb", 7);
+            SpawnPickup("Pickups/ManaOrb", 3);
+        }
     }
+
+
+    private void SpawnLoot(string prefabName, int spawnChance)
+    {
+        if (Random.Range(0, 10) < spawnChance)
+        {
+            Transform loot = Resources.Load<Transform>(prefabName);
+            loot.position = transform.position + lootOffset;
+            Transform lootObj = Instantiate(loot);
+            lootObj.GetComponent<NetworkObject>().Spawn(true);
+        }
+    }
+
+    private void SpawnPickup(string prefabName, int spawnChance)
+    {
+        //Health Orb spawn
+        if (Random.Range(0, 10) < spawnChance)
+        {
+            Transform healthOrb = Resources.Load<Transform>(prefabName);
+            healthOrb.position = new Vector3(
+                transform.position.x + Random.Range(-1f, 1f)
+                , -1.6f
+                , transform.position.z + Random.Range(-1f, 1f)
+            );
+            Transform healthOrbObj = Instantiate(healthOrb);
+            healthOrbObj.GetComponent<NetworkObject>().Spawn(true);
+        }
+}
 }

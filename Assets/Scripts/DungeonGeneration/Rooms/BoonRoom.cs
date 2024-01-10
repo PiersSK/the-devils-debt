@@ -6,7 +6,7 @@ using UnityEngine;
 public class BoonRoom : Room
 {
     private NetworkVariable<bool> isManaRegen = new(false);
-    private int spawnChance = 7; // 1=10%, 10=100%
+    private int spawnChance = 5; // 1=10%, 10=100%
 
     public override void OnNetworkSpawn()
     {
@@ -33,7 +33,7 @@ public class BoonRoom : Room
     {
         Transform fountainObj = Instantiate(Resources.Load<Transform>("Fountain"));
         fountainObj.localPosition = transform.position;
-        fountainObj.GetComponent<NetworkObject>().Spawn();
+        fountainObj.GetComponent<NetworkObject>().Spawn(true);
     }
 
 

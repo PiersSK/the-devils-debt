@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class EnemyStateMachine : MonoBehaviour
+public class EnemyStateMachine : NetworkBehaviour
 {
     public BaseState activeState;
     public PatrolState patrolState;
@@ -24,6 +25,7 @@ public class EnemyStateMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log("ESM IsOwner: " + IsOwner);
         if(activeState != null)
         {
             activeState.Perform();
