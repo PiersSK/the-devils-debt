@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Compass : Equipment
@@ -18,37 +19,79 @@ public class Compass : Equipment
     private CompassDestination destination = CompassDestination.Objective;
     private List<string> destinationName = new() { "Objective", "Puzzle Room" };
 
+    public bool orbIsActive = false;
+    private Transform currentObjectiveOrb;
+    private Transform currentDoorTarget;
+
     private void Update()
     {
         if (isPickedUp) // Point it north (ish)
             compassNeedle.localEulerAngles = -Player.LocalInstance.transform.eulerAngles;
+
+        if (orbIsActive && IsServer)
+        {
+            Vector3 direction = (currentDoorTarget.position - currentObjectiveOrb.position).normalized;
+            currentObjectiveOrb.GetComponent<Rigidbody>().velocity = direction * 10f;
+
+            if (Vector3.Distance(currentObjectiveOrb.position, currentDoorTarget.position) < 0.1f)
+            {
+                Destroy(currentObjectiveOrb.gameObject);
+                orbIsActive = false;
+            }
+        }
+
     }
 
     public override void PerformAbility()
     {
-        if (!onCooldown && Player.LocalInstance.playerMana.IncrementPlayerMana(-manaCost))
+        if (!orbIsActive && !onCooldown && Player.LocalInstance.playerMana.IncrementPlayerMana(-manaCost))
         {
-            string compassResponse = "";
-            if(destination == CompassDestination.Objective)
-                compassResponse = Dungeon.Instance.GetPathToObjective().ToString();
-            else if(destination == CompassDestination.PuzzleRoom)
-                compassResponse = Dungeon.Instance.GetPathToPuzzle().ToString();
+            Door.DoorDirection compassResponse = Door.DoorDirection.None;
+            if (destination == CompassDestination.Objective)
+                compassResponse = Dungeon.Instance.GetPathToObjective();
+            else if (destination == CompassDestination.PuzzleRoom)
+                compassResponse = Dungeon.Instance.GetPathToPuzzle();
 
-            if (compassResponse == "None") compassResponse = "Destination Reached";
+            string responseString = compassResponse.ToString();
+
+            if (compassResponse == Door.DoorDirection.None) responseString = "Destination Reached";
+            else
+            {
+                currentDoorTarget = Dungeon.Instance.GetRoomOfPlayer().doors[(int)compassResponse].transform;
+                SendProjectileServerRpc(Player.LocalInstance.GetComponent<NetworkObject>());
+            }
 
             Color nofifcationColor = destination == CompassDestination.Objective ? new Color(1, 0.8f, 0.05f) : new Color(0.55f, 0.25f, 0.66f); 
 
-            UIManager.Instance.notification.ShowNotification(compassResponse, nofifcationColor);
+            UIManager.Instance.notification.ShowNotification(responseString, nofifcationColor);
             UIManager.Instance.hotbarAccessory.PutOnCooldown(1f);
+                
+
         }
     }
 
-    public override void ResetAbility()
-    {
-    }
+    public override void ResetAbility() { }
+    public override void SetAnimations() { }
 
-    public override void SetAnimations()
+    [ServerRpc(RequireOwnership = false)]
+    private void SendProjectileServerRpc(NetworkObjectReference playerNOR)
     {
+        playerNOR.TryGet(out NetworkObject playerNO);
+        Player player = playerNO.GetComponent<Player>();
+
+        Transform orbPrefab = Resources.Load<Transform>("Projectiles/CompassProjectile");
+        orbPrefab.position = player.playerLook.cam.transform.position + (player.playerLook.cam.transform.forward * 2);
+
+        currentObjectiveOrb = Instantiate(orbPrefab);
+
+        currentObjectiveOrb.GetComponent<CompassProjectile>().playerSourceNO = player.GetComponent<NetworkObject>();
+        currentObjectiveOrb.GetComponent<CompassProjectile>().hasBeenfired = true;
+        currentObjectiveOrb.GetComponent<CompassProjectile>().sourceCompass = this;
+
+        currentObjectiveOrb.GetComponent<NetworkObject>().Spawn();
+
+        orbIsActive = true;
+
     }
 
     public override void PerformAlt()

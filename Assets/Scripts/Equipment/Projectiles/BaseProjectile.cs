@@ -10,7 +10,7 @@ public class BaseProjectile : MonoBehaviour
     public bool hasBeenfired = false;
     
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (hasBeenfired)
         {
@@ -23,9 +23,8 @@ public class BaseProjectile : MonoBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void DestroyProjectileServerRpc()
+    protected void DestroyProjectileServerRpc()
     {
         Destroy(gameObject);
-        GetComponent<NetworkObject>().Despawn();
     }
 }
