@@ -125,6 +125,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""AltUse"",
+                    ""type"": ""Button"",
+                    ""id"": ""efdeb394-aac2-4e87-8cd3-144d4fc21347"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -389,6 +398,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ToggleEquipDown"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""21783994-cec8-4ede-8e83-124ac76a3aee"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AltUse"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -926,6 +946,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_OnFoot_EquipOff = m_OnFoot.FindAction("EquipOff", throwIfNotFound: true);
         m_OnFoot_EquipAccessory = m_OnFoot.FindAction("EquipAccessory", throwIfNotFound: true);
         m_OnFoot_ToggleEquipDown = m_OnFoot.FindAction("ToggleEquipDown", throwIfNotFound: true);
+        m_OnFoot_AltUse = m_OnFoot.FindAction("AltUse", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1010,6 +1031,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_OnFoot_EquipOff;
     private readonly InputAction m_OnFoot_EquipAccessory;
     private readonly InputAction m_OnFoot_ToggleEquipDown;
+    private readonly InputAction m_OnFoot_AltUse;
     public struct OnFootActions
     {
         private @PlayerInput m_Wrapper;
@@ -1025,6 +1047,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @EquipOff => m_Wrapper.m_OnFoot_EquipOff;
         public InputAction @EquipAccessory => m_Wrapper.m_OnFoot_EquipAccessory;
         public InputAction @ToggleEquipDown => m_Wrapper.m_OnFoot_ToggleEquipDown;
+        public InputAction @AltUse => m_Wrapper.m_OnFoot_AltUse;
         public InputActionMap Get() { return m_Wrapper.m_OnFoot; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1067,6 +1090,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @ToggleEquipDown.started += instance.OnToggleEquipDown;
             @ToggleEquipDown.performed += instance.OnToggleEquipDown;
             @ToggleEquipDown.canceled += instance.OnToggleEquipDown;
+            @AltUse.started += instance.OnAltUse;
+            @AltUse.performed += instance.OnAltUse;
+            @AltUse.canceled += instance.OnAltUse;
         }
 
         private void UnregisterCallbacks(IOnFootActions instance)
@@ -1104,6 +1130,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @ToggleEquipDown.started -= instance.OnToggleEquipDown;
             @ToggleEquipDown.performed -= instance.OnToggleEquipDown;
             @ToggleEquipDown.canceled -= instance.OnToggleEquipDown;
+            @AltUse.started -= instance.OnAltUse;
+            @AltUse.performed -= instance.OnAltUse;
+            @AltUse.canceled -= instance.OnAltUse;
         }
 
         public void RemoveCallbacks(IOnFootActions instance)
@@ -1252,6 +1281,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnEquipOff(InputAction.CallbackContext context);
         void OnEquipAccessory(InputAction.CallbackContext context);
         void OnToggleEquipDown(InputAction.CallbackContext context);
+        void OnAltUse(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

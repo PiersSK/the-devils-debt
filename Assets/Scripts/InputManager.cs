@@ -34,9 +34,12 @@ public class InputManager : NetworkBehaviour
         onFoot.Sprint.performed += ctx => motor.ToggleSprint();
         onFoot.LockCursor.performed += ctx => ToggleCursorLock();
 
+        onFoot.AltUse.performed += ctx => inventory.PerformEquipmentAlt();
+
         onFoot.EquipMain.performed += ctx => inventory.EquipItemServerRpc(PlayerInventory.InventorySlot.MainHand);
         onFoot.EquipOff.performed += ctx => inventory.EquipItemServerRpc(PlayerInventory.InventorySlot.OffHand);
         onFoot.EquipAccessory.performed += ctx => inventory.EquipItemServerRpc(PlayerInventory.InventorySlot.Accessory);
+        
 
     }
 

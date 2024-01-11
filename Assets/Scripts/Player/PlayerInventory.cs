@@ -70,6 +70,11 @@ public class PlayerInventory : NetworkBehaviour
         equipment[(int)currentEquipped].SetAnimations();
     }
 
+    public void PerformEquipmentAlt()
+    {
+        equipment[(int)currentEquipped].PerformAlt();
+    }
+
     public void OffsetEquipmentInHand(Vector3 offset)
     {
         equipment[(int)currentEquipped].transform.localPosition = handPos + offset;
@@ -237,6 +242,7 @@ public class PlayerInventory : NetworkBehaviour
         {
             hotbarIcons[(int)slot].SetEquipped(true);
             hotbarIcons[(int)slot].itemInSlot = equipment[(int)slot];
+            equipment[(int)slot].UpdateAltUI();
         }
 
         if (equipment[(int)slot] != null)

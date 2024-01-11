@@ -100,6 +100,27 @@ public class Dungeon : NetworkBehaviour
         return new Vector3(x,y,z);
     }
 
+    public DoorDirection GetPathToPuzzle()
+    {
+        float minDistance = Mathf.Infinity;
+        DoorDirection bestDirection = DoorDirection.None;
+        Vector3 playerRoomCoords = GetGridOfPlayer();
+
+        if (playerRoomCoords == puzzleCoords) return bestDirection;
+
+        foreach (DoorDirection dir in cardinals)
+        {
+            float dist = Vector3.Distance(puzzleCoords, (playerRoomCoords + DirectionToGrid(dir)));
+            if (dist < minDistance)
+            {
+                bestDirection = dir;
+                minDistance = dist;
+            }
+        }
+
+        return bestDirection;
+    }
+
     public DoorDirection GetPathToObjective()
     {
         float minDistance = Mathf.Infinity;
