@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class BaseProjectile : MonoBehaviour
+public class BaseProjectile : NetworkBehaviour
 {
     private float damage = 5f;
     public NetworkObject playerSourceNO;
     public bool hasBeenfired = false;
     
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (hasBeenfired)
         {
@@ -23,9 +23,8 @@ public class BaseProjectile : MonoBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void DestroyProjectileServerRpc()
+    protected void DestroyProjectileServerRpc()
     {
         Destroy(gameObject);
-        GetComponent<NetworkObject>().Despawn();
     }
 }

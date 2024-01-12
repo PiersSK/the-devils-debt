@@ -70,6 +70,11 @@ public class PlayerInventory : NetworkBehaviour
         equipment[(int)currentEquipped].SetAnimations();
     }
 
+    public void PerformEquipmentAlt()
+    {
+        equipment[(int)currentEquipped].PerformAlt();
+    }
+
     public void OffsetEquipmentInHand(Vector3 offset)
     {
         equipment[(int)currentEquipped].transform.localPosition = handPos + offset;
@@ -77,13 +82,10 @@ public class PlayerInventory : NetworkBehaviour
 
     public void DestroyEquipment()
     {
-        Debug.Log("Destroying equipment of player " + OwnerClientId);
-
         foreach (Equipment item in equipment)
         {
             if (item != null)
             {
-                Debug.Log("Destroying item: " + item.name + "(is spawned " + item.IsSpawned + ")");
                 item.GetComponent<NetworkObject>().TryRemoveParent();
                 Destroy(item.gameObject);
             }
@@ -237,6 +239,7 @@ public class PlayerInventory : NetworkBehaviour
         {
             hotbarIcons[(int)slot].SetEquipped(true);
             hotbarIcons[(int)slot].itemInSlot = equipment[(int)slot];
+            equipment[(int)slot].UpdateAltUI();
         }
 
         if (equipment[(int)slot] != null)

@@ -100,6 +100,47 @@ public class Dungeon : NetworkBehaviour
         return new Vector3(x,y,z);
     }
 
+    public Room GetRoomOfPlayer()
+    {
+        Vector3 playerPos = Player.LocalInstance.transform.position;
+        int x = maxRoomRadius + (int)Mathf.Round(playerPos.x / roomWidth);
+        int y = maxRoomRadius + (int)Mathf.Round(playerPos.z / roomWidth);
+        int z = (maxFloors / 2) + (int)Mathf.Round(playerPos.y / roomHeight);
+
+        return dungeonGrid[x, y, z];
+    }
+
+    public Room GetRoomOfPlayer(Player player)
+    {
+        Vector3 playerPos = player.transform.position;
+        int x = maxRoomRadius + (int)Mathf.Round(playerPos.x / roomWidth);
+        int y = maxRoomRadius + (int)Mathf.Round(playerPos.z / roomWidth);
+        int z = (maxFloors / 2) + (int)Mathf.Round(playerPos.y / roomHeight);
+
+        return dungeonGrid[x, y, z];
+    }
+
+    public DoorDirection GetPathToPuzzle()
+    {
+        float minDistance = Mathf.Infinity;
+        DoorDirection bestDirection = DoorDirection.None;
+        Vector3 playerRoomCoords = GetGridOfPlayer();
+
+        if (playerRoomCoords == puzzleCoords) return bestDirection;
+
+        foreach (DoorDirection dir in cardinals)
+        {
+            float dist = Vector3.Distance(puzzleCoords, (playerRoomCoords + DirectionToGrid(dir)));
+            if (dist < minDistance)
+            {
+                bestDirection = dir;
+                minDistance = dist;
+            }
+        }
+
+        return bestDirection;
+    }
+
     public DoorDirection GetPathToObjective()
     {
         float minDistance = Mathf.Infinity;

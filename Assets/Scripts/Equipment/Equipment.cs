@@ -24,16 +24,25 @@ public abstract class Equipment : PickupInteractable
         Color.yellow
     };
     
-    [Header("Equipment General")]
-    //public PlayerInventory.InventorySlot inventorySlot;
     public bool onCooldown = false;
+
+    [Header("Equipment General")]
     public Player equippedPlayer;
     public ItemRarity rarity = ItemRarity.Common;
+
     [SerializeField] protected Animator animator;
 
     public abstract void PerformAbility();
     public abstract void SetAnimations();
     public abstract void ResetAbility();
+
+    public virtual void PerformAlt() { }
+
+    public virtual void UpdateAltUI()
+    {
+        UIManager.Instance.equipmentPrompt.gameObject.SetActive(false);
+        UIManager.Instance.equipmentDetails.gameObject.SetActive(false);
+    }
 
     protected virtual void Start()
     {

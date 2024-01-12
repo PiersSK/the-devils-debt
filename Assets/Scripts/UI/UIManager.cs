@@ -19,6 +19,9 @@ public class UIManager : MonoBehaviour
     public HotbarIcon hotbarOff;
     public HotbarIcon hotbarAccessory;
 
+    public TextMeshProUGUI equipmentPrompt;
+    public TextMeshProUGUI equipmentDetails;
+
     public PlayerNotification notification;
 
     public TextMeshProUGUI timer;
