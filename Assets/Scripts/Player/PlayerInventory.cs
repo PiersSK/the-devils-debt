@@ -82,13 +82,10 @@ public class PlayerInventory : NetworkBehaviour
 
     public void DestroyEquipment()
     {
-        Debug.Log("Destroying equipment of player " + OwnerClientId);
-
         foreach (Equipment item in equipment)
         {
             if (item != null)
             {
-                Debug.Log("Destroying item: " + item.name + "(is spawned " + item.IsSpawned + ")");
                 item.GetComponent<NetworkObject>().TryRemoveParent();
                 Destroy(item.gameObject);
             }

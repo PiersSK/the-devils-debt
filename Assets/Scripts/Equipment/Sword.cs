@@ -42,7 +42,6 @@ public class Sword : Equipment
     protected override void Start()
     {
         base.Start();
-        Debug.Log("start: rta true");
         readyToAttack = true;
         gameObject.SetActive(true);
     }
