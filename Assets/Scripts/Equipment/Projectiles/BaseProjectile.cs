@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class BaseProjectile : MonoBehaviour
+public class BaseProjectile : NetworkBehaviour
 {
     private float damage = 5f;
     public NetworkObject playerSourceNO;

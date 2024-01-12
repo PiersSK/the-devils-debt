@@ -28,23 +28,11 @@ public class Compass : Equipment
         if (isPickedUp) // Point it north (ish)
             compassNeedle.localEulerAngles = -Player.LocalInstance.transform.eulerAngles;
 
-        if (orbIsActive && IsServer)
-        {
-            Vector3 direction = (currentDoorTarget.position - currentObjectiveOrb.position).normalized;
-            currentObjectiveOrb.GetComponent<Rigidbody>().velocity = direction * 10f;
-
-            if (Vector3.Distance(currentObjectiveOrb.position, currentDoorTarget.position) < 0.1f)
-            {
-                Destroy(currentObjectiveOrb.gameObject);
-                orbIsActive = false;
-            }
-        }
-
     }
 
     public override void PerformAbility()
     {
-        if (!orbIsActive && !onCooldown && Player.LocalInstance.playerMana.IncrementPlayerMana(-manaCost))
+        if (!onCooldown && Player.LocalInstance.playerMana.IncrementPlayerMana(-manaCost))
         {
             Door.DoorDirection compassResponse = Door.DoorDirection.None;
             if (destination == CompassDestination.Objective)
@@ -86,11 +74,9 @@ public class Compass : Equipment
 
         currentObjectiveOrb.GetComponent<CompassProjectile>().playerSourceNO = player.GetComponent<NetworkObject>();
         currentObjectiveOrb.GetComponent<CompassProjectile>().hasBeenfired = true;
-        currentObjectiveOrb.GetComponent<CompassProjectile>().sourceCompass = this;
+        currentObjectiveOrb.GetComponent<CompassProjectile>().target = currentDoorTarget;
 
         currentObjectiveOrb.GetComponent<NetworkObject>().Spawn();
-
-        orbIsActive = true;
 
     }
 
