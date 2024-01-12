@@ -110,6 +110,16 @@ public class Dungeon : NetworkBehaviour
         return dungeonGrid[x, y, z];
     }
 
+    public Room GetRoomOfPlayer(Player player)
+    {
+        Vector3 playerPos = player.transform.position;
+        int x = maxRoomRadius + (int)Mathf.Round(playerPos.x / roomWidth);
+        int y = maxRoomRadius + (int)Mathf.Round(playerPos.z / roomWidth);
+        int z = (maxFloors / 2) + (int)Mathf.Round(playerPos.y / roomHeight);
+
+        return dungeonGrid[x, y, z];
+    }
+
     public DoorDirection GetPathToPuzzle()
     {
         float minDistance = Mathf.Infinity;

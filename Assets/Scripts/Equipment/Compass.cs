@@ -20,8 +20,6 @@ public class Compass : Equipment
     private List<string> destinationName = new() { "Objective", "Puzzle Room" };
 
     public bool orbIsActive = false;
-    private Transform currentObjectiveOrb;
-    private Transform currentDoorTarget;
 
     private void Update()
     {
@@ -32,29 +30,18 @@ public class Compass : Equipment
 
     public override void PerformAbility()
     {
-        if (!onCooldown && Player.LocalInstance.playerMana.IncrementPlayerMana(-manaCost))
+        Door.DoorDirection compassResponse = Door.DoorDirection.None;
+        if (destination == CompassDestination.Objective)
+            compassResponse = Dungeon.Instance.GetPathToObjective();
+        else if (destination == CompassDestination.PuzzleRoom)
+            compassResponse = Dungeon.Instance.GetPathToPuzzle();
+
+        bool atDestination = compassResponse == Door.DoorDirection.None;
+
+        if (!atDestination && !onCooldown && Player.LocalInstance.playerMana.IncrementPlayerMana(-manaCost))
         {
-            Door.DoorDirection compassResponse = Door.DoorDirection.None;
-            if (destination == CompassDestination.Objective)
-                compassResponse = Dungeon.Instance.GetPathToObjective();
-            else if (destination == CompassDestination.PuzzleRoom)
-                compassResponse = Dungeon.Instance.GetPathToPuzzle();
-
-            string responseString = compassResponse.ToString();
-
-            if (compassResponse == Door.DoorDirection.None) responseString = "Destination Reached";
-            else
-            {
-                currentDoorTarget = Dungeon.Instance.GetRoomOfPlayer().doors[(int)compassResponse].transform;
-                SendProjectileServerRpc(Player.LocalInstance.GetComponent<NetworkObject>());
-            }
-
-            Color nofifcationColor = destination == CompassDestination.Objective ? new Color(1, 0.8f, 0.05f) : new Color(0.55f, 0.25f, 0.66f); 
-
-            UIManager.Instance.notification.ShowNotification(responseString, nofifcationColor);
+            SendProjectileServerRpc(Player.LocalInstance.GetComponent<NetworkObject>(), compassResponse);
             UIManager.Instance.hotbarAccessory.PutOnCooldown(1f);
-                
-
         }
     }
 
@@ -62,7 +49,7 @@ public class Compass : Equipment
     public override void SetAnimations() { }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SendProjectileServerRpc(NetworkObjectReference playerNOR)
+    private void SendProjectileServerRpc(NetworkObjectReference playerNOR, Door.DoorDirection dir)
     {
         playerNOR.TryGet(out NetworkObject playerNO);
         Player player = playerNO.GetComponent<Player>();
@@ -70,14 +57,22 @@ public class Compass : Equipment
         Transform orbPrefab = Resources.Load<Transform>("Projectiles/CompassProjectile");
         orbPrefab.position = player.playerLook.cam.transform.position + (player.playerLook.cam.transform.forward * 2);
 
-        currentObjectiveOrb = Instantiate(orbPrefab);
+        Transform orbObj = Instantiate(orbPrefab);
+        orbObj.GetComponent<NetworkObject>().Spawn();
 
-        currentObjectiveOrb.GetComponent<CompassProjectile>().playerSourceNO = player.GetComponent<NetworkObject>();
-        currentObjectiveOrb.GetComponent<CompassProjectile>().hasBeenfired = true;
-        currentObjectiveOrb.GetComponent<CompassProjectile>().target = currentDoorTarget;
+        SendProjectileClientRpc(orbObj.GetComponent<NetworkObject>(), playerNOR, dir);
 
-        currentObjectiveOrb.GetComponent<NetworkObject>().Spawn();
+    }
 
+    [ClientRpc]
+    private void SendProjectileClientRpc(NetworkObjectReference orbNOR, NetworkObjectReference playerNOR, Door.DoorDirection dir)
+    {
+        orbNOR.TryGet(out NetworkObject orbNO);
+        playerNOR.TryGet(out NetworkObject playerNO);
+
+        Transform doorTarget = Dungeon.Instance.GetRoomOfPlayer(playerNO.GetComponent<Player>()).doors[(int)dir].transform;
+        Debug.Log("Setting orb target to : " + doorTarget.name);
+        orbNO.GetComponent<CompassProjectile>().target = doorTarget;
     }
 
     public override void PerformAlt()
